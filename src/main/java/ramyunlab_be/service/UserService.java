@@ -79,4 +79,16 @@ public class UserService {
 
             return  "닉네임: " + nickname;
     }
+
+    public UserEntity delete(final Long idx, final String password){
+        UserEntity user = userRepository.findByIdx(idx)
+            .orElseThrow(() -> new RuntimeException("user doesn't exist"));
+
+        if(user != null && passwordEncoder.matches(password, user.getPassword())){
+            userRepository.delete(user);
+            return user;
+        } else{
+            throw new RuntimeException("Invalid password");
+        }
+    }
 }

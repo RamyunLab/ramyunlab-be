@@ -2,7 +2,6 @@ package ramyunlab_be.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,7 @@ import ramyunlab_be.service.UserService;
 
 @Controller
 @RequestMapping("/auth")
-public class UserController {
+public class AuthController {
     @Autowired
     private UserService userService;
 
@@ -113,6 +112,4 @@ public class UserController {
                 .body(e.getMessage());
         }
     }
-
-
 }
