@@ -28,20 +28,6 @@ public class UserService {
             throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
         }   // 회원가입 빈칸 여부 확인
 
-        final String userId = userEntity.getUserId();
-        final String nickname = userEntity.getNickname();
-
-        // 아이디 중복 체크
-        if(userRepository.existsByUserId(userId)){
-            log.warn("이미 존재하는 아이디입니다. {}", userId);
-            throw new RuntimeException("userId already exists");
-        }
-
-        // 닉네임 중복 체크
-        if(userRepository.existsByNickname(nickname)){
-            log.warn("이미 존재하는 닉네임입니다. {}", nickname);
-            throw new RuntimeException("nickname already exists");
-        }
         return userRepository.save(userEntity);
     }
 
@@ -55,5 +41,42 @@ public class UserService {
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             return user;
         }else return null;
+    }
+
+    public String checkId(UserEntity userEntity){
+        if(userEntity == null ||
+            userEntity.getUserId() == null ||
+            userEntity.getUserId().trim().isEmpty()){
+            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+        }
+
+        final String userId = userEntity.getUserId();
+
+        // 아이디 중복 체크\
+
+            if(userRepository.existsByUserId(userId)){
+                log.warn("이미 존재하는 아이디입니다. {}", userId);
+                throw new RuntimeException("userId already exists");
+            }
+
+            return "아이디: " + userId ;
+    }
+
+    public String checkNickname(UserEntity userEntity){
+        if(userEntity == null ||
+            userEntity.getNickname() == null ||
+            userEntity.getNickname().trim().isEmpty()){
+            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+        }
+
+        final String nickname = userEntity.getNickname();
+
+        // 닉네임 중복 체크
+            if(userRepository.existsByNickname(nickname)){
+                log.warn("이미 존재하는 닉네임입니다. {}", nickname);
+                throw new RuntimeException("nickname already exists");
+            }
+
+            return  "닉네임: " + nickname;
     }
 }
