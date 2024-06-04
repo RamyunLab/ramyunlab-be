@@ -78,4 +78,41 @@ public class UserController {
                 .body(e.getMessage());
         }
     }
+
+    @GetMapping("/checkId")
+    public ResponseEntity<String> checkId(@RequestBody UserDTO userDTO) {
+        try {
+            UserEntity user = UserEntity.builder()
+                .userId(userDTO.getUserId())
+                .build();
+
+            String checkedUser = userService.checkId(user);
+
+            return ResponseEntity.ok().body(checkedUser);
+
+        } catch (Exception e) {
+            return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/checkNickname")
+    public ResponseEntity<String> checkNickname(@RequestBody UserDTO userDTO){
+        try{
+            UserEntity user = UserEntity.builder()
+                .nickname(userDTO.getNickname())
+                .build();
+
+            String checkedUser = userService.checkNickname(user);
+            return ResponseEntity.ok().body(checkedUser);
+
+        }catch (Exception e){
+            return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+        }
+    }
+
+
 }
