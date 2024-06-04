@@ -9,5 +9,6 @@ public class RamyunLabBeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RamyunLabBeApplication.class, args);
 	}
+	
 
 }
