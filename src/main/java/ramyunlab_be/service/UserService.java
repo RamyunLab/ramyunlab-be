@@ -1,8 +1,12 @@
 package ramyunlab_be.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.UserRepository;
 
@@ -12,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public UserEntity create(final UserEntity userEntity){
         if(userEntity == null ||
@@ -36,5 +43,17 @@ public class UserService {
             throw new RuntimeException("nickname already exists");
         }
         return userRepository.save(userEntity);
+    }
+
+    public UserEntity getByCredentials(final String userId, final String password){
+        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
+            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+        }
+
+        UserEntity user = userRepository.findByUserId(userId);
+
+        if(user != null && passwordEncoder.matches(password, user.getPassword())){
+            return user;
+        }else return null;
     }
 }
