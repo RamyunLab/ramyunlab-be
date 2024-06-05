@@ -62,7 +62,7 @@ public class UserService {
             return "useId: " + userId ;
     }
 
-    public String checkNickname(UserEntity userEntity){
+    public UserDTO checkNickname(UserEntity userEntity){
         if(userEntity == null ||
             userEntity.getNickname() == null ||
             userEntity.getNickname().trim().isEmpty()){
@@ -77,7 +77,7 @@ public class UserService {
                 throw new RuntimeException("nickname already exists");
             }
 
-            return  "nickname: " + nickname;
+            return UserDTO.builder().nickname(nickname).build();
     }
 
     public UserEntity delete(final Long idx, final String password){
