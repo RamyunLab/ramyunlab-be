@@ -39,11 +39,11 @@ public class UserService {
         UserEntity user = userRepository.findByUserId(userId);
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
-            return user;
+            return UserEntity.builder().userId(userId).build();
         }else return null;
     }
 
-    public String checkId(UserEntity userEntity){
+    public UserDTO checkId(UserEntity userEntity){
         if(userEntity == null ||
             userEntity.getUserId() == null ||
             userEntity.getUserId().trim().isEmpty()){
@@ -59,7 +59,7 @@ public class UserService {
                 throw new RuntimeException("userId already exists");
             }
 
-            return "useId: " + userId ;
+            return UserDTO.builder().userId(userId).build();
     }
 
     public UserDTO checkNickname(UserEntity userEntity){

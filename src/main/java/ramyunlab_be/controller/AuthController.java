@@ -27,7 +27,7 @@ public class AuthController {
     private TokenProvider tokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<ResDTO> registerUser(@RequestBody UserDTO userDTO){
         try {
             UserEntity user = UserEntity.builder()
                 .userId(userDTO.getUserId())
@@ -42,17 +42,22 @@ public class AuthController {
                 .idx(registeredUser.getIdx())
                 .build();
 
-            return ResponseEntity.ok().body(responseUserDTO.toString());
+            return ResponseEntity.ok().body(ResDTO
+                .builder()
+                .statusCode(StatusCode.OK)
+                .data(responseUserDTO)
+                .message("회원가입 성공")
+                .build());
 
         }catch (Exception e){
             return ResponseEntity
                 .badRequest()
-                .body(e.getMessage());
+                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ResDTO> loginUser(@RequestBody UserDTO userDTO) {
         try {
 
             UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword());
@@ -66,34 +71,39 @@ public class AuthController {
                     .token(token)
                     .build();
 
-                return ResponseEntity.ok().body(responseUserDTO.toString());
+                return ResponseEntity.ok().body(ResDTO
+                    .builder()
+                    .statusCode(StatusCode.OK)
+                    .data(responseUserDTO)
+                    .message("로그인 성공")
+                    .build());
             } else {
                 return ResponseEntity
                     .badRequest()
-                    .body("login failed");
+                    .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
             }
         } catch (Exception e) {
             return ResponseEntity
                 .badRequest()
-                .body(e.getMessage());
+                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
         }
     }
 
     @PostMapping("/checkId")
-    public ResponseEntity<String> checkId(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ResDTO> checkId(@RequestBody UserDTO userDTO) {
         try {
             UserEntity user = UserEntity.builder()
                 .userId(userDTO.getUserId())
                 .build();
 
-            String checkedUser = userService.checkId(user);
+            UserDTO checkedUser = userService.checkId(user);
 
-            return ResponseEntity.ok().body(checkedUser);
+            return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).data(checkedUser).message("중복 체크 성공").build());
 
         } catch (Exception e) {
             return ResponseEntity
                 .badRequest()
-                .body(e.getMessage());
+                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
         }
     }
 
