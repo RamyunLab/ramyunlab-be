@@ -59,7 +59,7 @@ public class UserService {
                 throw new RuntimeException("userId already exists");
             }
 
-            return "아이디: " + userId ;
+            return "useId: " + userId ;
     }
 
     public String checkNickname(UserEntity userEntity){
@@ -77,7 +77,7 @@ public class UserService {
                 throw new RuntimeException("nickname already exists");
             }
 
-            return  "닉네임: " + nickname;
+            return  "nickname: " + nickname;
     }
 
     public UserEntity delete(final Long idx, final String password){
