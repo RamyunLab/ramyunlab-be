@@ -1,0 +1,25 @@
+package ramyunlab_be.config;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.aspectj.apache.bcel.classfile.Module.Open;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SwaggerConfig {
+  @Bean
+  public OpenAPI openAPI(){
+    return new OpenAPI()
+        .components(new Components())
+        .info(apiInfo());
+  }
+
+  private Info apiInfo (){
+    return new Info()
+        .title("Springdoc Test")
+        .description("Springdoc + Swagger UI Test")
+        .version("1.0.0");
+  }
+}
