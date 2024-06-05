@@ -11,5 +11,8 @@ create table user (
 	u_idx bigint primary key not null auto_increment,
 	u_id varchar(20) not null,
 	u_nickname varchar(30) not null,
-    u_password varchar(255) not null
+    u_password varchar(255) not null,
+    u_deleted TIMESTAMP null,
+    u_isAdmin tinyint(1) not null
 );
+

@@ -23,7 +23,7 @@ public class AuthController {
     @Autowired
     private TokenProvider tokenProvider;
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO){
         try {
             UserEntity user = UserEntity.builder()
@@ -48,7 +48,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserDTO userDTO) {
         try {
 
