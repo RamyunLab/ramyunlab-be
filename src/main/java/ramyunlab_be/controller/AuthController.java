@@ -2,18 +2,16 @@ package ramyunlab_be.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.UserService;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
@@ -78,7 +76,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/checkId")
+    @PostMapping("/checkId")
     public ResponseEntity<String> checkId(@RequestBody UserDTO userDTO) {
         try {
             UserEntity user = UserEntity.builder()
@@ -96,7 +94,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/checkNickname")
+    @PostMapping("/checkNickname")
     public ResponseEntity<String> checkNickname(@RequestBody UserDTO userDTO){
         try{
             UserEntity user = UserEntity.builder()
