@@ -3,6 +3,7 @@ package ramyunlab_be.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ramyunlab_be.config.jwt.JwtProperties;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class TokenProvider {
     @Autowired
     private JwtProperties jwtProperties;
@@ -30,6 +32,7 @@ public class TokenProvider {
     }
 
     public String validateAndGetUserId(String token){
+        log.warn("filter validateAndGetUserId check {}", token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtProperties.getSecretkey())
             .parseClaimsJws(token)
