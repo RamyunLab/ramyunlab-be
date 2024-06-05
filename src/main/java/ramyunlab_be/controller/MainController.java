@@ -4,6 +4,7 @@ package ramyunlab_be.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +24,15 @@ public class MainController {
     @Autowired
     private UserService userService;
 
-    @DeleteMapping("/user/{idx}")
+    @DeleteMapping("/user")
     public ResponseEntity<String> deleteUser(
-        @PathVariable Long idx,
+        @AuthenticationPrincipal String userId,
         @RequestBody UserDTO userDTO
     ) {
         try {
-            log.info("hihihi 1 , {}", idx);
-            UserEntity user = userService.delete(idx, userDTO.getPassword());
-            log.warn("hihihi 2, {}", idx);
+            log.info("hihihi 1 , {}", userId);
+            UserEntity user = userService.delete(Long.valueOf(userId), userDTO.getPassword());
+            log.warn("hihihi 2, {}", userId);
                 return ResponseEntity.ok().body("withdrawal success");
         } catch (RuntimeException e) {
             if (e.getMessage().equals("User doesn't exist")) {
