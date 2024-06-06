@@ -39,11 +39,11 @@ public class UserService {
         UserEntity user = userRepository.findByUserId(userId);
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
-            return user;
+            return UserEntity.builder().userId(userId).build();
         }else return null;
     }
 
-    public String checkId(UserEntity userEntity){
+    public UserDTO checkId(UserEntity userEntity){
         if(userEntity == null ||
             userEntity.getUserId() == null ||
             userEntity.getUserId().trim().isEmpty()){
@@ -59,10 +59,10 @@ public class UserService {
                 throw new RuntimeException("userId already exists");
             }
 
-            return "useId: " + userId ;
+            return UserDTO.builder().userId(userId).build();
     }
 
-    public String checkNickname(UserEntity userEntity){
+    public UserDTO checkNickname(UserEntity userEntity){
         if(userEntity == null ||
             userEntity.getNickname() == null ||
             userEntity.getNickname().trim().isEmpty()){
@@ -77,7 +77,7 @@ public class UserService {
                 throw new RuntimeException("nickname already exists");
             }
 
-            return  "nickname: " + nickname;
+            return UserDTO.builder().nickname(nickname).build();
     }
 
     public UserEntity delete(final Long userIdx, final String password){

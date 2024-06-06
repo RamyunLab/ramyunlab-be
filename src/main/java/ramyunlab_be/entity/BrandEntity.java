@@ -28,3 +28,4 @@ public class BrandEntity {
     private List<RamyunEntity> ramyuns;
 
 }
+
