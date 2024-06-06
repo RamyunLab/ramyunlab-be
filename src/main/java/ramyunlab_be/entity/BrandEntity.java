@@ -23,8 +23,9 @@ public class BrandEntity {
     @Column(name = "b_name", nullable = false)
     private Integer brand;
 
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "brand",  cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RamyunEntity> ramyun;
+    private List<RamyunEntity> ramyuns;
 
 }
+

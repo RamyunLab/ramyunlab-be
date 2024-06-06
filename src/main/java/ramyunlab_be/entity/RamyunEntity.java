@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Builder
@@ -17,12 +19,12 @@ public class RamyunEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="r_idx", updatable = false)
-    private long ramyunIdx;
+    private Long ramyunIdx;
 
     @Column(name = "r_name", nullable = false, length = 20)
     private String ramyunName;
+    @Column(name = "r_img")
 
-    @Column(name = "r_img", nullable = true, length = 255)
     private String ramyunImg;
 
     @Column(name = "r_kcal", nullable = false)
@@ -43,11 +45,20 @@ public class RamyunEntity {
     @Column(name = "r_Na", nullable = false)
     private Integer ramyunNa;
 
-    @Column(name = "r_scoville", nullable = true)
+
+    @Column(name = "r_scoville")
     private Integer scoville;
 
     @ManyToOne
     @JoinColumn(name = "brand", nullable = false)
     @JsonBackReference
     private BrandEntity brand;
+
+    @OneToMany(mappedBy = "ramyun",  cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<ReviewEntity> reviews;
+
+    @OneToMany(mappedBy = "ramyun", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<FavoriteEntity> favorites;
 }
