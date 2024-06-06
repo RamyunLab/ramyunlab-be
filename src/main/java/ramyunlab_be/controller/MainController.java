@@ -30,9 +30,7 @@ public class MainController {
         @RequestBody UserDTO userDTO
     ) {
         try {
-            log.info("hihihi 1 , {}", userId);
             UserEntity user = userService.delete(Long.valueOf(userId), userDTO.getPassword());
-            log.warn("hihihi 2, {}", userId);
                 return ResponseEntity.ok().body("withdrawal success");
         } catch (RuntimeException e) {
             if (e.getMessage().equals("User doesn't exist")) {

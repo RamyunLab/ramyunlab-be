@@ -9,7 +9,7 @@ public class UserDTO {
     private String userId;
     private String nickname;
     private String password;
-    private Long idx;
+    private Long userIdx;
     private String token;
 
     @Override
@@ -18,7 +18,7 @@ public class UserDTO {
             "userId='" + userId + '\'' +
             ", nickname='" + nickname + '\'' +
             ", password='" + password + '\'' +
-            ", idx=" + idx +
+            ", userIdx=" + userIdx +
             ", token='" + token + '\'' +
             '}';
     }

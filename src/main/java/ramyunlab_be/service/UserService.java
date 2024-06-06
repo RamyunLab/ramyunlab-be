@@ -80,8 +80,8 @@ public class UserService {
             return  "nickname: " + nickname;
     }
 
-    public UserEntity delete(final Long idx, final String password){
-        UserEntity user = userRepository.findByIdx(idx)
+    public UserEntity delete(final Long userIdx, final String password){
+        UserEntity user = userRepository.findByUserIdx(userIdx)
             .orElseThrow(() -> new RuntimeException("user doesn't exist"));
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){

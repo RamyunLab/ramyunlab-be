@@ -36,7 +36,7 @@ public class AuthController {
             UserDTO responseUserDTO = userDTO.builder()
                 .userId(registeredUser.getUserId())
                 .nickname(registeredUser.getNickname())
-                .idx(registeredUser.getIdx())
+                .userIdx(registeredUser.getUserIdx())
                 .build();
 
             return ResponseEntity.ok().body(responseUserDTO.toString());
@@ -59,7 +59,7 @@ public class AuthController {
                 String token = tokenProvider.create(user);
                 final UserDTO responseUserDTO = UserDTO.builder()
                     .userId(user.getUserId())
-                    .idx(user.getIdx())
+                    .userIdx(user.getUserIdx())
                     .token(token)
                     .build();
 
