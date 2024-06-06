@@ -31,8 +31,9 @@ public class UserEntity {
     @Column(name = "u_Password", nullable = false)
     private String password;
 
-    @Column(name = "u_is_admin", nullable = false, columnDefinition = "tinyint(1)")
-    private Boolean isAdmin;
+    @Column(name = "u_is_admin", nullable = false)
+    @Builder.Default
+    private Boolean isAdmin=false;
 
     @Column(name = "u_deleted_at")
     private Timestamp userDeletedAt;
