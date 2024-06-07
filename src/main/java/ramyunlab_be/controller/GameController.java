@@ -43,7 +43,7 @@ public class GameController {
                                           .build());
   }
 
-  @Operation(summary = "스코빌 지수 있는 라면 랜덤 조회", description = "스코빌 지수 존재하는 라면 11개 조회")
+  @Operation(summary = "라면 랜덤 조회(Up & Down)", description = "스코빌 지수 존재하는 라면 조회(11개)")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "라면 목록 조회 성공"),
       @ApiResponse(responseCode = "500", description = "라면 목록 조회 실패")

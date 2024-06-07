@@ -22,5 +22,5 @@ public class GameDTO {
   private String r_img;
 
   @Schema(name = "scoville")
-  private int r_scoville;
+  private Integer r_scoville;
 }
