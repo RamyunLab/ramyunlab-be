@@ -3,15 +3,13 @@ package ramyunlab_be.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.entity.UserEntity;
-import ramyunlab_be.response.StatusCode;
+import ramyunlab_be.vo.StatusCode;
 import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.UserService;
 

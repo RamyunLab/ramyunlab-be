@@ -1,4 +1,4 @@
-package ramyunlab_be.response;
+package ramyunlab_be.vo;
 
 public class StatusCode {
   public static final int OK = 200;
