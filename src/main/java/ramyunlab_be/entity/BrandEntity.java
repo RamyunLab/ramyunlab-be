@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,13 +19,14 @@ import java.util.List;
 public class BrandEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "b_idx")
     private Long brandIdx;
 
     @Column(name = "b_name", nullable = false)
     private Integer brand;
 
     @OneToMany(mappedBy = "brand",  cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<RamyunEntity> ramyuns;
 
 }

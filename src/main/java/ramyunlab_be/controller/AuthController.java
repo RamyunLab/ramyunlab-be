@@ -2,6 +2,8 @@ package ramyunlab_be.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +18,7 @@ import ramyunlab_be.service.UserService;
 @RestController
 @RequestMapping(value="/auth", produces="application/json; charset=utf8")
 public class AuthController {
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     @Autowired
     private UserService userService;
 
@@ -55,6 +58,7 @@ public class AuthController {
 
             // user 가 있으면 토큰 제공
             if (user != null) {
+                log.warn("login {}", user.getPassword());
                 String token = tokenProvider.create(user);
                 final UserDTO responseUserDTO = UserDTO.builder()
                     .userId(user.getUserId())
