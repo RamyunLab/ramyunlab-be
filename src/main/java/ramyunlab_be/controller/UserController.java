@@ -25,17 +25,18 @@ public class UserController {
     @DeleteMapping("/user")
     public ResponseEntity<ResDTO> deleteUser(
         @AuthenticationPrincipal String userIdx,
+        @Valid
         @RequestBody UserDTO userDTO
     ) {
 //        try {
-            log.warn("userId {}, userDTO {} ", userIdx, userDTO.getPassword());
+//            log.warn("userId {}, userDTO {} ", userIdx, userDTO.getPassword());
             UserEntity user = userService.delete(Long.valueOf(userIdx), userDTO.getPassword());
 
 
             return ResponseEntity.ok().body(ResDTO
                 .builder()
                 .statusCode(StatusCode.OK)
-                .data(user)
+//                .data(user.getUserId())
                 .message("탈퇴 성공")
                 .build());
 //        } catch (RuntimeException e) {

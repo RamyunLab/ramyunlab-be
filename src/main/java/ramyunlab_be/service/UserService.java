@@ -100,7 +100,7 @@ public class UserService {
 
     public UserEntity delete(final Long userIdx, final String password){
         UserEntity user = userRepository.findByUserIdx(userIdx)
-            .orElseThrow(() -> new RuntimeException("user doesn't exist"));
+            .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
 
 
 
@@ -113,8 +113,8 @@ public class UserService {
 //                            .build();
 //            userRepository.save(deletedUser);
             return user;
-        } else{
-            throw new RuntimeException("Invalid password");
-        }
+        } else if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        } else throw new RuntimeException("회원탈퇴 실패");
     }
 }
