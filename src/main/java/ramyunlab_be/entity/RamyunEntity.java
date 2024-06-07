@@ -24,8 +24,8 @@ public class RamyunEntity {
 
     @Column(name = "r_name", nullable = false, length = 20)
     private String ramyunName;
-    @Column(name = "r_img")
 
+    @Column(name = "r_img")
     private String ramyunImg;
 
     @Column(name = "r_kcal", nullable = false)
@@ -45,7 +45,6 @@ public class RamyunEntity {
 
     @Column(name = "r_Na", nullable = false)
     private Integer ramyunNa;
-
 
     @Column(name = "r_scoville")
     private Integer scoville;
