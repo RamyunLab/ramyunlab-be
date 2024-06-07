@@ -17,8 +17,10 @@ public class ReviewDTO {
     private Integer rate;
     private String reviewPhoto;
     private Timestamp rvCreatedAt;
-    private String rvUpdatedAt;
-    private String rvDeletedAt;
+    private Timestamp rvUpdatedAt;
+    private Timestamp rvDeletedAt;
+    private Long userIdx;
+    private Long ramyunIdx;
 
     @Override
     public String toString() {

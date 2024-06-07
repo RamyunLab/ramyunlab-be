@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ramyun")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RamyunEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
