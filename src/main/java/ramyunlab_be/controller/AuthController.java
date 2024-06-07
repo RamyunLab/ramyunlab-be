@@ -1,5 +1,7 @@
 package ramyunlab_be.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.dto.ResErrDTO;
 import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.response.StatusCode;
@@ -27,8 +30,8 @@ public class AuthController {
     private TokenProvider tokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<ResDTO> registerUser(@RequestBody UserDTO userDTO){
-        try {
+    public ResponseEntity<ResDTO> registerUser(@Valid @RequestBody UserDTO userDTO){
+
             UserEntity user = UserEntity.builder()
                 .userId(userDTO.getUserId())
                 .nickname(userDTO.getNickname())
@@ -48,12 +51,6 @@ public class AuthController {
                 .data(responseUserDTO)
                 .message("회원가입 성공")
                 .build());
-
-        }catch (Exception e){
-            return ResponseEntity
-                .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
-        }
     }
 
     @PostMapping("/login")
@@ -90,8 +87,7 @@ public class AuthController {
     }
 
     @PostMapping("/checkId")
-    public ResponseEntity<ResDTO> checkId(@RequestBody UserDTO userDTO) {
-        try {
+    public ResponseEntity<ResDTO> checkId(@Valid @RequestBody UserDTO userDTO) {
             UserEntity user = UserEntity.builder()
                 .userId(userDTO.getUserId())
                 .build();
@@ -99,12 +95,6 @@ public class AuthController {
             UserDTO checkedUser = userService.checkId(user);
 
             return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).data(checkedUser).message("중복 체크 성공").build());
-
-        } catch (Exception e) {
-            return ResponseEntity
-                .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
-        }
     }
 
     @PostMapping("/checkNickname")
@@ -119,7 +109,14 @@ public class AuthController {
         }catch (Exception e){
             return ResponseEntity
                 .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
+                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
         }
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
+        return ResponseEntity
+            .badRequest()
+            .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
     }
 }
