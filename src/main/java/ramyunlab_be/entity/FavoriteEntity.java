@@ -30,10 +30,10 @@ public class FavoriteEntity {
     @ManyToOne
     @JoinColumn(name = "u_idx", nullable = false)
     @JsonBackReference
-    private List<UserEntity> users;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "r_idx", nullable = false)
     @JsonBackReference
-    private List<RamyunEntity> ramyuns;
+    private RamyunEntity ramyun;
 }

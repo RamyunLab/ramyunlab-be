@@ -21,12 +21,17 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public UserEntity create(final UserEntity userEntity){
-        if(userEntity == null ||
-            userEntity.getUserId() == null || userEntity.getUserId().trim().isEmpty() ||
-            userEntity.getNickname() == null || userEntity.getNickname().trim().isEmpty() ||
-            userEntity.getPassword() == null || userEntity.getPassword().trim().isEmpty()){
-            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-        }   // 회원가입 빈칸 여부 확인
+//        if(userEntity == null ||
+//            userEntity.getUserId() == null || userEntity.getUserId().trim().isEmpty() ||
+//            userEntity.getNickname() == null || userEntity.getNickname().trim().isEmpty() ||
+//            userEntity.getPassword() == null || userEntity.getPassword().trim().isEmpty()){
+//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+//        }   // 회원가입 빈칸 여부 확인
+//        try{
+//        checkId(userEntity);
+//        }catch (Exception e){
+//            throw new RuntimeException("아이디 중복검사를 진행해주세요.");
+//        }
 
         return userRepository.save(userEntity);
     }
@@ -59,6 +64,12 @@ public class UserService {
                 throw new RuntimeException("userId already exists");
             }
 
+//            try{
+//                if(!userRepository.existsByUserId(userId)){
+//                }
+//            }catch (Exception e){
+//                throw new RuntimeException("userID already exists");
+//            }
             return UserDTO.builder().userId(userId).build();
     }
 
