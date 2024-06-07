@@ -28,7 +28,8 @@ public class UserService {
 //            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
 //        }   // 회원가입 빈칸 여부 확인
 //        try{
-//        checkId(userEntity);
+        checkId(userEntity);
+        checkNickname(userEntity);
 //        }catch (Exception e){
 //            throw new RuntimeException("아이디 중복검사를 진행해주세요.");
 //        }
@@ -37,40 +38,40 @@ public class UserService {
     }
 
     public UserEntity getByCredentials(final String userId, final String password){
-        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
-            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-        }
+//        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
+//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+//        }
 
         UserEntity user = userRepository.findByUserId(userId);
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             return UserEntity.builder().userId(userId).build();
-        }else return null;
+        }else if(user == null){
+            throw new RuntimeException("존재하지 않는 아이디입니다.");
+        }else if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
+        } else {
+            return null;
+        }
+
     }
 
-    public UserDTO checkId(UserEntity userEntity){
-        if(userEntity == null ||
-            userEntity.getUserId() == null ||
-            userEntity.getUserId().trim().isEmpty()){
-            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-        }
+    public UserDTO checkId(UserEntity userEntity) {
+//        if(userEntity == null ||
+//            userEntity.getUserId() == null ||
+//            userEntity.getUserId().trim().isEmpty()){
+//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+//        }
 
         final String userId = userEntity.getUserId();
 
         // 아이디 중복 체크\
-
             if(userRepository.existsByUserId(userId)){
                 log.warn("이미 존재하는 아이디입니다. {}", userId);
                 throw new RuntimeException("userId already exists");
             }
+        return UserDTO.builder().userId(userId).build();
 
-//            try{
-//                if(!userRepository.existsByUserId(userId)){
-//                }
-//            }catch (Exception e){
-//                throw new RuntimeException("userID already exists");
-//            }
-            return UserDTO.builder().userId(userId).build();
     }
 
     public UserDTO checkNickname(UserEntity userEntity){
