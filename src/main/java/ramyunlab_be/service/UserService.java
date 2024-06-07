@@ -10,6 +10,10 @@ import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.UserRepository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Service
 @Slf4j
 public class UserService {
@@ -44,8 +48,10 @@ public class UserService {
 
         UserEntity user = userRepository.findByUserId(userId);
 
+        log.warn("user create service {}, {}, {}, {}", userId, user.getUserId(), password, user.getPassword());
+
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
-            return UserEntity.builder().userId(userId).build();
+            return UserEntity.builder().userId(userId).userIdx(user.getUserIdx()).build();
         }else if(user == null){
             throw new RuntimeException("존재하지 않는 아이디입니다.");
         }else if(!passwordEncoder.matches(password, user.getPassword())){
@@ -75,11 +81,11 @@ public class UserService {
     }
 
     public UserDTO checkNickname(UserEntity userEntity){
-        if(userEntity == null ||
-            userEntity.getNickname() == null ||
-            userEntity.getNickname().trim().isEmpty()){
-            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-        }
+//        if(userEntity == null ||
+//            userEntity.getNickname() == null ||
+//            userEntity.getNickname().trim().isEmpty()){
+//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+//        }
 
         final String nickname = userEntity.getNickname();
 
@@ -96,8 +102,16 @@ public class UserService {
         UserEntity user = userRepository.findByUserIdx(userIdx)
             .orElseThrow(() -> new RuntimeException("user doesn't exist"));
 
+
+
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             userRepository.delete(user);
+//            Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+//            UserEntity deletedUser = user.toBuilder()
+//                    .userIdx(user.getUserIdx())
+//                        .userDeletedAt(currentTimestamp)
+//                            .build();
+//            userRepository.save(deletedUser);
             return user;
         } else{
             throw new RuntimeException("Invalid password");

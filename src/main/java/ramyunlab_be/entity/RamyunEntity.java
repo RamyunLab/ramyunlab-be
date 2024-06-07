@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class RamyunEntity {
     @Column(name = "r_noodle", nullable = false)
     private Boolean noodle;
 
-    @Column(name = "r_isCup", nullable = false)
+    @Column(name = "r_is_cup", nullable = false)
     private Boolean isCup;
 
     @Column(name = "r_cooking", nullable = false)
@@ -50,15 +51,15 @@ public class RamyunEntity {
     private Integer scoville;
 
     @ManyToOne
-    @JoinColumn(name = "brand", nullable = false)
+    @JoinColumn(name = "b_idx", nullable = false)
     @JsonBackReference
     private BrandEntity brand;
 
     @OneToMany(mappedBy = "ramyun",  cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<ReviewEntity> reviews;
 
     @OneToMany(mappedBy = "ramyun", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<FavoriteEntity> favorites;
 }

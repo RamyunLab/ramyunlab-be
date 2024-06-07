@@ -30,10 +30,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // 요청의 Header 에 담겨온 Token 을 뽑아서 유효한지 확인
             if(token != null && !token.equalsIgnoreCase("null")){
-                String userId = tokenProvider.validateAndGetUserId(token);
-                log.warn("filter token userId check {}", userId);
+                String userIdx = tokenProvider.validateAndGetUserIdx(token);
+                log.warn("filter token userIdx check {}", userIdx);
                 // SecurityContextHolder 에 UsernamePasswordAuthenticationToken 만들어서 저장
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, AuthorityUtils.NO_AUTHORITIES);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userIdx, null, AuthorityUtils.NO_AUTHORITIES);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 

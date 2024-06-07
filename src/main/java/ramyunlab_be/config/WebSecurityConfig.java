@@ -39,7 +39,7 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**", "/game/**", "/main/**").permitAll()
                 .anyRequest().authenticated()
             );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

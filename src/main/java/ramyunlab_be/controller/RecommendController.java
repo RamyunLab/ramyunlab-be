@@ -1,4 +1,4 @@
 package ramyunlab_be.controller;
 
-public class MainController {
+public class RecommendController {
 }

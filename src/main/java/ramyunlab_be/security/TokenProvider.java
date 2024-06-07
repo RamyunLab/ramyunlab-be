@@ -21,7 +21,7 @@ public class TokenProvider {
 
     public String create(UserEntity user){
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
-
+        log.warn("token create {}", user.getUserIdx());
         return Jwts.builder()
             .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretkey())
             .setSubject(String.valueOf(user.getUserIdx()))
@@ -31,7 +31,7 @@ public class TokenProvider {
             .compact();
     }
 
-    public String validateAndGetUserId(String token){
+    public String validateAndGetUserIdx(String token){
         log.warn("filter validateAndGetUserId check {}", token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtProperties.getSecretkey())
