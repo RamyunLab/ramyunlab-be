@@ -50,9 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResDTO> loginUser(@RequestBody UserDTO userDTO) {
-        try {
-
+    public ResponseEntity<ResDTO> loginUser(@Valid @RequestBody UserDTO userDTO) {
             UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword());
 
             // user 가 있으면 토큰 제공
@@ -75,11 +73,6 @@ public class AuthController {
                     .badRequest()
                     .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
             }
-        } catch (Exception e) {
-            return ResponseEntity
-                .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).build());
-        }
     }
 
     @PostMapping("/checkId")
@@ -94,19 +87,13 @@ public class AuthController {
     }
 
     @PostMapping("/checkNickname")
-    public ResponseEntity<ResDTO> checkNickname(@RequestBody UserDTO userDTO){
-        try{
+    public ResponseEntity<ResDTO> checkNickname(@Valid @RequestBody UserDTO userDTO){
             UserEntity user = UserEntity.builder()
                 .nickname(userDTO.getNickname())
                 .build();
 
             UserDTO checkedUser = userService.checkNickname(user);
             return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).data(checkedUser).message("중복 체크 성공").build());
-        }catch (Exception e){
-            return ResponseEntity
-                .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
-        }
     }
 
     @ExceptionHandler(ValidationException.class)

@@ -38,15 +38,22 @@ public class UserService {
     }
 
     public UserEntity getByCredentials(final String userId, final String password){
-        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
-            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-        }
+//        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
+//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
+//        }
 
         UserEntity user = userRepository.findByUserId(userId);
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             return UserEntity.builder().userId(userId).build();
-        }else return null;
+        }else if(user == null){
+            throw new RuntimeException("존재하지 않는 아이디입니다.");
+        }else if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
+        } else {
+            return null;
+        }
+
     }
 
     public UserDTO checkId(UserEntity userEntity) {
