@@ -1,6 +1,7 @@
 package ramyunlab_be.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +15,18 @@ import java.sql.Timestamp;
 public class ReviewDTO {
     private Long rvIdx;
     private String reviewContent;
+
+    @NotNull(message = "별점을 입력해주세요.")
+    @Min(value = 1, message = "별점은 최소 1이어야 합니다.")
+    @Max(value = 5, message = "별점은 최대 5이어야 합니다.")
     private Integer rate;
+
     private String reviewPhoto;
     private Timestamp rvCreatedAt;
-    private String rvUpdatedAt;
-    private String rvDeletedAt;
+    private Timestamp rvUpdatedAt;
+    private Timestamp rvDeletedAt;
+    private Long userIdx;
+    private Long ramyunIdx;
 
     @Override
     public String toString() {

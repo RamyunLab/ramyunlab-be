@@ -1,5 +1,6 @@
 package ramyunlab_be.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,20 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @PostMapping("/review/{ramyunIdx}")
-    public ResponseEntity<ResDTO> addReview(@RequestBody ReviewDTO reviewDTO,
+    public ResponseEntity<ResDTO> addReview(@Valid @RequestBody ReviewDTO reviewDTO,
                                             @PathVariable Long ramyunIdx,
                                             @AuthenticationPrincipal String userIdx){
-        log.warn("userIdxxxxxx {}", userIdx);
         ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO);
+
+
         ReviewDTO responseReviewDTO = ReviewDTO.builder()
             .reviewContent(createdReview.getReviewContent())
             .reviewPhoto(createdReview.getReviewPhoto())
             .rvCreatedAt(createdReview.getRvCreatedAt())
             .rate(createdReview.getRate())
             .rvIdx(createdReview.getRvIdx())
+            .userIdx(createdReview.getUser().getUserIdx())
+            .ramyunIdx(createdReview.getRamyun().getRamyunIdx())
             .build();
 
         return ResponseEntity.ok().body(ResDTO
@@ -40,6 +44,21 @@ public class ReviewController {
             .statusCode(StatusCode.OK)
             .data(responseReviewDTO)
             .message("리뷰 추가 성공")
+            .build());
+    }
+
+    @PatchMapping("/review/{rvIdx}")
+    public ResponseEntity<ResDTO> updateReview(@Valid @RequestBody ReviewDTO reviewDTO,
+                                               @PathVariable Long rvIdx,
+                                               @AuthenticationPrincipal String userIdx){
+
+        ReviewEntity updatedReview = reviewService.update(rvIdx, userIdx, reviewDTO);
+
+        return ResponseEntity.ok().body(ResDTO
+            .builder()
+            .statusCode(StatusCode.OK)
+            .data(updatedReview)
+            .message("리뷰 수정 성공")
             .build());
     }
 
