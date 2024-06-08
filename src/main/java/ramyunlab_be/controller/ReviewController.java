@@ -1,5 +1,6 @@
 package ramyunlab_be.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @PostMapping("/review/{ramyunIdx}")
-    public ResponseEntity<ResDTO> addReview(@RequestBody ReviewDTO reviewDTO,
+    public ResponseEntity<ResDTO> addReview(@Valid @RequestBody ReviewDTO reviewDTO,
                                             @PathVariable Long ramyunIdx,
                                             @AuthenticationPrincipal String userIdx){
         ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO);
@@ -47,7 +48,7 @@ public class ReviewController {
     }
 
     @PatchMapping("/review/{rvIdx}")
-    public ResponseEntity<ResDTO> updateReview(@RequestBody ReviewDTO reviewDTO,
+    public ResponseEntity<ResDTO> updateReview(@Valid @RequestBody ReviewDTO reviewDTO,
                                                @PathVariable Long rvIdx,
                                                @AuthenticationPrincipal String userIdx){
 

@@ -24,8 +24,10 @@ public class ReviewService {
     private UserRepository userRepository;
 
     public ReviewEntity create(final Long ramyunIdx, final String userIdx, final ReviewDTO reviewDTO){
-        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("errr1"));
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("errr2"));
+        // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
         ReviewEntity review = ReviewEntity.builder()
             .reviewContent(reviewDTO.getReviewContent())
