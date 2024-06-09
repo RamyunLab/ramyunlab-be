@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,7 +33,7 @@ public class ReviewEntity {
     private Integer rate;
 
     @Column(name="rv_photo", length = 200)
-    private String reviewPhoto;
+    private List<String> reviewPhotoUrls;
 
     @Column(name = "rv_created_at", nullable = false)
     @CreationTimestamp

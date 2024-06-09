@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.ReviewDTO;
+import ramyunlab_be.dto.ReviewUploadPhotoDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.service.ReviewService;
@@ -27,21 +29,22 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-    @Operation(summary = "리뷰 작성", description = "리뷰 작성")
+    @Operation(summary = "리뷰 작성", description = "RequestBody 에 rate 필수로 입력(리뷰 내용, 사진은 nullable)해야 합니다. (토큰 필요)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 추가 성공"),
         @ApiResponse(responseCode = "400")
     })
     @PostMapping("/review/{ramyunIdx}")
     public ResponseEntity<ResDTO> addReview(@Valid @RequestBody ReviewDTO reviewDTO,
+                                            @ModelAttribute ReviewUploadPhotoDTO reviewUploadPhotoDTO,
                                             @PathVariable Long ramyunIdx,
                                             @AuthenticationPrincipal String userIdx){
-        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO);
+        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO, reviewUploadPhotoDTO);
 
 
         ReviewDTO responseReviewDTO = ReviewDTO.builder()
             .reviewContent(createdReview.getReviewContent())
-            .reviewPhoto(createdReview.getReviewPhoto())
+            .reviewPhotoUrls(createdReview.getReviewPhotoUrls())
             .rvCreatedAt(createdReview.getRvCreatedAt())
             .rate(createdReview.getRate())
             .rvIdx(createdReview.getRvIdx())
@@ -77,7 +80,10 @@ public class ReviewController {
             .build());
     }
 
-    @PostMapping("/review/photo/{ramyunIdx}")
+//    @PostMapping("/review/photo")
+//    public ResponseEntity<ResDTO> uploadPhoto (ReviewUploadPhotoDTO reviewUploadPhotoDTO){
+//
+//    }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
