@@ -1,6 +1,10 @@
 package ramyunlab_be.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +21,17 @@ import ramyunlab_be.vo.StatusCode;
 @RestController
 @RequestMapping(value="/api", produces="application/json; charset=utf8")
 @Slf4j
+@Tag(name = "User", description = "사용자 관련 API")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "회원탈퇴", description = "RequestBody : 패스워드 입력, 자물쇠 모양 아이콘 누르고 Available authorizations 에 token 정보 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "탈퇴 성공"),
+        @ApiResponse(responseCode = "400")
+    })
     @DeleteMapping("/user")
     public ResponseEntity<ResDTO> deleteUser(
         @AuthenticationPrincipal String userIdx,

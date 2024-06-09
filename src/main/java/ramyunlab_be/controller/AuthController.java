@@ -1,5 +1,9 @@
 package ramyunlab_be.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
@@ -17,6 +21,7 @@ import ramyunlab_be.service.UserService;
 
 @RestController
 @RequestMapping(value="/auth", produces="application/json; charset=utf8")
+@Tag(name = "Auth", description = "로그인, 회원가입 관련 API")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     @Autowired
@@ -28,6 +33,11 @@ public class AuthController {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Operation(summary = "회원가입", description = " requestBody : 아이디, 닉네임, 패스워드 입력 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+        @ApiResponse(responseCode = "400")
+    })
     @PostMapping("/register")
     public ResponseEntity<ResDTO> registerUser(@Valid @RequestBody UserDTO userDTO){
 
@@ -52,6 +62,11 @@ public class AuthController {
                 .build());
     }
 
+    @Operation(summary = "로그인", description = "requsetBody : 아이디, 패스워드 입력")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "400")
+    })
     @PostMapping("/login")
     public ResponseEntity<ResDTO> loginUser(@Valid @RequestBody UserDTO userDTO) {
             UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword());
@@ -79,6 +94,11 @@ public class AuthController {
             }
     }
 
+    @Operation(summary = "아이디 중복검사", description = " RequestBody : 아이디 입력, 자물쇠 모양 아이콘 누르고 Available authorizations 에 token 정보 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "중복 체크 성공"),
+        @ApiResponse(responseCode = "400")
+    })
     @PostMapping("/checkId")
     public ResponseEntity<ResDTO> checkId(@Valid @RequestBody UserDTO userDTO) {
             UserEntity user = UserEntity.builder()
@@ -90,6 +110,11 @@ public class AuthController {
             return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).data(checkedUser).message("중복 체크 성공").build());
     }
 
+    @Operation(summary = "닉네임 중복검사", description = "RequestBody : 닉네임 입력, 자물쇠 모양 아이콘 누르고 Available authorizations 에 token 정보 \"")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "중복 체크 성공"),
+        @ApiResponse(responseCode = "400")
+    })
     @PostMapping("/checkNickname")
     public ResponseEntity<ResDTO> checkNickname(@Valid @RequestBody UserDTO userDTO){
             UserEntity user = UserEntity.builder()
