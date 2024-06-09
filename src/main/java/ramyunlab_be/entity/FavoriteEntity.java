@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "favorites")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FavoriteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

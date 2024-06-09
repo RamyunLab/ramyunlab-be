@@ -17,7 +17,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 //    @Query("SELECT u FROM UserEntity u WHERE u.userId = :userId")
     UserEntity findByUserId(String userId);
 
+//    @Query("SELECT u FROM UserEntity u Where u.userIdx = :userIdx")
     Optional<UserEntity> findByUserIdx(Long userIdx);
+//    Optional<UserEntity> findByUserIdx2(Long userIdx);
 
 //    UserEntity findByUserIdAndPassword(String userId, String password);
 
