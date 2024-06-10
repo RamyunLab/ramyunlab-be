@@ -70,7 +70,11 @@ public class UserController {
 
     }
 
-    // 닉네임 변경
+    @Operation(summary = "닉네임 변경", description = "사용자의 닉네임 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
     @PatchMapping("/user/nickname")
     public ResponseEntity<ResDTO> updateNickname(@RequestBody UserDTO userDTO,
                                                  @AuthenticationPrincipal String userIdx) {
@@ -83,7 +87,11 @@ public class UserController {
                 .build());
     }
 
-    // 비밀번호 변경 시 비밀번호 확인
+    @Operation(summary = "비밀번호 확인", description = "회원 탈퇴 및 비밀번호 변경 시 사용자 인증을 위한 현재 비밀번호 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 확인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
     @PostMapping("/user/password")
     public ResponseEntity<ResDTO> confirmPassword(@Valid @RequestBody UserDTO userDTO,
                                                   @AuthenticationPrincipal String userIdx) {
@@ -98,7 +106,11 @@ public class UserController {
                 .build());
     }
 
-    // 비밀번호 변경
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
     @PatchMapping("/user/password")
     public ResponseEntity<ResDTO> updatePassword(@Valid @RequestBody UserDTO userDTO,
                                                  @AuthenticationPrincipal String userIdx) {
