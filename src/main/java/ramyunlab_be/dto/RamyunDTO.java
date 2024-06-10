@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ramyunlab_be.entity.BrandEntity;
 
 @Getter
 @Builder
@@ -24,7 +25,8 @@ public class RamyunDTO {
   private Integer gram;
   private Integer ramyunNa;
   private Integer scoville;
-  private double avrRate;
+  private Double avgRate;
+  private Long reviewCount;
 
   @Override
   public String toString () {

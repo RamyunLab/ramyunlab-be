@@ -7,25 +7,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.ResDTO;
-import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.service.MainService;
-import ramyunlab_be.vo.Pagenation;
 import ramyunlab_be.vo.StatusCode;
 
 @Slf4j
@@ -42,12 +35,14 @@ public class MainController {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
   })
   @GetMapping
-  public ResponseEntity<ResDTO> getAllList (@Parameter(name="page", description = "현재 페이지 번호", in = ParameterIn.QUERY)
+  public ResponseEntity<ResDTO> getAllList (@Parameter(name="page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
                                               @RequestParam int page,
-                                            @Parameter(name="sort", description = "정렬 기준", in = ParameterIn.QUERY)
-                                              @RequestParam(value="sort", required = false) String sort){
+                                            @Parameter(name="sort", description = "정렬 기준", in = ParameterIn.QUERY, example = "name")
+                                              @RequestParam(value="sort", required = false) String sort,
+                                            @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
+                                              @RequestParam(value = "direction", required = false) String direction){
     log.info("sort:: {}", sort);
-    Page<RamyunDTO> result = mainService.getAllList(page, sort);
+    Page<RamyunDTO> result = mainService.getAllList(page, sort, direction);
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("데이터 조회 성공")
