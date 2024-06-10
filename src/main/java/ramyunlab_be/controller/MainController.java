@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.service.MainService;
 import ramyunlab_be.vo.StatusCode;
 
@@ -48,6 +49,15 @@ public class MainController {
                                           .message("데이터 조회 성공")
                                           .data(result)
                                           .build());
+  }
+
+  @Operation(summary = "필터링된 라면 정보 조회", description = "조건을 걸어 필터링한 라면 정보를 조회함 (+페이지네이션) ")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
+  })
+  @GetMapping("/search")
+  public ResponseEntity<ResDTO> getFilteredList (@Parameter(name="searchDTO") @RequestParam(value = "searchDTO") RamyunFilterDTO searchDTO){
+    return ResponseEntity.ok().body(ResDTO.builder().build());
   }
 
   @ExceptionHandler(ValidationException.class)

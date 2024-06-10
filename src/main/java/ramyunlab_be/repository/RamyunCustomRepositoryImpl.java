@@ -1,5 +1,6 @@
 package ramyunlab_be.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -71,13 +72,62 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         .groupBy(ramyun.ramyunIdx)
         .orderBy(orderSpecifier);
 
-    // Apply pagination
+    // 페이지네이션 추가
     List<RamyunDTO> results = query
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
 
-    // Fetch the total count
+    // 총 데이터 개수
+    long total = jpaQueryFactory
+        .select(ramyun.ramyunIdx.count())
+        .from(ramyun)
+        .leftJoin(review).on(ramyun.ramyunIdx.eq(review.ramyun.ramyunIdx))
+        .groupBy(ramyun.ramyunIdx)
+        .fetch().size();
+
+    return new PageImpl<>(results, pageable, total);
+  }
+
+
+  @Override
+  public Page<RamyunDTO> findFilteredListQuery (Pageable pageable, String sort, String direction){
+    QRamyunEntity ramyun = QRamyunEntity.ramyunEntity;
+    QReviewEntity review = QReviewEntity.reviewEntity;
+
+    BooleanBuilder builder = new BooleanBuilder();
+
+
+    NumberExpression<Double> avgRate = review.rate.avg().coalesce(0.0);
+    NumberExpression<Long> reviewCount = review.rate.count().coalesce(0L);
+
+    JPAQuery<RamyunDTO> query = jpaQueryFactory
+        .select(Projections.fields(
+            RamyunDTO.class,
+            ramyun.ramyunIdx,
+            ramyun.ramyunName,
+            ramyun.ramyunImg,
+            ramyun.brand.brandName,
+            ramyun.noodle,
+            ramyun.ramyunKcal,
+            ramyun.isCup,
+            ramyun.cooking,
+            ramyun.gram,
+            ramyun.ramyunNa,
+            ramyun.scoville,
+            avgRate.as("avgRate"),
+            reviewCount.as("reviewCount")))
+        .from(ramyun)
+        .leftJoin(review).on(ramyun.ramyunIdx.eq(review.ramyun.ramyunIdx))
+        .groupBy(ramyun.ramyunIdx);
+
+    // 페이지네이션 추가
+    List<RamyunDTO> results = query
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
+
+    // 총 데이터 개수
     long total = jpaQueryFactory
         .select(ramyun.ramyunIdx.count())
         .from(ramyun)
