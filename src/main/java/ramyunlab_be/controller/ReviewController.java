@@ -62,7 +62,7 @@ public class ReviewController {
             .build());
     }
 
-    @Operation(summary = "리뷰 수정", description = "리뷰 수정")
+    @Operation(summary = "리뷰 수정", description = "RequestBody 에 rate 필수로 입력, token 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 수정 성공"),
         @ApiResponse(responseCode = "400")
@@ -80,6 +80,22 @@ public class ReviewController {
             .data(updatedReview)
             .message("리뷰 수정 성공")
             .build());
+    }
+
+    @Operation(summary = "리뷰 삭제", description = "토큰만 있으면 됩니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "리뷰 삭제 성공"),
+        @ApiResponse(responseCode = "400")
+    })
+    @DeleteMapping("/review/{rvIdx}")
+    public ResponseEntity<ResDTO> deleteReview(@PathVariable Long rvIdx,
+                                               @AuthenticationPrincipal String userIdx){
+        reviewService.delete(rvIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO
+           .builder()
+           .statusCode(StatusCode.OK)
+           .message("리뷰 삭제 성공")
+           .build());
     }
 
 

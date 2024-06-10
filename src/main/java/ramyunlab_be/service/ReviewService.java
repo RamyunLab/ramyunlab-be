@@ -120,4 +120,17 @@ public class ReviewService {
             .build();
         return reviewRepository.save(review);
     }
+
+    public ReviewEntity delete(final Long rvIdx, final String userIdx){
+        ReviewEntity review = reviewRepository.findById(rvIdx)
+            .orElseThrow(() -> new RuntimeException("SERVER ERROR!"));
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        if(user != null && review != null){
+            reviewRepository.delete(review);
+            return review;
+        } else throw new RuntimeException("리뷰 삭제 실패!");
+    }
 }
