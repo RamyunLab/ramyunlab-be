@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "review")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@SQLDelete(sql = "UPDATE review SET rv_deleted_at = now() WHERE rv_idx = ?")
 public class ReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
