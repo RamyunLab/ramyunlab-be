@@ -50,6 +50,17 @@ public class RecommendController {
             .build());
     }
 
+    @DeleteMapping("/recommend/{recommendIdx}")
+    public ResponseEntity<ResDTO> deleteRecommend(@PathVariable Long recommendIdx,
+                                                   @AuthenticationPrincipal String userIdx){
+        recommendService.delete(recommendIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO
+           .builder()
+           .statusCode(StatusCode.OK)
+           .message("공감 삭제 성공")
+           .build());
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
         return ResponseEntity

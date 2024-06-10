@@ -37,4 +37,17 @@ public class RecommendService {
 
         return recommendRepository.save(recommend);
     }
+
+    public RecommendEntity delete(final Long recommendIdx, final String userIdx) {
+        RecommendEntity recommend = recommendRepository.findById(recommendIdx)
+            .orElseThrow(() -> new RuntimeException("SERVER ERROR!"));
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(() -> new RuntimeException("로그인을 진행해주세요."));
+
+        if (user != null && recommend != null) {
+            recommendRepository.delete(recommend);
+            return recommend;
+        } else throw new RuntimeException("추천 삭제 실패!");
+    }
 }
