@@ -76,49 +76,53 @@ public class ReviewService {
         }
     }
 
-    public ReviewEntity update(final Long rvIdx, final String userIdx, final ReviewDTO reviewDTO){
+    public ReviewEntity update(final Long ramyunIdx,
+                               final Long rvIdx,
+                               final String userIdx,
+                               final ReviewDTO reviewDTO, MultipartFile file) throws Exception{
+        log.warn("service 1 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
+
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
         // 유효한 리뷰 인덱스가 없는 경우(URL 로 들어갔는데 해당되는 리뷰가 없는 경우 예외 처리)
         ReviewEntity review = reviewRepository.findById(rvIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
 
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
-        review = review.toBuilder()
-            .reviewContent(reviewDTO.getReviewContent())
-//            .reviewPhotoUrl(reviewDTO.getReviewPhotoUrl())
-            .rate(reviewDTO.getRate())
-            .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
-            .user(user)
-            .build();
-        return reviewRepository.save(review);
-    }
+        if (file!= null){
 
-    public ReviewEntity uploadPhoto(final Long ramyunIdx,
-                               final String userIdx,
-                               MultipartFile file ) throws Exception{
+            String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
 
-//        if (file == null || file.isEmpty()) {
-//            throw new IllegalArgumentException("파일이 업로드되지 않았습니다.");
-//        }
-        // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
-        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
-        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
-        String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
+            UUID uuid = UUID.randomUUID();
+            String filename = uuid + "_" + file.getOriginalFilename();
+            log.warn("filename : {}", filename);
 
-        UUID uuid = UUID.randomUUID();
-        String filename = uuid + "_" + file.getOriginalFilename();
-        log.warn("filename : {}", filename);
+            File savedFile = new File(projectPath, filename);
 
-        File savedFile = new File(projectPath, filename);
+            file.transferTo(savedFile);
 
-        file.transferTo(savedFile);
-
-        ReviewEntity review = ReviewEntity.builder()
-            .reviewPhotoUrl(filename)
-            .ramyun(ramyun)
-            .user(user)
-            .build();
-        return reviewRepository.save(review);
+            ReviewEntity reviewWithPhoto = ReviewEntity.builder()
+                .reviewContent(reviewDTO.getReviewContent())
+                .reviewPhotoUrl(filename)
+                .rate(reviewDTO.getRate())
+                .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
+                .rvIdx(review.getRvIdx())
+                .ramyun(ramyun)
+                .user(user)
+                .rvCreatedAt(review.getRvCreatedAt())
+                .build();
+            return reviewRepository.save(reviewWithPhoto);
+        }else{
+            ReviewEntity updatedreview = ReviewEntity.builder()
+                .reviewContent(reviewDTO.getReviewContent())
+                .rate(reviewDTO.getRate())
+                .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
+                .rvCreatedAt(review.getRvCreatedAt())
+                .rvIdx(review.getRvIdx())
+                .ramyun(ramyun)
+                .user(user)
+                .build();
+            return reviewRepository.save(updatedreview);
+        }
     }
 
     public ReviewEntity delete(final Long rvIdx, final String userIdx){

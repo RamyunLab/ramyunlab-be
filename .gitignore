@@ -39,3 +39,6 @@ out/
 ### 환경설정 ###
 *.yml
 *.properties
+
+### 업로드된 사진 ###
+src/resources/static/files

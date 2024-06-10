@@ -40,7 +40,6 @@ public class ReviewController {
                                             @Valid @RequestPart ReviewDTO reviewDTO,
                                             @PathVariable Long ramyunIdx,
                                             @AuthenticationPrincipal String userIdx) throws Exception{
-
         ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO, file);
 
 
@@ -62,18 +61,21 @@ public class ReviewController {
             .build());
     }
 
+
     @Operation(summary = "리뷰 수정", description = "RequestBody 에 rate 필수로 입력, token 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 수정 성공"),
         @ApiResponse(responseCode = "400")
     })
-    @PatchMapping("/review/{rvIdx}")
-    public ResponseEntity<ResDTO> updateReview(@Valid @RequestBody ReviewDTO reviewDTO,
+    @PatchMapping("/review/{ramyunIdx}/{rvIdx}")
+    public ResponseEntity<ResDTO> updateReview(@RequestPart(required = false) MultipartFile file,
+                                               @Valid @RequestPart ReviewDTO reviewDTO,
                                                @PathVariable Long rvIdx,
-                                               @AuthenticationPrincipal String userIdx){
-
-        ReviewEntity updatedReview = reviewService.update(rvIdx, userIdx, reviewDTO);
-
+                                               @PathVariable Long ramyunIdx,
+                                               @AuthenticationPrincipal String userIdx) throws Exception{
+        log.warn("controller 1 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
+        ReviewEntity updatedReview = reviewService.update(ramyunIdx, rvIdx, userIdx, reviewDTO, file);
+        log.warn("controller 2 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
         return ResponseEntity.ok().body(ResDTO
             .builder()
             .statusCode(StatusCode.OK)
