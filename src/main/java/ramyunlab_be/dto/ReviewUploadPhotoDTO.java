@@ -1,11 +1,21 @@
 package ramyunlab_be.dto;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Data
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewUploadPhotoDTO {
-    private List<MultipartFile> files;
+    private String files;
+
+    @Override
+    public String toString() {
+        return "ReviewUploadPhotoDTO{" +
+            "files=" + files +
+            '}';
+    }
 }

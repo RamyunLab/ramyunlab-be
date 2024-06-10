@@ -34,47 +34,57 @@ public class ReviewService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional
+
     public ReviewEntity create(final Long ramyunIdx,
                                final String userIdx,
-                               final ReviewDTO reviewDTO,
-                               final ReviewUploadPhotoDTO reviewUploadPhotoDTO){
+                               final ReviewDTO reviewDTO, MultipartFile file) throws Exception{
         // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
         RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
-//        if(reviewUploadPhotoDTO.getFiles() != null && !reviewUploadPhotoDTO.getFiles().isEmpty()){
-//            for(MultipartFile file : reviewUploadPhotoDTO.getFiles()){
-//                UUID uuid = UUID.randomUUID();
-//                String imageFileName = uuid + "_" + file.getOriginalFilename();
-//
-//                File destinationFile = new File(Folderename + imageFileName);
-//            }
-//        }
-//
-//        try{
-//            MultipartFile file;
-//            file.transferTo(destinationFile);
-//        }
+        if (file!= null){
 
-        ReviewEntity review = ReviewEntity.builder()
+        String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
+
+        UUID uuid = UUID.randomUUID();
+        String filename = uuid + "_" + file.getOriginalFilename();
+        log.warn("filename : {}", filename);
+
+        File savedFile = new File(projectPath, filename);
+
+        file.transferTo(savedFile);
+
+        ReviewEntity reviewWithPhoto = ReviewEntity.builder()
             .reviewContent(reviewDTO.getReviewContent())
-            .reviewPhotoUrls(reviewDTO.getReviewPhotoUrls())
+            .reviewPhotoUrl(filename)
+            .rate(reviewDTO.getRate())
+            .rvCreatedAt(reviewDTO.getRvCreatedAt())
+            .ramyun(ramyun)
+            .user(user)
+            .build();
+        return reviewRepository.save(reviewWithPhoto);
+        }else{
+            ReviewEntity review = ReviewEntity.builder()
+            .reviewContent(reviewDTO.getReviewContent())
             .rate(reviewDTO.getRate())
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
             .ramyun(ramyun)
             .user(user)
             .build();
         return reviewRepository.save(review);
+        }
     }
 
     public ReviewEntity update(final Long rvIdx, final String userIdx, final ReviewDTO reviewDTO){
-        ReviewEntity review = reviewRepository.findById(rvIdx).orElseThrow(()-> new RuntimeException("errrr4324"));
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("errr4"));
+        // 유효한 리뷰 인덱스가 없는 경우(URL 로 들어갔는데 해당되는 리뷰가 없는 경우 예외 처리)
+        ReviewEntity review = reviewRepository.findById(rvIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
         review = review.toBuilder()
             .reviewContent(reviewDTO.getReviewContent())
-            .reviewPhotoUrls(reviewDTO.getReviewPhotoUrls())
+//            .reviewPhotoUrl(reviewDTO.getReviewPhotoUrl())
             .rate(reviewDTO.getRate())
             .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
             .user(user)
@@ -82,16 +92,32 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-//    public ReviewEntity uploadFile(MultipartFile file) throws IOError {
-//        Path uploadPath = Paths.get(uploadFile);
-//        if(Files.exists(uploadPath)){
-//            Files.createDirectories(uploadPath);
+    public ReviewEntity uploadPhoto(final Long ramyunIdx,
+                               final String userIdx,
+                               MultipartFile file ) throws Exception{
+
+//        if (file == null || file.isEmpty()) {
+//            throw new IllegalArgumentException("파일이 업로드되지 않았습니다.");
 //        }
-//
-//        String FileName = file.getOriginalFilename();
-//        Path filePath = uploadPath.resolve(fileName);
-//        Files.copy(file.getInputStream(), filePath);
-//
-//        return FileName;
-//    }
+        // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+        String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
+
+        UUID uuid = UUID.randomUUID();
+        String filename = uuid + "_" + file.getOriginalFilename();
+        log.warn("filename : {}", filename);
+
+        File savedFile = new File(projectPath, filename);
+
+        file.transferTo(savedFile);
+
+        ReviewEntity review = ReviewEntity.builder()
+            .reviewPhotoUrl(filename)
+            .ramyun(ramyun)
+            .user(user)
+            .build();
+        return reviewRepository.save(review);
+    }
 }

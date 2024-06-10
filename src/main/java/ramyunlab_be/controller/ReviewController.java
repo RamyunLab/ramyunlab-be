@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,16 +36,17 @@ public class ReviewController {
         @ApiResponse(responseCode = "400")
     })
     @PostMapping("/review/{ramyunIdx}")
-    public ResponseEntity<ResDTO> addReview(@Valid @RequestBody ReviewDTO reviewDTO,
-                                            @ModelAttribute ReviewUploadPhotoDTO reviewUploadPhotoDTO,
+    public ResponseEntity<ResDTO> addReview(@RequestPart(required = false) MultipartFile file,
+                                            @Valid @RequestPart ReviewDTO reviewDTO,
                                             @PathVariable Long ramyunIdx,
-                                            @AuthenticationPrincipal String userIdx){
-        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO, reviewUploadPhotoDTO);
+                                            @AuthenticationPrincipal String userIdx) throws Exception{
+
+        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO, file);
 
 
         ReviewDTO responseReviewDTO = ReviewDTO.builder()
             .reviewContent(createdReview.getReviewContent())
-            .reviewPhotoUrls(createdReview.getReviewPhotoUrls())
+            .reviewPhotoUrl(createdReview.getReviewPhotoUrl())
             .rvCreatedAt(createdReview.getRvCreatedAt())
             .rate(createdReview.getRate())
             .rvIdx(createdReview.getRvIdx())
@@ -80,10 +82,6 @@ public class ReviewController {
             .build());
     }
 
-//    @PostMapping("/review/photo")
-//    public ResponseEntity<ResDTO> uploadPhoto (ReviewUploadPhotoDTO reviewUploadPhotoDTO){
-//
-//    }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {

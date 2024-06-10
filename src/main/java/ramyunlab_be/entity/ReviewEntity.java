@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ReviewEntity {
     private Integer rate;
 
     @Column(name="rv_photo", length = 200)
-    private List<String> reviewPhotoUrls;
+    private String reviewPhotoUrl;
 
     @Column(name = "rv_created_at", nullable = false)
     @CreationTimestamp
