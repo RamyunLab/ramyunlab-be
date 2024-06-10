@@ -63,4 +63,21 @@ public class RamyunEntity {
     @OneToMany(mappedBy = "ramyun", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<FavoriteEntity> favorites;
+
+    @Override
+    public String toString () {
+        return "RamyunEntity{" +
+               "brand=" + brand +
+               ", scoville=" + scoville +
+               ", ramyunNa=" + ramyunNa +
+               ", gram=" + gram +
+               ", cooking=" + cooking +
+               ", isCup=" + isCup +
+               ", noodle=" + noodle +
+               ", ramyunKcal=" + ramyunKcal +
+               ", ramyunImg='" + ramyunImg + '\'' +
+               ", ramyunName='" + ramyunName + '\'' +
+               ", ramyunIdx=" + ramyunIdx +
+               '}';
+    }
 }

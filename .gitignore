@@ -39,3 +39,6 @@ out/
 ### 환경설정 ###
 *.yml
 *.properties
+
+### QueryDsl QClass Directory ###
+/src/main/generated
