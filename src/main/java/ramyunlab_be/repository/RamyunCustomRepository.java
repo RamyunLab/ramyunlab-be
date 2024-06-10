@@ -9,4 +9,6 @@ import ramyunlab_be.dto.RamyunDTO;
 
 public interface RamyunCustomRepository {
   Page<RamyunDTO> findAllListQuery (Pageable pageable, String sort, String direction);
+
+  Page<RamyunDTO> findFilteredListQuery (Pageable pageable, String sort, String direction);
 }
