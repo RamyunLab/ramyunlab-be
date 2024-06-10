@@ -117,4 +117,35 @@ public class UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         } else throw new RuntimeException("회원탈퇴 실패");
     }
+    
+    // 닉네임 변경
+    public UserEntity updateNickname(String userIdx, UserDTO userDTO) {
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+                .orElseThrow(() -> new RuntimeException("Error shit;;"));
+        user = user.toBuilder()
+                .nickname(userDTO.getNickname())
+                .build();
+        return userRepository.save(user);
+    }
+
+    // 비밀번호 변경 시 비밀번호 확인.
+    public boolean confirmPassword(String userIdx, UserDTO userDTO) {
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+                .orElseThrow(()->new RuntimeException("회원 정보 없음."));
+
+        boolean isMatched = passwordEncoder.matches(userDTO.getPassword(),user.getPassword());
+
+        return isMatched;
+    }
+
+    // 비밀번호 변경
+    public UserEntity updatePassword(String userIdx, UserDTO userDTO) {
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+                .orElseThrow(()-> new RuntimeException("회원 정보 없음."));
+
+        user = user.toBuilder()
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .build();
+        return userRepository.save(user);
+    }
 }

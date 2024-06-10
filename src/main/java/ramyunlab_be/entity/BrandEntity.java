@@ -25,7 +25,7 @@ public class BrandEntity {
     private Long brandIdx;
 
     @Column(name = "b_name", nullable = false)
-    private String brand;
+    private String brandName;
 
     @OneToMany(mappedBy = "brand",  cascade = CascadeType.ALL)
     @JsonManagedReference

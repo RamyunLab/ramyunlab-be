@@ -40,5 +40,10 @@ out/
 *.yml
 *.properties
 
+
 ### 업로드된 사진 ###
 src/resources/static/files
+
+### QueryDsl QClass Directory ###
+/src/main/generated
+
