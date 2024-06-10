@@ -27,7 +27,7 @@ public class ReviewDTO {
     @NotNull(message = "별점을 입력해주세요.")
     @Min(value = 1, message = "별점은 최소 1이어야 합니다.")
     @Max(value = 5, message = "별점은 최대 5이어야 합니다.")
-    private Integer rate;
+    private String rate;
 
     @Schema(description = "사진 url", example = "dsfafa.png", nullable = true)
     private String reviewPhotoUrl;

@@ -47,7 +47,7 @@ public class ReviewController {
             .reviewContent(createdReview.getReviewContent())
             .reviewPhotoUrl(createdReview.getReviewPhotoUrl())
             .rvCreatedAt(createdReview.getRvCreatedAt())
-            .rate(createdReview.getRate())
+            .rate(createdReview.getRate().toString())
             .rvIdx(createdReview.getRvIdx())
             .userIdx(createdReview.getUser().getUserIdx())
             .ramyunIdx(createdReview.getRamyun().getRamyunIdx())

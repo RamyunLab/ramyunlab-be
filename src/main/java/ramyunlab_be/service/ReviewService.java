@@ -43,6 +43,7 @@ public class ReviewService {
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
+        Integer rate = Integer.valueOf(reviewDTO.getRate());
         if (file!= null){
 
         String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
@@ -58,7 +59,7 @@ public class ReviewService {
         ReviewEntity reviewWithPhoto = ReviewEntity.builder()
             .reviewContent(reviewDTO.getReviewContent())
             .reviewPhotoUrl(filename)
-            .rate(reviewDTO.getRate())
+            .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
             .ramyun(ramyun)
             .user(user)
@@ -67,7 +68,7 @@ public class ReviewService {
         }else{
             ReviewEntity review = ReviewEntity.builder()
             .reviewContent(reviewDTO.getReviewContent())
-            .rate(reviewDTO.getRate())
+            .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
             .ramyun(ramyun)
             .user(user)
@@ -88,6 +89,9 @@ public class ReviewService {
 
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        Integer rate = Integer.valueOf(reviewDTO.getRate());
+
         if (file!= null){
 
             String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
@@ -103,7 +107,7 @@ public class ReviewService {
             ReviewEntity reviewWithPhoto = ReviewEntity.builder()
                 .reviewContent(reviewDTO.getReviewContent())
                 .reviewPhotoUrl(filename)
-                .rate(reviewDTO.getRate())
+                .rate(rate)
                 .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
                 .rvIdx(review.getRvIdx())
                 .ramyun(ramyun)
@@ -114,7 +118,7 @@ public class ReviewService {
         }else{
             ReviewEntity updatedreview = ReviewEntity.builder()
                 .reviewContent(reviewDTO.getReviewContent())
-                .rate(reviewDTO.getRate())
+                .rate(rate)
                 .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
                 .rvCreatedAt(review.getRvCreatedAt())
                 .rvIdx(review.getRvIdx())
