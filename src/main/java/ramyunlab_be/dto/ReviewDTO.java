@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Builder
@@ -28,7 +30,7 @@ public class ReviewDTO {
     private Integer rate;
 
     @Schema(description = "사진 url", example = "dsfafa.png", nullable = true)
-    private String reviewPhoto;
+    private String reviewPhotoUrl;
 
     @Schema(description = "리뷰 작성 일자", example = "2024-06-07 15:57:32")
     private Timestamp rvCreatedAt;
@@ -51,7 +53,7 @@ public class ReviewDTO {
             "rvIdx=" + rvIdx +
             ", reviewContent='" + reviewContent + '\'' +
             ", rate=" + rate +
-            ", reviewPhoto='" + reviewPhoto + '\'' +
+            ", reviewPhotoUrl='" + reviewPhotoUrl + '\'' +
             ", rvCreatedAt='" + rvCreatedAt + '\'' +
             ", rvUpdatedAt='" + rvUpdatedAt + '\'' +
             ", rvDeletedAt='" + rvDeletedAt + '\'' +
