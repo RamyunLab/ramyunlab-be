@@ -13,7 +13,7 @@ import lombok.Getter;
 @Schema(description = "회원 정보")
 public class UserDTO {
     @Schema(description = "회원 아이디", example = "test123")
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z][a-zA-Z0-9]{3,19}$", message = "아이디는 숫자로 시작하지 않는 길이 4~20자, 영어 대소문자, 숫자로 이루어진 문자열이어야 합니다.")
+    @Pattern(regexp = "(?![0-9])(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z][a-zA-Z0-9].{3,19}", message = "아이디는 숫자로 시작하지 않는 길이 4~20자, 영어 대소문자, 숫자로 이루어진 문자열이어야 합니다.")
     private String userId;
 
     @Schema(description = "회원 닉네임", example = "test")
@@ -21,7 +21,7 @@ public class UserDTO {
     private String nickname;
 
     @Schema(description = "회원 비밀번호", example = "test123!")
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$", message = "비밀번호는 숫자로 시작하지 않는 길이 8자 이상의 영어 대소문자, 숫자, 특수문자로 이루어진 문자열이어야 합니다.")
+    @Pattern(regexp = "(?![0-9])(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,}", message = "비밀번호는 영어 대소문자, 숫자, 특수문자가 적어도 한 개 이상으로 이루어진 8자 이상의 문자열이어야 합니다.")
     private String password;
 
     @Schema(description = "회원 인덱스", example = "1")
