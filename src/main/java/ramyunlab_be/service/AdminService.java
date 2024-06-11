@@ -2,6 +2,9 @@ package ramyunlab_be.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.repository.RamyunRepository;
@@ -20,7 +23,12 @@ public class AdminService {
         this.ramyunRepository = ramyunRepository;
     }
 
-    public static List<RamyunEntity> getGoodsList() {
-        return ramyunRepository.findAll();
+    public static Page<RamyunEntity> getGoodsList(Pageable pageable) {
+        return ramyunRepository.findAll(pageable);
     }
+
+//    public static Page<RamyunEntity> getGoodsList(Pageable pageable) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+//        return ramyunRepository.findByAddress("Korea", pageRequest);
+//    }
 }
