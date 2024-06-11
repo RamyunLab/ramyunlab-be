@@ -21,8 +21,7 @@ public class UserDTO {
     private String nickname;
 
     @Schema(description = "회원 비밀번호", example = "test123!")
-    @Pattern(regexp ="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()-_=+\\\\|/.,<>?:;'\"{}\\\\[\\\\]\\\\\\\\]).{8,}$",
-        message = "비밀번호는 숫자로 시작하지 않는 길이 8자 이상의 영어 대소문자, 숫자, 특수문자로 이루어진 문자열이어야 합니다.")
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$", message = "비밀번호는 숫자로 시작하지 않는 길이 8자 이상의 영어 대소문자, 숫자, 특수문자로 이루어진 문자열이어야 합니다.")
     private String password;
 
     @Schema(description = "회원 인덱스", example = "1")
