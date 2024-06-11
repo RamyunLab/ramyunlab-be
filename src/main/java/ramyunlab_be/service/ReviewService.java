@@ -1,17 +1,13 @@
 package ramyunlab_be.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.ReviewDTO;
-import ramyunlab_be.dto.ReviewUploadPhotoDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
@@ -20,23 +16,24 @@ import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 
 import java.io.File;
-import java.io.IOError;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class ReviewService {
-    @Autowired
-    private ReviewRepository reviewRepository;
+
+    final private ReviewRepository reviewRepository;
+    final private RamyunRepository ramyunRepository;
+    final private UserRepository userRepository;
 
     @Autowired
-    private RamyunRepository ramyunRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public ReviewService(final ReviewRepository reviewRepository,
+                         final RamyunRepository ramyunRepository,
+                         final UserRepository userRepository) {
+        this.reviewRepository = reviewRepository;
+        this.ramyunRepository = ramyunRepository;
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     private AmazonS3 amazonS3Client;

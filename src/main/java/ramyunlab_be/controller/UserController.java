@@ -24,8 +24,12 @@ import ramyunlab_be.vo.StatusCode;
 @Tag(name = "User", description = "사용자 관련 API")
 public class UserController {
 
+    final private UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(final UserService userService){
+        this.userService = userService;
+    }
 
     @Operation(summary = "회원탈퇴", description = "RequestBody : 패스워드 입력, 자물쇠 모양 아이콘 누르고 Available authorizations 에 token 정보 ")
     @ApiResponses(value = {
