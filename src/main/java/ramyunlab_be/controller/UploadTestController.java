@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/test")
+@Slf4j
 public class UploadTestController {
 
   private final AmazonS3Client amazonS3Client;
@@ -31,7 +33,7 @@ public class UploadTestController {
   public ResponseEntity<String> uploadFile (@RequestParam("file") MultipartFile file) {
     try {
       String fileName =file.getOriginalFilename();
-      String fileUrl= "https://" + cloudfront + "/img/" +fileName;
+      String fileUrl= "https://" + cloudfront + "/" + fileName;
       ObjectMetadata metadata= new ObjectMetadata();
       metadata.setContentType(file.getContentType());
       metadata.setContentLength(file.getSize());

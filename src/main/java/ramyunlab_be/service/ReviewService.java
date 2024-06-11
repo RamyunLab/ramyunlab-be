@@ -1,9 +1,13 @@
 package ramyunlab_be.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.ReviewDTO;
@@ -34,6 +38,12 @@ public class ReviewService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AmazonS3 amazonS3Client;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+    @Value("${cloudfront-domain-name}")
+    private String cloudfront;
 
     public ReviewEntity create(final Long ramyunIdx,
                                final String userIdx,
@@ -49,16 +59,23 @@ public class ReviewService {
         String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
 
         UUID uuid = UUID.randomUUID();
-        String filename = uuid + "_" + file.getOriginalFilename();
-        log.warn("filename : {}", filename);
+        String fileName = uuid + "_" + file.getOriginalFilename();
+//        log.warn("filename : {}", filename);
+//
+//        File savedFile = new File(projectPath, filename);
+//
+//        file.transferTo(savedFile);
 
-        File savedFile = new File(projectPath, filename);
+            String fileUrl= "https://" + cloudfront + "/" + fileName;
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket,fileName,file.getInputStream(),metadata);
 
-        file.transferTo(savedFile);
 
         ReviewEntity reviewWithPhoto = ReviewEntity.builder()
             .reviewContent(reviewDTO.getReviewContent())
-            .reviewPhotoUrl(filename)
+            .reviewPhotoUrl(fileUrl)
             .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
             .ramyun(ramyun)

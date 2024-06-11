@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "brand")
+@Table(name = "BRAND")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrandEntity {
     @Id

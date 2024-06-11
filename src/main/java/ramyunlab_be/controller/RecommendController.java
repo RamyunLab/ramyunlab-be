@@ -19,6 +19,8 @@ import ramyunlab_be.vo.StatusCode;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api", produces="application/json; charset=utf8")
+//@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @Tag(name = "Recommend", description = "공감 관련 API")
 public class RecommendController {
 
