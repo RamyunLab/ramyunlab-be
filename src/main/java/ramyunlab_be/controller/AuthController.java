@@ -81,6 +81,10 @@ public class AuthController {
                     .token(token)
                     .build();
 
+                if (responseUserDTO.getUserDeletedAt() != null){
+                    throw new ValidationException("이미 탈퇴한 회원입니다.");
+                }
+
                 return ResponseEntity.ok().body(ResDTO
                     .builder()
                     .statusCode(StatusCode.OK)
