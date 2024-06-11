@@ -82,7 +82,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
 
     // 총 데이터 개수
     long total = query.fetch().size();
-
     log.info("총 개수::: {}", total);
     return new PageImpl<>(results, pageable, total);
   }

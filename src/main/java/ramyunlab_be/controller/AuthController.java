@@ -24,8 +24,13 @@ import ramyunlab_be.service.UserService;
 @Tag(name = "Auth", description = "로그인, 회원가입 관련 API")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
+    final private UserService userService;
+
     @Autowired
-    private UserService userService;
+    public AuthController(final UserService userService){
+        this.userService = userService;
+    }
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -80,6 +85,10 @@ public class AuthController {
                     .userIdx(user.getUserIdx())
                     .token(token)
                     .build();
+
+                if (responseUserDTO.getUserDeletedAt() != null){
+                    throw new ValidationException("이미 탈퇴한 회원입니다.");
+                }
 
                 return ResponseEntity.ok().body(ResDTO
                     .builder()

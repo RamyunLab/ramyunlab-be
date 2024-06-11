@@ -38,7 +38,6 @@ public class RamyunFilterDTO {
   private List<Integer> na;
 
   @QueryProjection
-
   public RamyunFilterDTO (String name, List<Long> brand, List<Boolean> noodle, List<Boolean> isCup,
                           List<Boolean> cooking, List<Integer> kcal, List<Integer> gram, List<Integer> na) {
     this.name = name;
