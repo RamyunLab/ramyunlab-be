@@ -27,8 +27,12 @@ import ramyunlab_be.vo.StatusCode;
 @Tag(name = "Review", description = "리뷰 관련 API")
 public class ReviewController {
 
+    final private ReviewService reviewService;
+
     @Autowired
-    private ReviewService reviewService;
+    public ReviewController(final ReviewService reviewService){
+        this.reviewService = reviewService;
+    }
 
     @Operation(summary = "리뷰 작성", description = "RequestBody 에 rate 필수로 입력(리뷰 내용, 사진은 nullable)해야 합니다. (토큰 필요)")
     @ApiResponses(value = {

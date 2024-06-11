@@ -12,13 +12,15 @@ import java.util.List;
 @Slf4j
 public class AdminService {
 
+
+    private static RamyunRepository ramyunRepository = null;
+
     @Autowired
-    private RamyunRepository ramyunRepository;
+    public AdminService(final RamyunRepository ramyunRepository) {
+        this.ramyunRepository = ramyunRepository;
+    }
 
-    public List<RamyunEntity> getGoodsList(){
-        List<RamyunEntity> result = ramyunRepository.findAll();
-
-
-    return result;
+    public static List<RamyunEntity> getGoodsList() {
+        return ramyunRepository.findAll();
     }
 }

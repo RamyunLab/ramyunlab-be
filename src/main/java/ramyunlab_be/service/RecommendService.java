@@ -13,14 +13,20 @@ import ramyunlab_be.repository.UserRepository;
 @Service
 @Slf4j
 public class RecommendService {
-    @Autowired
-    private RecommendRepository recommendRepository;;
+
+    final private RecommendRepository recommendRepository;;
+    final private ReviewRepository reviewRepository;
+    final private UserRepository userRepository;
+
 
     @Autowired
-    private ReviewRepository reviewRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public RecommendService(final RecommendRepository recommendRepository,
+                            final ReviewRepository reviewRepository,
+                            final UserRepository userRepository) {
+        this.recommendRepository = recommendRepository;
+        this.reviewRepository = reviewRepository;
+        this.userRepository = userRepository;
+    }
 
     public RecommendEntity create(final Long rvIdx, final String userIdx){
 

@@ -24,8 +24,12 @@ import ramyunlab_be.vo.StatusCode;
 @Tag(name = "Recommend", description = "공감 관련 API")
 public class RecommendController {
 
+    final private RecommendService recommendService;
+
     @Autowired
-    private RecommendService recommendService;
+    public RecommendController(final RecommendService recommendService){
+        this.recommendService = recommendService;
+    }
 
     @Operation(summary = "공감 추가", description = "토큰만 있으면 됩니다.")
     @ApiResponses(value = {

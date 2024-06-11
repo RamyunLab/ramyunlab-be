@@ -18,8 +18,12 @@ import java.time.LocalTime;
 @Slf4j
 public class UserService {
 
+    final private UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserService(final UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
