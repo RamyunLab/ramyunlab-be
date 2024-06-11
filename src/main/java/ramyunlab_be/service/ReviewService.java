@@ -114,16 +114,22 @@ public class ReviewService {
             String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
 
             UUID uuid = UUID.randomUUID();
-            String filename = uuid + "_" + file.getOriginalFilename();
-            log.warn("filename : {}", filename);
+            String fileName = uuid + "_" + file.getOriginalFilename();
+//            log.warn("filename : {}", filename);
+//
+//            File savedFile = new File(projectPath, filename);
+//
+//            file.transferTo(savedFile);
 
-            File savedFile = new File(projectPath, filename);
-
-            file.transferTo(savedFile);
+            String fileUrl= "https://" + cloudfront + "/" + fileName;
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket,fileName,file.getInputStream(),metadata);
 
             ReviewEntity reviewWithPhoto = ReviewEntity.builder()
                 .reviewContent(reviewDTO.getReviewContent())
-                .reviewPhotoUrl(filename)
+                .reviewPhotoUrl(fileUrl)
                 .rate(rate)
                 .rvUpdatedAt(reviewDTO.getRvUpdatedAt())
                 .rvIdx(review.getRvIdx())
