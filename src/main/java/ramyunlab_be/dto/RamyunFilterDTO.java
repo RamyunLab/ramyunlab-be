@@ -5,14 +5,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Data
-
+@NoArgsConstructor
 @Schema(name = "SearchDTO", description = "검색에 필요한 쿼리스트링 관련 DTO")
 public class RamyunFilterDTO {
-  @Schema(name="brandName", example = "삼양")
-  private String brandName;
+
+  @Schema(name="name", example = "불닭")
+  private String name;
+
+  @Schema(name="brand", example = "1")
+  private List<Long> brand;
 
   @Schema(name = "noodle")
   private List<Boolean> noodle;
@@ -24,24 +29,24 @@ public class RamyunFilterDTO {
   private List<Boolean> cooking;
 
   @Schema(name = "ramyunKcal")
-  private Integer ramyunKcal;
+  private List<Integer> kcal;
 
   @Schema(name="gram")
-  private Integer gram;
+  private List<Integer> gram;
 
   @Schema(name="ramyunNa")
-  private Integer ramyunNa;
+  private List<Integer> na;
 
   @QueryProjection
-
-  public RamyunFilterDTO (String brandName, List<Boolean> noodle, List<Boolean> isCup, List<Boolean> cooking,
-                          Integer ramyunKcal, Integer gram, Integer ramyunNa) {
-    this.brandName = brandName;
+  public RamyunFilterDTO (String name, List<Long> brand, List<Boolean> noodle, List<Boolean> isCup,
+                          List<Boolean> cooking, List<Integer> kcal, List<Integer> gram, List<Integer> na) {
+    this.name = name;
+    this.brand = brand;
     this.noodle = noodle;
     this.isCup = isCup;
     this.cooking = cooking;
-    this.ramyunKcal = ramyunKcal;
+    this.kcal = kcal;
     this.gram = gram;
-    this.ramyunNa = ramyunNa;
+    this.na = na;
   }
 }
