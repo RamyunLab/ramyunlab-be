@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -50,6 +51,9 @@ public class RamyunEntity {
 
     @Column(name = "r_scoville")
     private Integer scoville;
+
+    @Column(name = "r_deleted_at")
+    private Timestamp RamyunDeletedAt;
 
     @ManyToOne
     @JoinColumn(name = "b_idx", nullable = false)
