@@ -60,12 +60,9 @@ public class AdminService {
                                  final MultipartFile file,
                                  final String userIdx) throws Exception {
         // 유효한 관리자 인덱스가 없는 경우(토큰 만료)
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
 
         BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브랜드입니다."));
-//        if(brandEntity != null && ramyunDTO.getBrandIdx() == null){
-//            brand = brandRepository.save(brand);
-//        }
 
         if (file != null) {
 
@@ -98,6 +95,45 @@ public class AdminService {
             throw new RuntimeException("상품 등록 실패");
     }
 
+    public RamyunEntity updateGoods(final Long ramyunIdx,
+                                    final RamyunDTO ramyunDTO,
+                                    final MultipartFile file,
+                                    final String userIdx) throws Exception {
+        // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."));
 
+        // 유효한 관리자 인덱스가 없는 경우(토큰 만료)
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        // 등록되지 않은 브랜드인 경우
+        BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브��드입니다."));
+
+        if(file != null){
+            UUID uuid = UUID.randomUUID();
+            String fileName = uuid + "_" + file.getOriginalFilename();
+            String fileUrl = "https://" + cloudfront + "/" + fileName;
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+
+            RamyunEntity updatedGoods = RamyunEntity.builder()
+                .ramyunIdx(ramyun.getRamyunIdx())
+               .ramyunName(ramyunDTO.getRamyunName())
+               .ramyunImg(fileUrl)
+               .ramyunNa(ramyunDTO.getRamyunNa())
+               .isCup(ramyunDTO.getIsCup())
+               .noodle(ramyunDTO.getNoodle())
+               .gram(ramyunDTO.getGram())
+                .ramyunKcal(ramyunDTO.getRamyunKcal())
+                .brand(brand)
+                .build();
+            return ramyunRepository.save(updatedGoods);
+        } else if(file == null && ramyunDTO.getRamyunImg()!= null){
+            throw new RuntimeException("이미지를 추가해주세요.");
+        }else
+            throw new RuntimeException("상품 수정 실패");
+    }
 
 }

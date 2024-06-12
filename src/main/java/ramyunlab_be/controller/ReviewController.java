@@ -77,9 +77,7 @@ public class ReviewController {
                                                @PathVariable Long rvIdx,
                                                @PathVariable Long ramyunIdx,
                                                @AuthenticationPrincipal String userIdx) throws Exception{
-        log.warn("controller 1 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
         ReviewEntity updatedReview = reviewService.update(ramyunIdx, rvIdx, userIdx, reviewDTO, file);
-        log.warn("controller 2 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
         return ResponseEntity.ok().body(ResDTO
             .builder()
             .statusCode(StatusCode.OK)
