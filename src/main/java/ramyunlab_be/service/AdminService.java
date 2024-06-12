@@ -59,12 +59,10 @@ public class AdminService {
     public RamyunEntity addGoods(final RamyunDTO ramyunDTO,
                                  final MultipartFile file,
                                  final String userIdx) throws Exception {
-
-        log.warn("ramyunDTO : {}", ramyunDTO);
         // 유효한 관리자 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
 
-        BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException(""));
+        BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브랜드입니다."));
 //        if(brandEntity != null && ramyunDTO.getBrandIdx() == null){
 //            brand = brandRepository.save(brand);
 //        }
@@ -94,8 +92,10 @@ public class AdminService {
                 .brand(brand)
                 .build();
             return ramyunRepository.save(newGoods);
-        } else
+        } else if(file == null && ramyunDTO.getRamyunImg()!= null){
             throw new RuntimeException("이미지를 추가해주세요.");
+        }else
+            throw new RuntimeException("상품 등록 실패");
     }
 
 }
