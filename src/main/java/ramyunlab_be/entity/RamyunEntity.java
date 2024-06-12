@@ -53,7 +53,7 @@ public class RamyunEntity {
     private Integer scoville;
 
     @Column(name = "r_deleted_at")
-    private Timestamp RamyunDeletedAt;
+    private Timestamp ramyunDeletedAt;
 
     @ManyToOne
     @JoinColumn(name = "b_idx", nullable = false)
