@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "ramyun")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@SQLDelete(sql = "UPDATE ramyun SET r_deleted_at = now() WHERE r_idx = ?")
 public class RamyunEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
