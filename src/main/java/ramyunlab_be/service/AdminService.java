@@ -53,6 +53,10 @@ public class AdminService {
     private String cloudfront;
 
     public static Page<RamyunEntity> getGoodsList(Pageable pageable) {
+
+
+
+
         return ramyunRepository.findAll(pageable);
     }
 
