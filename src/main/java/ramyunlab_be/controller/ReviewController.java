@@ -102,9 +102,6 @@ public class ReviewController {
            .build());
     }
 
-    @Operation(summary = "전체 공감 수 조회", description = "토큰 필요")
-    @GetMapping("/totalRecReviews/{rvIdx}")
-
 
 
     @ExceptionHandler(ValidationException.class)
