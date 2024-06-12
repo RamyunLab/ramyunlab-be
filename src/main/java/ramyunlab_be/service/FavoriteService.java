@@ -17,11 +17,11 @@ public class FavoriteService {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-    public Page<FavoriteDTO> getFavoriteList(int pageNo) {
+    public Page<FavoriteDTO> getFavoriteList(int pageNo, String userIdx) {
 
         PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "favCreatedAt"));
 
-        Page<FavoriteEntity> result = favoriteRepository.findAll(pageRequest);
+        Page<FavoriteEntity> result = favoriteRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 
         return result.map(this::convert);
     }
@@ -29,6 +29,7 @@ public class FavoriteService {
     private FavoriteDTO convert(FavoriteEntity favoriteEntity) {
         return FavoriteDTO.builder()
                 .favIdx(favoriteEntity.getFavIdx())
+                .userIdx(favoriteEntity.getUser().getUserIdx())
                 .ramyunIdx(favoriteEntity.getRamyun().getRamyunIdx())
                 .ramyunImg(favoriteEntity.getRamyun().getRamyunImg())
                 .ramyunName(favoriteEntity.getRamyun().getRamyunName())
