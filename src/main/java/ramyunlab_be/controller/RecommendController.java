@@ -36,7 +36,7 @@ public class RecommendController {
         @ApiResponse(responseCode = "200", description = "공감 추가 성공"),
         @ApiResponse(responseCode = "400")
     })
-    @PostMapping("/recommend/{rvIdx}")
+    @PostMapping("/recReview/{rvIdx}")
     public ResponseEntity<ResDTO> recommend(@PathVariable Long rvIdx,
                                             @AuthenticationPrincipal String userIdx){
         RecommendEntity addRecommend = recommendService.create(rvIdx, userIdx);
@@ -56,7 +56,7 @@ public class RecommendController {
             .build());
     }
 
-    @DeleteMapping("/recommend/{recommendIdx}")
+    @DeleteMapping("/recReview/{recommendIdx}")
     public ResponseEntity<ResDTO> deleteRecommend(@PathVariable Long recommendIdx,
                                                    @AuthenticationPrincipal String userIdx){
         recommendService.delete(recommendIdx, userIdx);
