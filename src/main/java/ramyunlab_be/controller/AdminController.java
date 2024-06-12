@@ -127,7 +127,7 @@ public class AdminController {
             .build());
     }
 
-    @Operation(summary = "상품 삭제", description = "상품 idx, 토�� 필요")
+    @Operation(summary = "상품 삭제", description = "상품 idx, 토큰 필요")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "상품 삭제 실패")
