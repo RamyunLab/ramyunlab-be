@@ -30,6 +30,36 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
+  public RamyunDTO getRamyunInfo (Long id) {
+
+    NumberExpression<Double> avgRate = reviewEntity.rate.avg().coalesce(0.0);
+    NumberExpression<Long> reviewCount = reviewEntity.rate.count().coalesce(0L);
+
+    JPAQuery<RamyunDTO> query = jpaQueryFactory
+        .select(Projections.fields(
+            RamyunDTO.class,
+            ramyunEntity.ramyunIdx,
+            ramyunEntity.ramyunName,
+            ramyunEntity.ramyunImg,
+            ramyunEntity.brand.brandName,
+            ramyunEntity.noodle,
+            ramyunEntity.ramyunKcal,
+            ramyunEntity.isCup,
+            ramyunEntity.cooking,
+            ramyunEntity.gram,
+            ramyunEntity.ramyunNa,
+            ramyunEntity.scoville,
+            avgRate.as("avgRate"),
+            reviewCount.as("reviewCount")))
+        .from(ramyunEntity)
+        .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
+        .where(ramyunEntity.ramyunIdx.eq(id))
+        .groupBy(ramyunEntity.ramyunIdx);
+
+    return query.fetchOne();
+  }
+
+  @Override
   public Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filterDTO){
 
     NumberExpression<Double> avgRate = reviewEntity.rate.avg().coalesce(0.0);

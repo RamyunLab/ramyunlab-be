@@ -18,14 +18,18 @@ public class MainService {
 
   private final MainRepository mainRepository;
 
+  /* 라면 데이터 목록 조회 */
   public Page<RamyunDTO> getRamyunList (int pageNo, String sort, String direction, RamyunFilterDTO filter){
     // 페이징 정보 설정
     Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE);
-
     // 라면 데이터 조회
     Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter);
-
     return result;
   }
 
+  /* 라면 상세 정보 + 리뷰 + 평점 조회 */
+  public RamyunDTO getRamyun (long id){
+    RamyunDTO ramyun = mainRepository.getRamyunInfo(id);
+    return ramyun;
+  }
 }

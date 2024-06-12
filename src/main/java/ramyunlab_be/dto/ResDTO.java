@@ -7,13 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ramyunlab_be.vo.StatusCode;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Schema(name = "ResDTO", description = "응답 값의 기본 형식을 담은 DTO")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResDTO<T> {
@@ -30,5 +29,13 @@ public class ResDTO<T> {
   public ResDTO(Integer statusCode, String message){
     this.statusCode = statusCode;
     this.message = message;
+  }
+
+  // 생성자
+  @Builder
+  public ResDTO(Integer statusCode, String message, T data) {
+    this.statusCode = statusCode;
+    this.message = message;
+    this.data = data;
   }
 }

@@ -7,21 +7,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 import ramyunlab_be.dto.RamyunDTO;
+import ramyunlab_be.dto.RamyunInfo;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
+import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.service.MainService;
+import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
 
 @Slf4j
@@ -32,6 +34,8 @@ import ramyunlab_be.vo.StatusCode;
 public class MainController {
 
   private final MainService mainService;
+
+  private final ReviewService reviewService;
 
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
@@ -80,6 +84,32 @@ public class MainController {
       Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter);
       return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).message("데이터 조회 성공").data(result).build());
     }
+
+  @Operation(summary = "라면 상세페이지 정보 조회", description = "라면 한 개와 라면에 대한 리뷰 정보를 조회하는 API (+리뷰 페이지네이션)")
+  @GetMapping("/ramyun/{idx}")
+  public ResponseEntity<ResDTO<?>> getRamyunInfo (@Parameter(name="idx", description = "라면 인덱스", example = "1")
+                                                    @PathVariable Long idx,
+                                                  @Parameter(name="page", description = "페이지", example = "1")
+                                                    @RequestParam(value = "page", required = false) Integer page){
+   // 로그인 판별 후 찜 추가 여부 확인
+
+    // 라면 + 평점 조회
+    RamyunDTO ramyun = mainService.getRamyun(idx);
+
+    // 리뷰 조회
+    if(page == null){
+      page = 1;
+    }
+    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(idx, page);
+
+//    return ResponseEntity.ok().body(new ResDTO<RamyunInfo>(StatusCode.OK, "라면 데이터 조회 성공", RamyunInfo.builder().ramyun(ramyun).review(reviews).build()));
+    return ResponseEntity.ok().body(ResDTO.builder()
+                                          .statusCode(StatusCode.OK)
+                                          .message("라면 데이터 조회 성공")
+                                          .data(RamyunInfo.builder().ramyun(ramyun).review(reviews).build())
+                                          .build());
+  }
+
 
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ResDTO> handleValidationException (ValidationException e) {
