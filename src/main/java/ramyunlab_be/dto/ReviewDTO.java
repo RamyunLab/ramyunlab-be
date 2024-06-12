@@ -41,6 +41,9 @@ public class ReviewDTO {
     @Schema(description = "리뷰 삭제 일자(논리 삭제 시 변경)", example = "2024-06-07 15:57:32", nullable = true)
     private Timestamp rvDeletedAt;
 
+    @Schema(description = "공감 수", example = "1")
+    private Integer rvRecommendCount;
+
     @Schema(description = "회원 인덱스", example = "1")
     private Long userIdx;
 
