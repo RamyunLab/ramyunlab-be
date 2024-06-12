@@ -106,7 +106,7 @@ public class AdminService {
         userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
 
         // 등록되지 않은 브랜드인 경우
-        BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브��드입니다."));
+        BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브랜드입니다."));
 
         if(file != null){
             UUID uuid = UUID.randomUUID();
