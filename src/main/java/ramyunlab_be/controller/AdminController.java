@@ -21,6 +21,7 @@ import ramyunlab_be.service.AdminService;
 import ramyunlab_be.vo.StatusCode;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,26 +46,34 @@ public class AdminController {
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
         Page<RamyunEntity> results = AdminService.getGoodsList(pageable);
-        List<RamyunEntity> responseResult = results.stream()
-            .map(result -> RamyunEntity.builder()
-                .ramyunIdx(result.getRamyunIdx())
-                .ramyunName(result.getRamyunName())
-                .ramyunImg(result.getRamyunImg())
-                .ramyunKcal(result.getRamyunKcal())
-                .noodle(result.getNoodle())
-                .isCup(result.getIsCup())
-                .cooking(result.getCooking())
-                .gram(result.getGram())
-                .ramyunNa(result.getRamyunNa())
-                .build())
-            .collect(Collectors.toList());
+
+        log.warn("page : {}", results.getPageable().getPageNumber());
+        log.warn("size : {}", results.getSize());
+        log.warn("totalPages : {}", results.getTotalPages());
+
+
+//        List<RamyunEntity> responseResult = results.stream()
+//            .map(result -> RamyunEntity.builder()
+//                .ramyunIdx(result.getRamyunIdx())
+//                .ramyunName(result.getRamyunName())
+//                .ramyunImg(result.getRamyunImg())
+//                .ramyunKcal(result.getRamyunKcal())
+//                .noodle(result.getNoodle())
+//                .isCup(result.getIsCup())
+//                .cooking(result.getCooking())
+//                .gram(result.getGram())
+//                .ramyunNa(result.getRamyunNa())
+//                .build())
+//            .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
                 .message("전체 상품 리스트 조회 성공")
-                .data(responseResult)
+                .data(results)
+//                .data(results.getTotalPages())
             .build());
     }
+
 
     @Operation(summary = "상품 추가", description = "라면 모든 정보, 사진 파일, 토큰 필요")
     @ApiResponses(value = {
