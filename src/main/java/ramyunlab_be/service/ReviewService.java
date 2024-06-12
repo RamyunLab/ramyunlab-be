@@ -46,22 +46,14 @@ public class ReviewService {
                                final String userIdx,
                                final ReviewDTO reviewDTO, MultipartFile file) throws Exception{
         // 유효한 라면 인덱스가 없는 경우(url로 들어갔는데 해당되는 라면이 없는 경우 예외 처리)
-        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
         Integer rate = Integer.valueOf(reviewDTO.getRate());
         if (file!= null){
-
-//        String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
-
         UUID uuid = UUID.randomUUID();
         String fileName = uuid + "_" + file.getOriginalFilename();
-//        log.warn("filename : {}", filename);
-//
-//        File savedFile = new File(projectPath, filename);
-//
-//        file.transferTo(savedFile);
 
             String fileUrl= "https://" + cloudfront + "/" + fileName;
             ObjectMetadata metadata= new ObjectMetadata();
@@ -95,7 +87,6 @@ public class ReviewService {
                                final Long rvIdx,
                                final String userIdx,
                                final ReviewDTO reviewDTO, MultipartFile file) throws Exception{
-        log.warn("service 1 {}, {}, {}, {}, {}", ramyunIdx, rvIdx, userIdx, reviewDTO, file);
 
         RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
         // 유효한 리뷰 인덱스가 없는 경우(URL 로 들어갔는데 해당되는 리뷰가 없는 경우 예외 처리)
@@ -108,15 +99,9 @@ public class ReviewService {
 
         if (file!= null){
 
-            String projectPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "files";
 
             UUID uuid = UUID.randomUUID();
             String fileName = uuid + "_" + file.getOriginalFilename();
-//            log.warn("filename : {}", filename);
-//
-//            File savedFile = new File(projectPath, filename);
-//
-//            file.transferTo(savedFile);
 
             String fileUrl= "https://" + cloudfront + "/" + fileName;
             ObjectMetadata metadata= new ObjectMetadata();

@@ -96,12 +96,35 @@ public class AdminController {
             .build());
     }
 
+    @Operation(summary = "상품 수정", description = "라면 모든 정보, 사진, 토큰 필요")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "상품 수정 실패")
+    })
     @PatchMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
                                               @RequestPart RamyunDTO ramyunDTO,
                                               @RequestPart(required = false)MultipartFile file,
                                               @AuthenticationPrincipal String userIdx) throws Exception{
+        RamyunEntity updatedRamyun = adminService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
 
+        RamyunDTO responseRamyunDTO = RamyunDTO.builder()
+            .ramyunIdx(updatedRamyun.getRamyunIdx())
+            .ramyunName(updatedRamyun.getRamyunName())
+            .ramyunImg(updatedRamyun.getRamyunImg())
+            .ramyunKcal(updatedRamyun.getRamyunKcal())
+            .noodle(updatedRamyun.getNoodle())
+            .isCup(updatedRamyun.getIsCup())
+            .cooking(updatedRamyun.getCooking())
+            .gram(updatedRamyun.getGram())
+            .ramyunNa(updatedRamyun.getRamyunNa())
+            .build();
+
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .data(responseRamyunDTO)
+            .message("상품 수정 성공")
+            .build());
     }
 
     @ExceptionHandler(ValidationException.class)
