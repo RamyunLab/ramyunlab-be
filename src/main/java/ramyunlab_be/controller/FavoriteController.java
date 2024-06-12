@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.FavoriteDTO;
 import ramyunlab_be.dto.ResDTO;
@@ -42,9 +43,10 @@ public class FavoriteController {
     })
     @GetMapping("")
     public ResponseEntity<ResDTO> getFavoriteList(@Parameter(name = "page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
-                                                    @RequestParam(name = "page", required = false) Integer pageNo) {
+                                                    @RequestParam(name = "page", required = false) Integer pageNo,
+                                                  @AuthenticationPrincipal String userIdx) {
         if(pageNo == null) pageNo = 1;
-        Page<FavoriteDTO> favList = favoriteService.getFavoriteList(pageNo);
+        Page<FavoriteDTO> favList = favoriteService.getFavoriteList(pageNo, userIdx);
 
         return ResponseEntity.ok().body(ResDTO.builder()
                 .statusCode(StatusCode.OK)

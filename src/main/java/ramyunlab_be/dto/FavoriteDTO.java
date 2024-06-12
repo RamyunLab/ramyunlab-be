@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 @Schema(name = "FavoriteDTO", description = "찜 목록")
 public class FavoriteDTO{
     private Long favIdx;
+    private Long userIdx;
     private Long ramyunIdx;
     private String ramyunName;
     private String ramyunImg;
