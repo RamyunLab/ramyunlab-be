@@ -17,7 +17,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "USER")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SQLDelete(sql = "UPDATE user SET u_deleted_at = now() WHERE u_idx = ?")
 public class UserEntity {

@@ -167,6 +167,16 @@ public class AdminGoodsController {
 
     }
 
+    @DeleteMapping("/brand/{brandIdx}")
+    public ResponseEntity<ResDTO> deleteBrand(@PathVariable Long brandIdx,
+                                              @AuthenticationPrincipal String userIdx){
+        adminService.deleteBrand(brandIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .message("브랜드 삭제 성공")
+            .build());
+    }
+
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
