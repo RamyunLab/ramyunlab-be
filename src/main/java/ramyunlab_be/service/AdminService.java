@@ -136,4 +136,12 @@ public class AdminService {
             throw new RuntimeException("상품 수정 실패");
     }
 
+    public RamyunEntity deleteGoods(final Long ramyunIdx, final String userIdx){
+        // 유효한 관리자 인덱스가 없는 경우(토큰 만료)
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."));
+        ramyunRepository.delete(ramyun);
+        return ramyun;
+    }
 }
