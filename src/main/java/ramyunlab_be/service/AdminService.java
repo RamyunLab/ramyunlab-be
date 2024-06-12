@@ -95,6 +95,20 @@ public class AdminService {
             throw new RuntimeException("상품 등록 실패");
     }
 
+    public BrandEntity addBrand(final BrandDTO brandDTO,
+                                final String userIdx){
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+        log.warn("brand : {}", brandDTO);
+
+        BrandEntity newBrand = BrandEntity.builder()
+            .brandIdx(brandDTO.getBrandIdx())
+            .brandName(brandDTO.getBrandName())
+            .build();
+        log.warn("newBrand : {}", newBrand.getBrandIdx());
+        return brandRepository.save(newBrand);
+    }
+        // 유효한 관리자 인덱스가 없는 경우(토큰 만료))
+
     public RamyunEntity updateGoods(final Long ramyunIdx,
                                     final RamyunDTO ramyunDTO,
                                     final MultipartFile file,

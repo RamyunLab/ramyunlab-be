@@ -13,9 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.ResDTO;
-import ramyunlab_be.dto.BrandDTO;
+import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.service.AdminService;
 import ramyunlab_be.vo.StatusCode;
@@ -27,12 +28,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/admin", produces="application/json; charset=utf8")
 @Tag(name = "Admin", description = "관리자 관련 API")
-public class AdminController {
+public class AdminGoodsController {
 
     final private AdminService adminService;
 
     @Autowired
-    public AdminController(final AdminService adminService){
+    public AdminGoodsController(final AdminService adminService){
         this.adminService = adminService;
     }
 
@@ -93,6 +94,29 @@ public class AdminController {
             .statusCode(StatusCode.OK)
             .data(responseRamyunDTO)
             .message("상품 추가 성공")
+            .build());
+    }
+
+    @Operation(summary = "브랜드 추가", description = "브랜드명, 토큰 필요")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "브랜드 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "브랜드 추가 실패")
+        })
+    @PostMapping("/brand")
+    public ResponseEntity<ResDTO> addBrand(@RequestBody BrandDTO brandDTO,
+                                            @AuthenticationPrincipal String userIdx){
+        log.warn("brand : {}", brandDTO.getBrandIdx());
+        BrandEntity addedBrand = adminService.addBrand(brandDTO, userIdx);
+
+        BrandDTO responseBrandDTO = BrandDTO.builder()
+            .brandIdx(addedBrand.getBrandIdx())
+            .brandName(addedBrand.getBrandName())
+            .build();
+
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .data(responseBrandDTO)
+            .message("브랜드 추가 성공")
             .build());
     }
 
