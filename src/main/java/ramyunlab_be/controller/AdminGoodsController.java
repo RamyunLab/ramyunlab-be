@@ -13,72 +13,64 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.ResDTO;
-import ramyunlab_be.dto.BrandDTO;
+import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.service.AdminService;
 import ramyunlab_be.vo.StatusCode;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/admin", produces="application/json; charset=utf8")
 @Tag(name = "Admin", description = "관리자 관련 API")
-public class AdminController {
+public class AdminGoodsController {
 
     final private AdminService adminService;
 
     @Autowired
-    public AdminController(final AdminService adminService){
+    public AdminGoodsController(final AdminService adminService){
         this.adminService = adminService;
     }
 
 
     @Operation(summary = "전체 상품 리스트 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 상품 리스트 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "전체 상품 리스트 조회 실패")
+        @ApiResponse(responseCode = "200", description = "전체 상품 리스트 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "전체 상품 리스트 조회 실패")
     })
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
         Page<RamyunEntity> results = AdminService.getGoodsList(pageable);
-
-        log.warn("page : {}", results.getPageable().getPageNumber());
-        log.warn("size : {}", results.getSize());
-        log.warn("totalPages : {}", results.getTotalPages());
-
-
-//        List<RamyunEntity> responseResult = results.stream()
-//            .map(result -> RamyunEntity.builder()
-//                .ramyunIdx(result.getRamyunIdx())
-//                .ramyunName(result.getRamyunName())
-//                .ramyunImg(result.getRamyunImg())
-//                .ramyunKcal(result.getRamyunKcal())
-//                .noodle(result.getNoodle())
-//                .isCup(result.getIsCup())
-//                .cooking(result.getCooking())
-//                .gram(result.getGram())
-//                .ramyunNa(result.getRamyunNa())
-//                .build())
-//            .collect(Collectors.toList());
+        List<RamyunEntity> responseResult = results.stream()
+            .map(result -> RamyunEntity.builder()
+                .ramyunIdx(result.getRamyunIdx())
+                .ramyunName(result.getRamyunName())
+                .ramyunImg(result.getRamyunImg())
+                .ramyunKcal(result.getRamyunKcal())
+                .noodle(result.getNoodle())
+                .isCup(result.getIsCup())
+                .cooking(result.getCooking())
+                .gram(result.getGram())
+                .ramyunNa(result.getRamyunNa())
+                .build())
+            .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
-                .message("전체 상품 리스트 조회 성공")
-                .data(results)
-//                .data(results.getTotalPages())
+            .message("전체 상품 리스트 조회 성공")
+            .data(responseResult)
             .build());
     }
 
-
     @Operation(summary = "상품 추가", description = "라면 모든 정보, 사진 파일, 토큰 필요")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "상품 추가 성공"),
-            @ApiResponse(responseCode = "400", description = "상품 추가 실패")
+        @ApiResponse(responseCode = "200", description = "상품 추가 성공"),
+        @ApiResponse(responseCode = "400", description = "상품 추가 실패")
     })
     @PostMapping("/goods")
     public ResponseEntity<ResDTO> addGoods(@RequestPart RamyunDTO ramyunDTO,
@@ -105,10 +97,33 @@ public class AdminController {
             .build());
     }
 
+    @Operation(summary = "브랜드 추가", description = "브랜드명, 토큰 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "브랜드 추가 성공"),
+        @ApiResponse(responseCode = "400", description = "브랜드 추가 실패")
+    })
+    @PostMapping("/brand")
+    public ResponseEntity<ResDTO> addBrand(@RequestBody BrandDTO brandDTO,
+                                           @AuthenticationPrincipal String userIdx){
+        log.warn("brand : {}", brandDTO.getBrandIdx());
+        BrandEntity addedBrand = adminService.addBrand(brandDTO, userIdx);
+
+        BrandDTO responseBrandDTO = BrandDTO.builder()
+            .brandIdx(addedBrand.getBrandIdx())
+            .brandName(addedBrand.getBrandName())
+            .build();
+
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .data(responseBrandDTO)
+            .message("브랜드 추가 성공")
+            .build());
+    }
+
     @Operation(summary = "상품 수정", description = "라면 모든 정보, 사진, 토큰 필요")
-        @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "상품 수정 성공"),
-            @ApiResponse(responseCode = "400", description = "상품 수정 실패")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "상품 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "상품 수정 실패")
     })
     @PatchMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
@@ -138,17 +153,17 @@ public class AdminController {
 
     @Operation(summary = "상품 삭제", description = "상품 idx, 토큰 필요")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "상품 삭제 성공"),
-            @ApiResponse(responseCode = "400", description = "상품 삭제 실패")
+        @ApiResponse(responseCode = "200", description = "상품 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "상품 삭제 실패")
     })
     @DeleteMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> deleteGoods(@PathVariable Long ramyunIdx,
-                                             @AuthenticationPrincipal String userIdx){
+                                              @AuthenticationPrincipal String userIdx){
         adminService.deleteGoods(ramyunIdx, userIdx);
         return ResponseEntity.ok().body(ResDTO.builder()
-         .statusCode(StatusCode.OK)
-         .message("상품 삭제 성공")
-         .build());
+            .statusCode(StatusCode.OK)
+            .message("상품 삭제 성공")
+            .build());
 
     }
 
@@ -160,3 +175,4 @@ public class AdminController {
             .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
     }
 }
+
