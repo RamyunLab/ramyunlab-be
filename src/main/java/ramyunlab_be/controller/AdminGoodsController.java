@@ -18,11 +18,8 @@ import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
-import ramyunlab_be.service.AdminService;
+import ramyunlab_be.service.AdminGoodsService;
 import ramyunlab_be.vo.StatusCode;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -30,11 +27,11 @@ import java.util.stream.Collectors;
 @Tag(name = "Admin", description = "관리자 관련 API")
 public class AdminGoodsController {
 
-    final private AdminService adminService;
+    final private AdminGoodsService adminGoodsService;
 
     @Autowired
-    public AdminGoodsController(final AdminService adminService){
-        this.adminService = adminService;
+    public AdminGoodsController(final AdminGoodsService adminGoodsService){
+        this.adminGoodsService = adminGoodsService;
     }
 
 
@@ -45,25 +42,25 @@ public class AdminGoodsController {
     })
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
-        Page<RamyunEntity> results = AdminService.getGoodsList(pageable);
-        List<RamyunEntity> responseResult = results.stream()
-            .map(result -> RamyunEntity.builder()
-                .ramyunIdx(result.getRamyunIdx())
-                .ramyunName(result.getRamyunName())
-                .ramyunImg(result.getRamyunImg())
-                .ramyunKcal(result.getRamyunKcal())
-                .noodle(result.getNoodle())
-                .isCup(result.getIsCup())
-                .cooking(result.getCooking())
-                .gram(result.getGram())
-                .ramyunNa(result.getRamyunNa())
-                .build())
-            .collect(Collectors.toList());
+        Page<RamyunEntity> results = AdminGoodsService.getGoodsList(pageable);
+//        List<RamyunEntity> responseResult = results.stream()
+//            .map(result -> RamyunEntity.builder()
+//                .ramyunIdx(result.getRamyunIdx())
+//                .ramyunName(result.getRamyunName())
+//                .ramyunImg(result.getRamyunImg())
+//                .ramyunKcal(result.getRamyunKcal())
+//                .noodle(result.getNoodle())
+//                .isCup(result.getIsCup())
+//                .cooking(result.getCooking())
+//                .gram(result.getGram())
+//                .ramyunNa(result.getRamyunNa())
+//                .build())
+//            .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .message("전체 상품 리스트 조회 성공")
-            .data(responseResult)
+            .data(results)
             .build());
     }
 
@@ -76,7 +73,7 @@ public class AdminGoodsController {
     public ResponseEntity<ResDTO> addGoods(@RequestPart RamyunDTO ramyunDTO,
                                            @RequestPart(required = false)MultipartFile file,
                                            @AuthenticationPrincipal String userIdx) throws Exception{
-        RamyunEntity addedRamyun = adminService.addGoods(ramyunDTO, file, userIdx);
+        RamyunEntity addedRamyun = adminGoodsService.addGoods(ramyunDTO, file, userIdx);
 
         RamyunDTO responseRamyunDTO = RamyunDTO.builder()
             .ramyunIdx(addedRamyun.getRamyunIdx())
@@ -106,7 +103,7 @@ public class AdminGoodsController {
     public ResponseEntity<ResDTO> addBrand(@RequestBody BrandDTO brandDTO,
                                            @AuthenticationPrincipal String userIdx){
         log.warn("brand : {}", brandDTO.getBrandIdx());
-        BrandEntity addedBrand = adminService.addBrand(brandDTO, userIdx);
+        BrandEntity addedBrand = adminGoodsService.addBrand(brandDTO, userIdx);
 
         BrandDTO responseBrandDTO = BrandDTO.builder()
             .brandIdx(addedBrand.getBrandIdx())
@@ -130,7 +127,7 @@ public class AdminGoodsController {
                                               @RequestPart RamyunDTO ramyunDTO,
                                               @RequestPart(required = false)MultipartFile file,
                                               @AuthenticationPrincipal String userIdx) throws Exception{
-        RamyunEntity updatedRamyun = adminService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
+        RamyunEntity updatedRamyun = adminGoodsService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
 
         RamyunDTO responseRamyunDTO = RamyunDTO.builder()
             .ramyunIdx(updatedRamyun.getRamyunIdx())
@@ -159,7 +156,7 @@ public class AdminGoodsController {
     @DeleteMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> deleteGoods(@PathVariable Long ramyunIdx,
                                               @AuthenticationPrincipal String userIdx){
-        adminService.deleteGoods(ramyunIdx, userIdx);
+        adminGoodsService.deleteGoods(ramyunIdx, userIdx);
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .message("상품 삭제 성공")
@@ -167,10 +164,15 @@ public class AdminGoodsController {
 
     }
 
+    @Operation(summary = "브랜드 삭제", description = "브랜드 idx, 토큰 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "브랜드 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "브랜드 삭제 실패")
+    })
     @DeleteMapping("/brand/{brandIdx}")
     public ResponseEntity<ResDTO> deleteBrand(@PathVariable Long brandIdx,
                                               @AuthenticationPrincipal String userIdx){
-        adminService.deleteBrand(brandIdx, userIdx);
+        adminGoodsService.deleteBrand(brandIdx, userIdx);
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .message("브랜드 삭제 성공")
