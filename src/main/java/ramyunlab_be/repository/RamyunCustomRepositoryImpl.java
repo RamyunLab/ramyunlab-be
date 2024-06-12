@@ -97,7 +97,8 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   /* 조회 조건 */
   private BooleanBuilder filterConditions(RamyunFilterDTO conditions){
     BooleanBuilder builder = new BooleanBuilder();
-    builder.and(ramyunNameContains(conditions.getName()))
+    builder.and(ramyunNotDeleted())
+        .and(ramyunNameContains(conditions.getName()))
         .and(ramyunBrandContains(conditions.getBrand()))
         .and(noodleContains(conditions.getNoodle()))
         .and(ramyunIsCup(conditions.getIsCup()))
@@ -107,6 +108,11 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         .and(ramyunNaRange(conditions.getNa()));
     log.info("LOG ::: {}",builder);
     return builder;
+  }
+
+  // 삭제된 라면 제외
+  private BooleanExpression ramyunNotDeleted(){
+    return ramyunEntity.ramyunDeletedAt.isNull();
   }
 
   // 라면 이름

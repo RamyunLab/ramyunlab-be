@@ -24,11 +24,8 @@ public class MainService {
 
     // 라면 데이터 조회
     Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter);
-  
-    if(result.isEmpty()){
-      throw new RuntimeException("조회 결과가 없습니다.");
-    }
 
     return result;
   }
+
 }
