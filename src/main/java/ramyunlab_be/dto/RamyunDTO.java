@@ -27,21 +27,31 @@ public class RamyunDTO {
   private Integer scoville;
   private Double avgRate;
   private Long reviewCount;
+  private Long brandIdx;
 
   @Override
-  public String toString () {
+  public String toString() {
     return "RamyunDTO{" +
-           "ramyunIdx=" + ramyunIdx +
-           ", ramyunName='" + ramyunName + '\'' +
-           ", ramyunImg='" + ramyunImg + '\'' +
-           ", brandName=" + brandName +
-           ", noodle=" + noodle +
-           ", ramyunKcal=" + ramyunKcal +
-           ", isCup=" + isCup +
-           ", cooking=" + cooking +
-           ", gram=" + gram +
-           ", ramyunNa=" + ramyunNa +
-           ", scoville=" + scoville +
-           '}';
+        "ramyunIdx=" + ramyunIdx +
+        ", ramyunName='" + ramyunName + '\'' +
+        ", ramyunImg='" + ramyunImg + '\'' +
+        ", brandName='" + brandName + '\'' +
+        ", noodle=" + noodle +
+        ", ramyunKcal=" + ramyunKcal +
+        ", isCup=" + isCup +
+        ", cooking=" + cooking +
+        ", gram=" + gram +
+        ", ramyunNa=" + ramyunNa +
+        ", scoville=" + scoville +
+        ", avgRate=" + avgRate +
+        ", reviewCount=" + reviewCount +
+        ", brandIdx=" + brandIdx +
+        '}';
+  }
+
+  public BrandEntity getBrand() {
+    return BrandEntity.builder()
+       .brandIdx(brandIdx)
+       .build();
   }
 }
