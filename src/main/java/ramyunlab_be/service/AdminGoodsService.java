@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,22 +13,15 @@ import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
-import ramyunlab_be.entity.ReviewEntity;
-import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.BrandRepository;
 import ramyunlab_be.repository.RamyunRepository;
 import ramyunlab_be.repository.UserRepository;
 
-import java.io.File;
-import java.util.List;
 import java.util.UUID;
-
-import static ramyunlab_be.entity.QBrandEntity.brandEntity;
-import static ramyunlab_be.entity.QRamyunEntity.ramyunEntity;
 
 @Service
 @Slf4j
-public class AdminService {
+public class AdminGoodsService {
 
 
     private static RamyunRepository ramyunRepository = null;
@@ -37,9 +29,9 @@ public class AdminService {
     final private BrandRepository brandRepository;
 
     @Autowired
-    public AdminService(final RamyunRepository ramyunRepository,
-                        final UserRepository userRepository,
-                        final BrandRepository brandRepository) {
+    public AdminGoodsService(final RamyunRepository ramyunRepository,
+                             final UserRepository userRepository,
+                             final BrandRepository brandRepository) {
         this.ramyunRepository = ramyunRepository;
         this.userRepository = userRepository;
         this.brandRepository = brandRepository;

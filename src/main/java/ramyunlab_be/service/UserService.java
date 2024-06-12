@@ -29,26 +29,16 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public UserEntity create(final UserEntity userEntity){
-//        if(userEntity == null ||
-//            userEntity.getUserId() == null || userEntity.getUserId().trim().isEmpty() ||
-//            userEntity.getNickname() == null || userEntity.getNickname().trim().isEmpty() ||
-//            userEntity.getPassword() == null || userEntity.getPassword().trim().isEmpty()){
-//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-//        }   // 회원가입 빈칸 여부 확인
-//        try{
+
         checkId(userEntity);
         checkNickname(userEntity);
-//        }catch (Exception e){
-//            throw new RuntimeException("아이디 중복검사를 진행해주세요.");
-//        }
+
 
         return userRepository.save(userEntity);
     }
 
     public UserEntity getByCredentials(final String userId, final String password){
-//        if(userId == null || password == null || userId.trim().isEmpty() || password.trim().isEmpty()){
-//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-//        }
+
 
         UserEntity user = userRepository.findByUserId(userId);
 
@@ -67,11 +57,6 @@ public class UserService {
     }
 
     public UserDTO checkId(UserEntity userEntity) {
-//        if(userEntity == null ||
-//            userEntity.getUserId() == null ||
-//            userEntity.getUserId().trim().isEmpty()){
-//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-//        }
 
         final String userId = userEntity.getUserId();
 
@@ -85,11 +70,6 @@ public class UserService {
     }
 
     public UserDTO checkNickname(UserEntity userEntity){
-//        if(userEntity == null ||
-//            userEntity.getNickname() == null ||
-//            userEntity.getNickname().trim().isEmpty()){
-//            throw new RuntimeException("Invalid arguments : 빈 칸을 입력해주세요.");
-//        }
 
         final String nickname = userEntity.getNickname();
 
@@ -110,12 +90,6 @@ public class UserService {
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             userRepository.delete(user);
-//            Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-//            UserEntity deletedUser = user.toBuilder()
-//                    .userIdx(user.getUserIdx())
-//                        .userDeletedAt(currentTimestamp)
-//                            .build();
-//            userRepository.save(deletedUser);
             return user;
         } else if(!passwordEncoder.matches(password, user.getPassword())){
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
