@@ -96,6 +96,14 @@ public class AdminController {
             .build());
     }
 
+    @PatchMapping("/goods/{ramyunIdx}")
+    public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
+                                              @RequestPart RamyunDTO ramyunDTO,
+                                              @RequestPart(required = false)MultipartFile file,
+                                              @AuthenticationPrincipal String userIdx) throws Exception{
+
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
         return ResponseEntity
