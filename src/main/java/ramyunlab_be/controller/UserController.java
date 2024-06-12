@@ -74,7 +74,9 @@ public class UserController {
 
     }
 
-    @Operation(summary = "닉네임 변경", description = "사용자의 닉네임 변경")
+    @Operation(summary = "닉네임 변경",
+            description = "사용자의 닉네임 변경." +
+                    "RequestBody:: nickname 입력. 사용 전 자물쇠 아이콘 클릭 -> Value input 내에 token 값 입력 후 Authorize 클릭.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -91,7 +93,9 @@ public class UserController {
                 .build());
     }
 
-    @Operation(summary = "비밀번호 확인", description = "회원 탈퇴 및 비밀번호 변경 시 사용자 인증을 위한 현재 비밀번호 확인")
+    @Operation(summary = "비밀번호 확인",
+            description = "회원 탈퇴 및 비밀번호 변경 시 사용자 인증을 위한 현재 비밀번호 확인." +
+                    "RequestBody:: 현재 패스워드 입력. 사용 전 자물쇠 아이콘 클릭 -> Value input 내에 token 값 입력 후 Authorize 클릭.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "비밀번호 확인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -110,7 +114,8 @@ public class UserController {
                 .build());
     }
 
-    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호 변경")
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호 변경." +
+            "RequestBody:: 변경할 패스워드 입력. 사용 전 자물쇠 아이콘 클릭 -> Value input 내에 token 값 입력 후 Authorize 클릭.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
