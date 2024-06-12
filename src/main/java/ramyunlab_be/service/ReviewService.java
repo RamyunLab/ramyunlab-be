@@ -5,8 +5,12 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReviewEntity;
@@ -14,6 +18,7 @@ import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.RamyunRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
+import ramyunlab_be.vo.Pagenation;
 
 import java.io.File;
 import java.util.UUID;
@@ -145,5 +150,27 @@ public class ReviewService {
             reviewRepository.delete(review);
             return review;
         } else throw new RuntimeException("리뷰 삭제 실패!");
+    }
+
+    public Page<ReviewDTO> getMyReviewList(Integer pageNo, String userIdx) {
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
+
+        Page<ReviewEntity> result = reviewRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
+
+        return result.map(this::convert);
+    }
+
+    private ReviewDTO convert(ReviewEntity reviewEntity) {
+        return ReviewDTO.builder()
+                .rvIdx(reviewEntity.getRvIdx())
+                .userIdx(reviewEntity.getUser().getUserIdx())
+                .ramyunIdx(reviewEntity.getRamyun().getRamyunIdx())
+                .reviewPhotoUrl(reviewEntity.getReviewPhotoUrl())
+                .reviewContent(reviewEntity.getReviewContent())
+                .rate(String.valueOf(reviewEntity.getRate()))
+                .rvCreatedAt(reviewEntity.getRvCreatedAt())
+                .rvUpdatedAt(reviewEntity.getRvUpdatedAt())
+                .rvDeletedAt(reviewEntity.getRvDeletedAt())
+                .build();
     }
 }

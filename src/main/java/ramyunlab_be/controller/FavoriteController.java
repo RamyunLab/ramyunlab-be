@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/favorite")
+@RequestMapping("/api")
 @Tag(name="Favorite", description = "찜 기능 관련 API")
 public class FavoriteController {
     @Autowired
@@ -41,7 +41,7 @@ public class FavoriteController {
             @ApiResponse(responseCode = "200", description = "찜 목록 호출 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    @GetMapping("")
+    @GetMapping("/user/favorite")
     public ResponseEntity<ResDTO> getFavoriteList(@Parameter(name = "page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
                                                     @RequestParam(name = "page", required = false) Integer pageNo,
                                                   @AuthenticationPrincipal String userIdx) {

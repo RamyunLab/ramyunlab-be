@@ -17,7 +17,7 @@ public class FavoriteService {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-    public Page<FavoriteDTO> getFavoriteList(int pageNo, String userIdx) {
+    public Page<FavoriteDTO> getFavoriteList(Integer pageNo, String userIdx) {
 
         PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "favCreatedAt"));
 

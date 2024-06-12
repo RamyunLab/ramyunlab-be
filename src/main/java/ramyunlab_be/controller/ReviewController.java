@@ -1,6 +1,8 @@
 package ramyunlab_be.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +11,7 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +68,6 @@ public class ReviewController {
             .build());
     }
 
-
     @Operation(summary = "리뷰 수정", description = "RequestBody 에 rate 필수로 입력, token 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 수정 성공"),
@@ -100,6 +102,25 @@ public class ReviewController {
            .statusCode(StatusCode.OK)
            .message("리뷰 삭제 성공")
            .build());
+    }
+
+    @Operation(summary = "내가 쓴 리뷰 목록 불러오기", description = "내가 쓴 리뷰 목록을 불러온다(With. pagination).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내가 쓴 리뷰 목록 호출 성공"),
+            @ApiResponse(responseCode = "400", description = "내가 쓴 리뷰 목록 호출 실패")
+    })
+    @GetMapping("/user/myReview")
+    public ResponseEntity<ResDTO> getMyReviewList(@Parameter(name = "page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
+                                                      @RequestParam(name = "page", required = false) Integer pageNo,
+                                                  @AuthenticationPrincipal String userIdx) {
+        if(pageNo == null) pageNo = 1;
+        Page<ReviewDTO> myReviewList = reviewService.getMyReviewList(pageNo, userIdx);
+
+        return ResponseEntity.ok().body(ResDTO.builder()
+                .statusCode(StatusCode.OK)
+                .message("리뷰 목록 호출 완료.")
+                .data(myReviewList)
+                .build());
     }
 
 
