@@ -24,8 +24,12 @@ import ramyunlab_be.vo.StatusCode;
 @Tag(name = "User", description = "사용자 관련 API")
 public class UserController {
 
+    final private UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(final UserService userService){
+        this.userService = userService;
+    }
 
     @Operation(summary = "회원탈퇴", description = "RequestBody : 패스워드 입력, 자물쇠 모양 아이콘 누르고 Available authorizations 에 token 정보 ")
     @ApiResponses(value = {
@@ -70,10 +74,62 @@ public class UserController {
 
     }
 
-        @ExceptionHandler(ValidationException.class)
-        public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
-            return ResponseEntity
-                .badRequest()
-                .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
-        }
+    @Operation(summary = "닉네임 변경", description = "사용자의 닉네임 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PatchMapping("/user/nickname")
+    public ResponseEntity<ResDTO> updateNickname(@RequestBody UserDTO userDTO,
+                                                 @AuthenticationPrincipal String userIdx) {
+        UserEntity updateUser = userService.updateNickname(userIdx, userDTO);
+        return ResponseEntity.ok().body(ResDTO
+                .builder()
+                .statusCode(StatusCode.OK)
+                .data(updateUser)
+                .message("닉네임 변경 완료.")
+                .build());
+    }
+
+    @Operation(summary = "비밀번호 확인", description = "회원 탈퇴 및 비밀번호 변경 시 사용자 인증을 위한 현재 비밀번호 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 확인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/user/password")
+    public ResponseEntity<ResDTO> confirmPassword(@Valid @RequestBody UserDTO userDTO,
+                                                  @AuthenticationPrincipal String userIdx) {
+        boolean isMatched = userService.confirmPassword(userIdx, userDTO);
+
+        String message = isMatched ? "비밀번호 일치함." : "비밀번호 확인 실패.";
+
+        return ResponseEntity.ok().body(ResDTO.builder()
+                .statusCode(StatusCode.OK)
+                .data(isMatched)
+                .message(message)
+                .build());
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PatchMapping("/user/password")
+    public ResponseEntity<ResDTO> updatePassword(@Valid @RequestBody UserDTO userDTO,
+                                                 @AuthenticationPrincipal String userIdx) {
+        UserEntity updateUser = userService.updatePassword(userIdx, userDTO);
+        return ResponseEntity.ok().body(ResDTO.builder()
+                .statusCode(StatusCode.OK)
+                .data(updateUser)
+                .message("비밀번호 변경 완료.")
+                .build());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
+        return ResponseEntity
+            .badRequest()
+            .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());
+    }
 }

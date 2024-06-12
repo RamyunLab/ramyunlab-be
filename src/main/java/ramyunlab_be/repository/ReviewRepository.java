@@ -9,6 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
-
-//    Optional<Long> findRvIdxRvIdx (Long rvIdx);
 }
