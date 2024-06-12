@@ -158,6 +158,15 @@ public class AdminService {
         ramyunRepository.delete(ramyun);
         return ramyun;
     }
+
+    public BrandEntity deleteBrand(final Long brandIdx, final String userIdx){
+        // 유효한 관리자 인덱스가 없는 경우(토큰 만료)
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        BrandEntity brand = brandRepository.findById(brandIdx).orElseThrow(()-> new RuntimeException("해당 브랜드가 존재하지 않습니다."));
+        brandRepository.delete(brand);
+        return brand;
+    }
 }
 
 
