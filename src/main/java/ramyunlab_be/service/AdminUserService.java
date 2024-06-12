@@ -23,4 +23,16 @@ public class AdminUserService {
         return userRepository.findAll(pageable);
 
     }
+
+    public UserEntity deleteUser(final Long userIdx,
+                                 final String admin){
+        userRepository.findByUserIdx(Long.valueOf(admin))
+           .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
+
+        UserEntity user = userRepository.findByUserIdx(userIdx).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+
+        userRepository.delete(user);
+        return user;
+    }
 }
