@@ -127,6 +127,23 @@ public class AdminController {
             .build());
     }
 
+    @Operation(summary = "상품 삭제", description = "상품 idx, 토큰 필요")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "상품 삭제 실패")
+    })
+    @DeleteMapping("/goods/{ramyunIdx}")
+    public ResponseEntity<ResDTO> deleteGoods(@PathVariable Long ramyunIdx,
+                                             @AuthenticationPrincipal String userIdx){
+        adminService.deleteGoods(ramyunIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+         .statusCode(StatusCode.OK)
+         .message("상품 삭제 성공")
+         .build());
+
+    }
+
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
         return ResponseEntity
