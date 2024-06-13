@@ -41,36 +41,41 @@ public class FavoriteService {
                 .build();
     }
 
-    public Boolean addFavorite(FavoriteDTO dto) {
+    public void addFavorite(Long userIdx, Long ramyunIdx) {
         try {
-            FavoriteEntity favorite = FavoriteEntity.builder()
-                                                    .user(UserEntity.builder().userIdx(dto.getUserIdx()).build())
-                                                    .ramyun(RamyunEntity.builder().ramyunIdx(dto.getRamyunIdx()).build())
-                                                    .build();
-            FavoriteEntity result = favoriteRepository.save(favorite);
-            log.info("찜 추가 성공? {}", result);
-            return true;
-        }catch(Exception e) {
+            // 찜 추가 여부 확인
+            Optional<FavoriteEntity> favorite = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
+            if(favorite.isPresent()) {
+                log.info("FAVORITE IS PRESENT?? {}",favorite.get());
+                throw new RuntimeException("중복된 요청입니다.");
+            }else{
+                FavoriteEntity fv = FavoriteEntity.builder()
+                                                        .user(UserEntity.builder().userIdx(userIdx).build())
+                                                        .ramyun(RamyunEntity.builder().ramyunIdx(ramyunIdx).build())
+                                                        .build();
+                FavoriteEntity result = favoriteRepository.save(fv);
+                log.info("찜 추가 성공? {}", result);
+            }
+        } catch(Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("찜을 추가하지 못했습니다.");
         }
     }
 
-        public Boolean deleteFavorite(Long userIdx, Long ramyunIdx) {
-            try {
-                // 찜 추가 여부 확인
-                Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
-                if(!result.isPresent()) {
-                    throw new NoSuchElementException("찜한 내용을 찾을 수 없습니다.");
-                }else{
-                    FavoriteEntity favorite = result.get();
-                    favoriteRepository.delete(favorite);
-                }
-                return true;
-            }catch(Exception e){
-                log.error(e.getMessage());
-                throw new RuntimeException(e.getMessage());
+    public void deleteFavorite(Long userIdx, Long ramyunIdx) {
+        try {
+            // 찜 추가 여부 확인
+            Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
+            if(result.isEmpty()) {
+                throw new RuntimeException("찜한 내용을 찾을 수 없습니다.");
+            }else{
+                FavoriteEntity favorite = result.get();
+                favoriteRepository.delete(favorite);
             }
+        }catch(Exception e){
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
+    }
 
 }

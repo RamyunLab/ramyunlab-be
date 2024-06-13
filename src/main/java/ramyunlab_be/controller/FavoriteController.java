@@ -66,14 +66,12 @@ public class FavoriteController {
         try {
             // 로그인 여부 판별
             if (userIdx == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                     .body(ResDTO.builder()
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResDTO.builder()
                                                  .statusCode(StatusCode.UNAUTHORIZED)
                                                  .message("로그인이 필요합니다.")
                                                  .build());
             }
-            FavoriteDTO dto = FavoriteDTO.builder().ramyunIdx(ramyunIdx.get("ramyunIdx")).userIdx(Long.valueOf(userIdx)).build();
-            Boolean result = favoriteService.addFavorite(dto);
+            favoriteService.addFavorite(Long.valueOf(userIdx), ramyunIdx.get("ramyunIdx"));
             return ResponseEntity.ok().body(ResDTO.builder()
                                                   .statusCode(StatusCode.OK)
                                                   .message("찜 추가 성공")
@@ -94,10 +92,9 @@ public class FavoriteController {
                                                       .build());
         }catch (Exception e){
             log.error(e.getMessage());
-            return ResponseEntity.badRequest()
-                                     .body(ResDTO.builder()
-                                                 .statusCode(StatusCode.BAD_REQUEST)
-                                                 .message(e.getMessage()).build());
+            return ResponseEntity.badRequest().body(ResDTO.builder()
+                                                          .statusCode(StatusCode.BAD_REQUEST)
+                                                          .message(e.getMessage()).build());
         }
     }
 
