@@ -7,21 +7,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.FavoriteDTO;
 import ramyunlab_be.dto.ResDTO;
-import ramyunlab_be.entity.FavoriteEntity;
 import ramyunlab_be.service.FavoriteService;
 import ramyunlab_be.vo.StatusCode;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -53,6 +52,50 @@ public class FavoriteController {
                 .message("찜목록 호출 완료")
                 .data(favList)
                 .build());
+    }
+
+
+    @Operation(summary = "찜 추가", description = "라면 찜 추가")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "찜 추가 성공"),
+        @ApiResponse(responseCode = "401", description = "찜 추가 실패 - 비로그인 상태"),
+        @ApiResponse(responseCode = "400", description = "찜 추가 실패 - 그 외 예외사항 발생 시")
+    })
+    @PostMapping("/favorites")
+    public ResponseEntity<ResDTO<Object>> addFavorite (@AuthenticationPrincipal String userIdx, @RequestBody Map<String,Long> ramyunIdx) {
+        try {
+            // 로그인 여부 판별
+            if (userIdx == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResDTO.builder()
+                                                 .statusCode(StatusCode.UNAUTHORIZED)
+                                                 .message("로그인이 필요합니다.")
+                                                 .build());
+            }
+            favoriteService.addFavorite(Long.valueOf(userIdx), ramyunIdx.get("ramyunIdx"));
+            return ResponseEntity.ok().body(ResDTO.builder()
+                                                  .statusCode(StatusCode.OK)
+                                                  .message("찜 추가 성공")
+                                                  .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                                 .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message("찜 추가 실패").build());
+        }
+    }
+
+    @DeleteMapping("/favorites")
+    public ResponseEntity<ResDTO<Object>> deleteFavorite(@AuthenticationPrincipal String userIdx, @RequestBody Map<String, Long> ramyun) {
+        try {
+            favoriteService.deleteFavorite(Long.valueOf(userIdx), ramyun.get("ramyunIdx"));
+            return ResponseEntity.ok().body(ResDTO.builder()
+                                                      .statusCode(StatusCode.OK)
+                                                      .message("찜 삭제 성공")
+                                                      .build());
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(ResDTO.builder()
+                                                          .statusCode(StatusCode.BAD_REQUEST)
+                                                          .message(e.getMessage()).build());
+        }
     }
 
     @ExceptionHandler(ValidationException.class)

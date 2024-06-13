@@ -172,6 +172,7 @@ public class ReviewService {
       return result.map(review -> ReviewDTO.builder()
                                              .rvIdx(review.getRvIdx())
                                              .userIdx(review.getUser().getUserIdx())
+                                             .userNickname(review.getUser().getNickname())
                                              .ramyunIdx(review.getRamyun().getRamyunIdx())
                                              .reviewContent(review.getReviewContent())
                                              .rate(Integer.toString(review.getRate()))

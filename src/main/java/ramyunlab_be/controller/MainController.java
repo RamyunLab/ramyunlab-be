@@ -86,6 +86,9 @@ public class MainController {
     }
 
   @Operation(summary = "라면 상세페이지 정보 조회", description = "라면 한 개와 라면에 대한 리뷰 정보를 조회하는 API (+리뷰 페이지네이션)")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
+  })
   @GetMapping("/ramyun/{idx}")
   public ResponseEntity<ResDTO<?>> getRamyunInfo (@Parameter(name="idx", description = "라면 인덱스", example = "1")
                                                     @PathVariable Long idx,
