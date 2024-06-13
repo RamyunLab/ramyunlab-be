@@ -15,7 +15,5 @@ public interface FavoriteRepository extends JpaRepository<FavoriteEntity,Long> {
     Page<FavoriteEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
     // 찜 추가
-//    @Modifying
-//    @Query(value = "INSERT INTO favorites (u_idx, r_idx) VALUES(:userIdx, :ramyunIdx)", nativeQuery = true)
     FavoriteEntity save (FavoriteDTO favorite);
 }

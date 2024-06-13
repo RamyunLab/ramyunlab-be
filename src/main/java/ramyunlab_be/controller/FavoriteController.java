@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +62,8 @@ public class FavoriteController {
         @ApiResponse(responseCode = "400", description = "찜 추가 실패 - 그 외 예외사항 발생 시")
     })
     @PostMapping("/favorites")
-    public ResponseEntity<ResDTO<Object>> addFavorite(@AuthenticationPrincipal String userIdx, @RequestParam Long ramyunIdx) {
+    public ResponseEntity<ResDTO<Object>> addFavorite (@AuthenticationPrincipal String userIdx, @RequestBody Map<String,Long> ramyunIdx) {
         try {
-            log.info("userIdx???? {}",userIdx);
-            log.info("ramyunIdx??? {}",ramyunIdx);
             // 로그인 여부 판별
             if (userIdx == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -73,7 +72,7 @@ public class FavoriteController {
                                                  .message("로그인이 필요합니다.")
                                                  .build());
             }
-            FavoriteDTO dto = FavoriteDTO.builder().ramyunIdx(Long.valueOf(ramyunIdx)).userIdx(Long.valueOf(userIdx)).build();
+            FavoriteDTO dto = FavoriteDTO.builder().ramyunIdx(ramyunIdx.get("ramyunIdx")).userIdx(Long.valueOf(userIdx)).build();
             Boolean result = favoriteService.addFavorite(dto);
             return ResponseEntity.ok().body(ResDTO.builder()
                                                   .statusCode(StatusCode.OK)

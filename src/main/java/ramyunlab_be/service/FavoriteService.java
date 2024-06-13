@@ -49,12 +49,7 @@ public class FavoriteService {
                                                     .build();
             FavoriteEntity result = favoriteRepository.save(favorite);
             log.info("찜 추가 성공? {}", result);
-            if(result != null) {
-                return true;
-            }
-            else{
-                throw new RuntimeException("찜을 추가하지 못했습니다.");
-            }
+            return true;
         }catch(Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("찜을 추가하지 못했습니다.");
