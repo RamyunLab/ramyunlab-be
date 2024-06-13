@@ -14,4 +14,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvDeletedAt IS NULL ORDER BY rv.rvCreatedAt DESC")
     Page<ReviewEntity> findReviewByRamyunIdx(Long ramyunIdx, Pageable pageable);
+
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvReportedAt IS NOT NULL ORDER BY rv.rvReportedAt DESC")
+    Page<ReviewEntity> findReportedReviewByReviewIdx(Long reviewIdx, Pageable pageable);
 }

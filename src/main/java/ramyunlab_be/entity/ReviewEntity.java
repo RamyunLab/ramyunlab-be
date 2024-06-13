@@ -52,6 +52,9 @@ public class ReviewEntity {
     @Column(name = "rv_recommend_count", columnDefinition = "int default 0")
     private Integer rvRecommendCount;
 
+    @Column(name = "rv_reported_at")
+    private Timestamp rvReportedAt;
+
     @ManyToOne
     @JoinColumn(name = "u_idx", nullable = false)
     @JsonBackReference
