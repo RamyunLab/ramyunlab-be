@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
+import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 
 @Service
@@ -13,10 +15,13 @@ import ramyunlab_be.repository.UserRepository;
 public class AdminUserService {
 
     static private UserRepository userRepository = null;
+    private static ReviewRepository reviewRepository;
 
     @Autowired
-    public AdminUserService(final UserRepository userRepository){
+    public AdminUserService(final UserRepository userRepository,
+                            final ReviewRepository reviewRepository){
         this.userRepository = userRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public static Page<UserEntity> getUsers(Pageable pageable) {
@@ -34,5 +39,9 @@ public class AdminUserService {
 
         userRepository.delete(user);
         return user;
+    }
+
+    public static Page<ReviewEntity> getReportedReview(Pageable pageable) {
+        return reviewRepository.findReportedReviewByReviewIdx(null, pageable);
     }
 }

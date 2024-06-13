@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.service.AdminGoodsService;
 import ramyunlab_be.service.AdminUserService;
@@ -54,6 +55,16 @@ public class AdminUserController {
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .message("사용자 삭제 성공")
+            .build());
+    }
+
+    @GetMapping("/review")
+    public ResponseEntity<ResDTO> getReviews(Pageable pageable) {
+        Page<ReviewEntity> results = AdminUserService.getReportedReview(pageable);
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .data(results)
+            .message("신고된 리뷰 목록 호출 완료")
             .build());
     }
 
