@@ -1,5 +1,6 @@
 package ramyunlab_be.service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,6 @@ public class FavoriteService {
 
     public Boolean addFavorite(FavoriteDTO dto) {
         try {
-            log.info("Service 진입 여부");
             FavoriteEntity favorite = FavoriteEntity.builder()
                                                     .user(UserEntity.builder().userIdx(dto.getUserIdx()).build())
                                                     .ramyun(RamyunEntity.builder().ramyunIdx(dto.getRamyunIdx()).build())
@@ -55,5 +55,22 @@ public class FavoriteService {
             throw new RuntimeException("찜을 추가하지 못했습니다.");
         }
     }
+
+        public Boolean deleteFavorite(Long userIdx, Long ramyunIdx) {
+            try {
+                // 찜 추가 여부 확인
+                Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
+                if(!result.isPresent()) {
+                    throw new NoSuchElementException("찜한 내용을 찾을 수 없습니다.");
+                }else{
+                    FavoriteEntity favorite = result.get();
+                    favoriteRepository.delete(favorite);
+                }
+                return true;
+            }catch(Exception e){
+                log.error(e.getMessage());
+                throw new RuntimeException(e.getMessage());
+            }
+        }
 
 }

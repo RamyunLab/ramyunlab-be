@@ -84,6 +84,23 @@ public class FavoriteController {
         }
     }
 
+    @DeleteMapping("/favorites")
+    public ResponseEntity<ResDTO<Object>> deleteFavorite(@AuthenticationPrincipal String userIdx, @RequestBody Map<String, Long> ramyun) {
+        try {
+            favoriteService.deleteFavorite(Long.valueOf(userIdx), ramyun.get("ramyunIdx"));
+            return ResponseEntity.ok().body(ResDTO.builder()
+                                                      .statusCode(StatusCode.OK)
+                                                      .message("찜 삭제 성공")
+                                                      .build());
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest()
+                                     .body(ResDTO.builder()
+                                                 .statusCode(StatusCode.BAD_REQUEST)
+                                                 .message(e.getMessage()).build());
+        }
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
         return ResponseEntity
