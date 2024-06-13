@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +89,7 @@ public class MainController {
     }
 
   @Operation(summary = "라면 상세페이지 정보 조회",
-             description = "라면 및 라면에 대한 리뷰 정보를 조회하는 API"
-                           + "- 라면 상세페이지 요청 시 rv_page는 붙이지 않아도 됨 (페이지네이션 시에만 사용)")
+             description = "라면 및 라면에 대한 리뷰 정보를 조회하는 API")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
   })
@@ -107,12 +107,17 @@ public class MainController {
     RamyunDTO ramyun = mainService.getRamyun(ramyunIdx);
 
     // 리뷰 조회
-    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, 0);
+    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, 1);
+
+    // 베스트 리뷰 조회
+    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx);
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("라면 데이터 조회 성공")
-                                          .data(RamyunInfo.builder().ramyun(ramyun).review(reviews).isLiked(isLiked).build())
+                                          .data(RamyunInfo.builder().ramyun(ramyun)
+                                                          .bestReview(bestReview).review(reviews)
+                                                          .isLiked(isLiked).build())
                                           .build());
   }
 
