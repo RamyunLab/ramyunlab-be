@@ -55,7 +55,7 @@ public class FavoriteController {
     }
 
 
-    @Operation(summary = "찜 추가", description = "라면 찜 추가")
+    @Operation(summary = "찜 추가", description = "라면 찜 추가\n로그인 필수, ramyunIdx 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "찜 추가 성공"),
         @ApiResponse(responseCode = "401", description = "찜 추가 실패 - 비로그인 상태"),
@@ -82,6 +82,11 @@ public class FavoriteController {
         }
     }
 
+    @Operation(summary = "찜 삭제", description = "라면 찜 삭제\n로그인 필수, ramyunIdx 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "찜 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "찜 삭제 실패")
+    })
     @DeleteMapping("/favorites")
     public ResponseEntity<ResDTO<Object>> deleteFavorite(@AuthenticationPrincipal String userIdx, @RequestBody Map<String, Long> ramyun) {
         try {

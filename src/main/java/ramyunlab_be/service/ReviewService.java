@@ -166,9 +166,9 @@ public class ReviewService {
 
 
     @Operation(summary = "라면별 리뷰 조회", description = "라면 상세페이지 리뷰 조회")
-    public Page<ReviewDTO> getReviewByRamyun (Long id, int pageNo){
+    public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, int pageNo){
         Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
-        Page<ReviewEntity> result = reviewRepository.findReviewByRamyunIdx(id, pageable);
+        Page<ReviewEntity> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, pageable);
       return result.map(review -> ReviewDTO.builder()
                                              .rvIdx(review.getRvIdx())
                                              .userIdx(review.getUser().getUserIdx())

@@ -30,7 +30,7 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public RamyunDTO getRamyunInfo (Long id) {
+  public RamyunDTO getRamyunInfo (Long ramyunIdx) {
 
     NumberExpression<Double> avgRate = reviewEntity.rate.avg().coalesce(0.0);
     NumberExpression<Long> reviewCount = reviewEntity.rate.count().coalesce(0L);
@@ -53,7 +53,7 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
             reviewCount.as("reviewCount")))
         .from(ramyunEntity)
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-        .where(ramyunEntity.ramyunIdx.eq(id))
+        .where(ramyunEntity.ramyunIdx.eq(ramyunIdx))
         .groupBy(ramyunEntity.ramyunIdx);
 
     return query.fetchOne();

@@ -17,4 +17,6 @@ public class RamyunInfo {
   private RamyunDTO ramyun;
   @Schema(name = "리뷰 정보", description = "특정 라면에 대한 리뷰 정보 DTO")
   private Page<ReviewDTO> review;
+  @Schema(name = "찜 여부", description = "사용자의 찜 여부를 확인\n비로그인 유저 - false, 로그인 유저 - 찜 여부 조회 후 true/false 판별")
+  private Boolean isLiked;
 }

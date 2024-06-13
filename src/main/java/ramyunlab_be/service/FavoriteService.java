@@ -41,6 +41,15 @@ public class FavoriteService {
                 .build();
     }
 
+    /* 찜 여부 조회 */
+    public boolean isLiked(Long userIdx, Long ramyunIdx){
+        boolean isLiked = false;
+        Optional<FavoriteEntity> favorite = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
+        if(favorite.isPresent()) isLiked = true;
+        return isLiked;
+    }
+
+    /* 찜 추가 */
     public void addFavorite(Long userIdx, Long ramyunIdx) {
         try {
             // 찜 추가 여부 확인
@@ -62,6 +71,7 @@ public class FavoriteService {
         }
     }
 
+    /* 찜 삭제 */
     public void deleteFavorite(Long userIdx, Long ramyunIdx) {
         try {
             // 찜 추가 여부 확인

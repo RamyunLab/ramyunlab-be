@@ -7,6 +7,9 @@ import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.entity.RamyunEntity;
 
 public interface RamyunCustomRepository {
+  /* 라면 리스트 조회 (+필터링) */
   Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filter);
-  RamyunDTO getRamyunInfo (Long id);
+
+  /* 라면 상세 조회 */
+  RamyunDTO getRamyunInfo (Long ramyunIdx);
 }
