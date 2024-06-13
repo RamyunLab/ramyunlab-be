@@ -34,7 +34,8 @@ public class AdminUserService {
         userRepository.findByUserIdx(Long.valueOf(admin))
            .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
 
-        UserEntity user = userRepository.findByUserIdx(userIdx).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+        UserEntity user = userRepository.findByUserIdx(userIdx)
+            .orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
 
 
         userRepository.delete(user);
@@ -43,5 +44,19 @@ public class AdminUserService {
 
     public static Page<ReviewEntity> getReportedReview(Pageable pageable) {
         return reviewRepository.findReportedReviewByReviewIdx(null, pageable);
+    }
+
+    public ReviewEntity deleteReportedReview(final Long rvIdx,
+                                     final String userIdx) {
+        userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        ReviewEntity checkReview = reviewRepository.checkReportedReviewByIdx(rvIdx)
+                .orElseThrow(()-> new RuntimeException("신고된 리뷰가 아닙니다."));
+
+        reviewRepository.delete(checkReview);
+        return checkReview;
+
+
     }
 }
