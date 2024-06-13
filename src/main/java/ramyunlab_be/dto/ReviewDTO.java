@@ -46,6 +46,9 @@ public class ReviewDTO {
 
     @Schema(description = "회원 인덱스", example = "1")
     private Long userIdx;
+    
+    @Schema(description = "회원 닉네임", example = "테스트계정")
+    private String userNickname;
 
     @Schema(description = "라면 인덱스", example = "1")
     private Long ramyunIdx;
