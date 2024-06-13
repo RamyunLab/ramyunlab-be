@@ -48,6 +48,11 @@ public class AdminUserController {
             .build());
     }
 
+    @Operation(summary = "사용자 삭제")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "사용자 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "사용자 삭제 실패")
+    })
     @DeleteMapping("/user/{userIdx}")
     public ResponseEntity<ResDTO> deleteUser(@PathVariable Long userIdx,
                                              @AuthenticationPrincipal String admin){
@@ -58,7 +63,12 @@ public class AdminUserController {
             .build());
     }
 
-    @GetMapping("/review")
+    @Operation(summary = "신고된 리뷰 목록 조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "신고된 리뷰 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "신고된 리�� 목록 조회 실패")
+    })
+    @GetMapping("/reviews")
     public ResponseEntity<ResDTO> getReviews(Pageable pageable) {
         Page<ReviewEntity> results = AdminUserService.getReportedReview(pageable);
         return ResponseEntity.ok().body(ResDTO.builder()
@@ -66,6 +76,21 @@ public class AdminUserController {
             .data(results)
             .message("신고된 리뷰 목록 호출 완료")
             .build());
+    }
+
+    @Operation(summary = "신고된 리뷰 삭제")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "신고된 리뷰 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "신고된 리뷰 삭제 실패")
+    })
+    @DeleteMapping("/review/{rvIdx}")
+    public ResponseEntity<ResDTO> deleteReview(@PathVariable Long rvIdx,
+                                               @AuthenticationPrincipal String userIdx){
+        adminUserService.deleteReportedReview(rvIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+           .statusCode(StatusCode.OK)
+           .message("신고된 리뷰 삭제 성공")
+           .build());
     }
 
     @ExceptionHandler(ValidationException.class)
