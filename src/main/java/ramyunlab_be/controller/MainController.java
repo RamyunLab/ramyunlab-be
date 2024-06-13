@@ -116,6 +116,26 @@ public class MainController {
                                           .build());
   }
 
+  @Operation(summary = "라면 리뷰 조회",
+             description = "특정 라면에 대한 리뷰 정보를 조회함 (페이지네이션)")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
+  })
+  @GetMapping("/ramyun/{ramyunIdx}/review")
+  public ResponseEntity<ResDTO<Object>> getRamyunReview (@Parameter(name="ramyunIdx", description = "라면 인덱스", example = "1")
+                                                         @PathVariable Long ramyunIdx,
+                                                         @Parameter(name="page", description = "페이지", example = "1")
+                                                         @RequestParam(value = "page", required = false) Integer page,
+                                                         @AuthenticationPrincipal String userIdx){
+    // 리뷰 조회
+    if(page == null) page = 1;
+    Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, page);
+
+    return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK)
+                                          .message("리뷰 조회 성공")
+                                          .data(RamyunInfo.builder().review(result).build()).build());
+  }
+
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ResDTO> handleValidationException (ValidationException e) {
     return ResponseEntity
