@@ -75,13 +75,11 @@ public class FavoriteService {
     public void deleteFavorite(Long userIdx, Long ramyunIdx) {
         try {
             // 찜 추가 여부 확인
-            Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
-            if(result.isEmpty()) {
-                throw new RuntimeException("찜한 내용을 찾을 수 없습니다.");
-            }else{
-                FavoriteEntity favorite = result.get();
-                favoriteRepository.delete(favorite);
-            }
+//            Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
+            FavoriteEntity favorite = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx)
+                                                      .orElseThrow(()->new RuntimeException("찜한 내용을 찾을 수 없습니다."));
+            log.info("IS FAVORITE EXIST {}", favorite);
+            favoriteRepository.delete(favorite);
         }catch(Exception e){
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
