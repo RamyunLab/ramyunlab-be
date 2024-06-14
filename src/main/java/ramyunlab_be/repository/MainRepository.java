@@ -12,8 +12,9 @@ import ramyunlab_be.entity.ReviewEntity;
 
 @Repository
 public interface MainRepository extends JpaRepository<RamyunEntity, Long>, RamyunCustomRepository {
-
+  /* 라면 리스트 조회 (+필터링) */
   Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filter);
 
-  RamyunDTO getRamyunInfo (Long id);
+  /*라면 상세 정보 조회 */
+  RamyunDTO getRamyunInfo (Long ramyunIdx);
 }

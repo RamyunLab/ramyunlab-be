@@ -2,7 +2,8 @@ package ramyunlab_be.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ramyunlab_be.dto.RamyunDTO;
-import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReviewEntity;
@@ -24,7 +23,6 @@ import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagenation;
 
-import java.io.File;
 import java.util.UUID;
 
 @Service
@@ -164,22 +162,31 @@ public class ReviewService {
         return result.map(this::convert);
     }
 
-
-    @Operation(summary = "라면별 리뷰 조회", description = "라면 상세페이지 리뷰 조회")
-    public Page<ReviewDTO> getReviewByRamyun (Long id, int pageNo){
+    public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, int pageNo){
         Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
-        Page<ReviewEntity> result = reviewRepository.findReviewByRamyunIdx(id, pageable);
-      return result.map(review -> ReviewDTO.builder()
-                                             .rvIdx(review.getRvIdx())
-                                             .userIdx(review.getUser().getUserIdx())
-                                             .userNickname(review.getUser().getNickname())
-                                             .ramyunIdx(review.getRamyun().getRamyunIdx())
-                                             .reviewContent(review.getReviewContent())
-                                             .rate(Integer.toString(review.getRate()))
-                                             .reviewPhotoUrl(review.getReviewPhotoUrl())
-                                             .rvCreatedAt(review.getRvCreatedAt())
-                                             .rvRecommendCount(review.getRvRecommendCount())
-                                             .build());
+        Page<ReviewEntity> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, pageable);
+        return result.map(this::convert);
+//      return result.map(review -> ReviewDTO.builder()
+//                                             .rvIdx(review.getRvIdx())
+//                                             .userIdx(review.getUser().getUserIdx())
+//                                             .userNickname(review.getUser().getNickname())
+//                                             .ramyunIdx(review.getRamyun().getRamyunIdx())
+//                                             .reviewContent(review.getReviewContent())
+//                                             .rate(Integer.toString(review.getRate()))
+//                                             .reviewPhotoUrl(review.getReviewPhotoUrl())
+//                                             .rvCreatedAt(review.getRvCreatedAt())
+//                                             .rvRecommendCount(review.getRvRecommendCount())
+//                                             .build());
+    }
+
+    public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx){
+        Pageable pageable = PageRequest.of(0, 3);
+        Optional<List<ReviewEntity>> result = reviewRepository.findBestReviewByRamyunIdx(ramyunIdx, pageable);
+        log.info("resutl???? {}",result);
+        if(result.isPresent()){
+            return result.get().stream().map(this::convert).collect(Collectors.toList());
+        }
+        return null;
     }
 
     private ReviewDTO convert(ReviewEntity reviewEntity) {
@@ -193,6 +200,7 @@ public class ReviewService {
                 .rvCreatedAt(reviewEntity.getRvCreatedAt())
                 .rvUpdatedAt(reviewEntity.getRvUpdatedAt())
                 .rvDeletedAt(reviewEntity.getRvDeletedAt())
+                .rvRecommendCount(reviewEntity.getRvRecommendCount())
                 .build();
     }
 }
