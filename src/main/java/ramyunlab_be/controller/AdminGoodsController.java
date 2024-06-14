@@ -24,7 +24,7 @@ import ramyunlab_be.vo.StatusCode;
 @Slf4j
 @RestController
 @RequestMapping(value = "/admin", produces="application/json; charset=utf8")
-@Tag(name = "Admin", description = "관리자 관련 API")
+@Tag(name = "AdminGoods", description = "관리자 관련 API")
 public class AdminGoodsController {
 
     final private AdminGoodsService adminGoodsService;

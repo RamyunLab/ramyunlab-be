@@ -10,6 +10,8 @@ import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class AdminUserService {
@@ -27,6 +29,14 @@ public class AdminUserService {
     public static Page<UserEntity> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
 
+    }
+
+    public List<UserEntity> searchUser(final String keyword,
+                                       final String userIdx) {
+        userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
+
+        return userRepository.searchByUserId(keyword);
     }
 
     public UserEntity deleteUser(final Long userIdx,
