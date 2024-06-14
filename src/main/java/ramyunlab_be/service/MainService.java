@@ -1,5 +1,7 @@
 package ramyunlab_be.service;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
+import ramyunlab_be.entity.FavoriteEntity;
+import ramyunlab_be.repository.FavoriteRepository;
 import ramyunlab_be.repository.MainRepository;
 import ramyunlab_be.vo.Pagenation;
 
@@ -17,14 +21,25 @@ import ramyunlab_be.vo.Pagenation;
 public class MainService {
 
   private final MainRepository mainRepository;
+  private final FavoriteRepository favoriteRepository;
 
   /* 라면 데이터 목록 조회 */
-  public Page<RamyunDTO> getRamyunList (int pageNo, String sort, String direction, RamyunFilterDTO filter){
+  public Page<RamyunDTO> getRamyunList (int pageNo, String sort, String direction, RamyunFilterDTO filter, Long userIdx){
     // 페이징 정보 설정
     Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE);
 
     // 라면 데이터 조회
-    Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter);
+    Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter, userIdx);
+
+    Boolean isLike = false;
+//    for(RamyunDTO ramyun : result.getContent()){
+//      log.info("RAMYUN IDX {}",ramyun.getRamyunIdx());
+//      Optional<FavoriteEntity> fav = favoriteRepository.findLikedRamyun(userIdx, ramyun.getRamyunIdx());
+//      if(fav.isPresent()){
+//        isLike = true;
+//      }
+//      ramyun.setIsLiked(isLike);
+//    }
     return result;
   }
 
