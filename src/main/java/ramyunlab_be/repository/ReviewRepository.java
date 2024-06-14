@@ -21,7 +21,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     Page<ReviewEntity> findReviewByRamyunIdx(Long ramyunIdx, Pageable pageable);
 
     /* 라면별 베스트 리뷰 조회  */
-    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvRecommendCount != 0 AND rv.rvDeletedAt IS NULL ORDER BY rv.rvRecommendCount DESC")
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvRecommendCount >= 10 AND rv.rvDeletedAt IS NULL ORDER BY rv.rvRecommendCount DESC, rv.rvCreatedAt ASC")
     Optional<List<ReviewEntity>> findBestReviewByRamyunIdx (Long ramyunIdx, Pageable pageable);
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvReportedAt IS NOT NULL ORDER BY rv.rvReportedAt DESC")
