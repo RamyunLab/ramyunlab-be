@@ -219,6 +219,15 @@ public class ReviewService {
         ReviewEntity review = reviewRepository.findById(rvIdx)
             .orElseThrow(()-> new RuntimeException("리뷰가 존재하지 않습니다."));
 
+        boolean blockSelfReport = review.getUser().getUserIdx().equals(user.getUserIdx());
+        ReportEntity duplicateReport = reportRepository.findReportedReviewByRvIdx(rvIdx, user.getUserIdx());
+
+        if(blockSelfReport){
+            throw new RuntimeException("자신의 리뷰는 신고할 수 없습니다.");
+        } else if (duplicateReport != null) {
+            throw new RuntimeException("이미 신고한 리뷰입니다.");
+        } else{
+
         ReportEntity report = ReportEntity.builder()
             .reportReason(reportDTO.getReportReason())
             .reportCreatedAt(reportDTO.getReportCreatedAt())
@@ -227,6 +236,7 @@ public class ReviewService {
             .build();
 
         return reportRepository.save(report);
+        }
 
     }
 
