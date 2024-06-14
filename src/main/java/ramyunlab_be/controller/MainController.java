@@ -6,27 +6,27 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ramyunlab_be.dto.FavoriteDTO;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.RamyunInfo;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.dto.ReviewDTO;
+import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.FavoriteService;
 import ramyunlab_be.service.MainService;
 import ramyunlab_be.service.ReviewService;
@@ -42,6 +42,12 @@ public class MainController {
   private final MainService mainService;
   private final ReviewService reviewService;
   private final FavoriteService favoriteService;
+
+  @Autowired
+  private HttpServletRequest request;
+
+  @Autowired
+  private TokenProvider tokenProvider;
 
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
@@ -63,10 +69,6 @@ public class MainController {
       user = Long.parseLong(userIdx);
     }
 
-    if(userIdx != null && !userIdx.equals("anonymousUser")) {
-      userIdx = null;
-    }
-
     // 라면 목록 조회
     if(page == null) page = 1;
     Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter, user);
@@ -86,7 +88,7 @@ public class MainController {
         @ApiResponse(responseCode = "400", useReturnTypeSchema = true, description = "데이터 조회 실패")
     })
     @GetMapping("/search")
-    public ResponseEntity<ResDTO<Object>> getFilteredList(@Parameter(name="page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
+    public ResponseEntity<ResDTO<Object>> getFilteredList (@Parameter(name="page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
                                                             @RequestParam(name="page", required = false) Integer page,
                                                           @Parameter(name="sort", description = "정렬 기준", in = ParameterIn.QUERY, example = "name")
                                                             @RequestParam(value="sort", required = false) String sort,
@@ -95,7 +97,6 @@ public class MainController {
                                                           @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
                                                             RamyunFilterDTO filter,
                                                           @AuthenticationPrincipal String userIdx){
-
       Long user = null;
       if(userIdx != null && !userIdx.equals("anonymousUser")) {
         user = Long.parseLong(userIdx);

@@ -118,7 +118,12 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         .fetch();
 
     // 총 데이터 개수
-    long total = query.fetch().size();
+    long total = jpaQueryFactory
+        .select(ramyunEntity.ramyunIdx.count())
+        .from(ramyunEntity)
+        .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
+        .groupBy(ramyunEntity.ramyunIdx)
+        .fetch().size();
     log.info("{조회된 총 쿼리 데이터 수 {}}", total);
 
     return new PageImpl<>(results, pageable, total);

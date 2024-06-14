@@ -78,7 +78,6 @@ public class AuthController {
 
             // user 가 있으면 토큰 제공
             if (user != null) {
-                log.warn("login {}", user.getPassword());
                 String token = tokenProvider.create(user);
                 final UserDTO responseUserDTO = UserDTO.builder()
                     .userId(user.getUserId())
