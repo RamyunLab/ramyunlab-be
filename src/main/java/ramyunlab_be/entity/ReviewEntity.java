@@ -2,6 +2,7 @@ package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,8 +53,11 @@ public class ReviewEntity {
     @Column(name = "rv_recommend_count", columnDefinition = "int default 0")
     private Integer rvRecommendCount;
 
-    @Column(name = "rv_reported_at")
-    private Timestamp rvReportedAt;
+    @Column(name = "rv_is_reported")
+    private Boolean rvIsReported;
+
+    @Column(name = "rv_report_count")
+    private Integer rvReportCount;
 
     @ManyToOne
     @JoinColumn(name = "u_idx", nullable = false)
@@ -64,4 +68,8 @@ public class ReviewEntity {
     @JoinColumn(name = "r_idx", nullable = false)
     @JsonBackReference
     private RamyunEntity ramyun;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ReportEntity> reports;
 }

@@ -14,11 +14,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ramyunlab_be.dto.ReportDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
+import ramyunlab_be.entity.ReportEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.RamyunRepository;
+import ramyunlab_be.repository.ReportRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagenation;
@@ -32,14 +35,17 @@ public class ReviewService {
     final private ReviewRepository reviewRepository;
     final private RamyunRepository ramyunRepository;
     final private UserRepository userRepository;
+    final private ReportRepository reportRepository;
 
     @Autowired
     public ReviewService(final ReviewRepository reviewRepository,
                          final RamyunRepository ramyunRepository,
-                         final UserRepository userRepository) {
+                         final UserRepository userRepository,
+                         final ReportRepository reportRepository) {
         this.reviewRepository = reviewRepository;
         this.ramyunRepository = ramyunRepository;
         this.userRepository = userRepository;
+        this.reportRepository = reportRepository;
     }
 
     @Autowired
@@ -203,4 +209,25 @@ public class ReviewService {
                 .rvRecommendCount(reviewEntity.getRvRecommendCount())
                 .build();
     }
+
+    public ReportEntity complaint(final Long rvIdx,
+                                   final String userIdx,
+                                   final ReportDTO reportDTO){
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        ReviewEntity review = reviewRepository.findById(rvIdx)
+            .orElseThrow(()-> new RuntimeException("리뷰가 존재하지 않습니다."));
+
+        ReportEntity report = ReportEntity.builder()
+            .reportReason(reportDTO.getReportReason())
+            .reportCreatedAt(reportDTO.getReportCreatedAt())
+            .user(user)
+            .review(review)
+            .build();
+
+        return reportRepository.save(report);
+
+    }
+
 }

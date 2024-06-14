@@ -2,6 +2,7 @@ package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "USER")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SQLDelete(sql = "UPDATE user SET u_deleted_at = now() WHERE u_idx = ?")
 public class UserEntity {
@@ -43,14 +44,18 @@ public class UserEntity {
     private Timestamp userDeletedAt;
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<ReviewEntity> reviews;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<RecommendEntity> recommends;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<FavoriteEntity> favorites;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ReportEntity> reports;
 }

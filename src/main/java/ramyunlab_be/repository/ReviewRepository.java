@@ -24,10 +24,10 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvRecommendCount >= 10 AND rv.rvDeletedAt IS NULL ORDER BY rv.rvRecommendCount DESC, rv.rvCreatedAt ASC")
     Optional<List<ReviewEntity>> findBestReviewByRamyunIdx (Long ramyunIdx, Pageable pageable);
 
-    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvReportedAt IS NOT NULL ORDER BY rv.rvReportedAt DESC")
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported IS NOT NULL ORDER BY rv.rvIsReported DESC")
     Page<ReviewEntity> findReportedReviewByReviewIdx(Long reviewIdx, Pageable pageable);
 
-    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvReportedAt IS NOT NULL AND rv.rvIdx = :rvIdx")
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported IS NOT NULL AND rv.rvIdx = :rvIdx")
     Optional<ReviewEntity> checkReportedReviewByIdx(Long rvIdx);
 
 
