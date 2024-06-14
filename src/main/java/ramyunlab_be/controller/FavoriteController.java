@@ -65,7 +65,7 @@ public class FavoriteController {
     public ResponseEntity<ResDTO<Object>> addFavorite (@AuthenticationPrincipal String userIdx, @RequestBody Map<String,Long> ramyunIdx) {
         try {
             // 로그인 여부 판별
-            if (userIdx == null) {
+            if (userIdx == null && !userIdx.equals("anonymousUser")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResDTO.builder()
                                                  .statusCode(StatusCode.UNAUTHORIZED)
                                                  .message("로그인이 필요합니다.")

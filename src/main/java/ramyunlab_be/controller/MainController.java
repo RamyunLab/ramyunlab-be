@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -89,7 +90,7 @@ public class MainController {
     }
 
   @Operation(summary = "라면 상세페이지 정보 조회",
-             description = "라면 및 라면에 대한 리뷰 정보를 조회하는 API")
+             description = "라면 정보 및 라면에 대한 리뷰 첫 페이지를 조회함")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
   })
@@ -97,10 +98,11 @@ public class MainController {
   public ResponseEntity<ResDTO<Object>> getRamyunInfo (@Parameter(name="ramyunIdx", description = "라면 인덱스", example = "1")
                                                          @PathVariable Long ramyunIdx,
                                                        @AuthenticationPrincipal String userIdx){
-   // 로그인 판별 후 찜 추가 여부 확인
+
+   // 로그인 유저 판별 후 찜 추가 여부 확인
     boolean isLiked = false;
-    if(userIdx != null) {
-      isLiked = favoriteService.isLiked(Long.valueOf(userIdx), ramyunIdx);
+    if(userIdx != null && !userIdx.equals("anonymousUser")) {
+      isLiked = favoriteService.isLiked(Long.parseLong(userIdx), ramyunIdx);
     }
 
     // 라면 + 평점 조회
@@ -114,7 +116,7 @@ public class MainController {
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
-                                          .message("라면 데이터 조회 성공")
+                                          .message("데이터 조회 성공")
                                           .data(RamyunInfo.builder().ramyun(ramyun)
                                                           .bestReview(bestReview).review(reviews)
                                                           .isLiked(isLiked).build())
