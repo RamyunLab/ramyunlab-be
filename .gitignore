@@ -49,3 +49,5 @@ src/resources/static/files
 build/generated/sources/annotationProcessor/java/main/ramyunlab_be/dto
 build/generated/sources/annotationProcessor/java/main/ramyunlab_be/entity
 $buildDir/
+
+.env

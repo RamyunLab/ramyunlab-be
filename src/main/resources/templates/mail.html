@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>lamyunLab - 건의사항</title>
+</head>
+<body>
+  <h1 style="text-align : center">건의사항</h1>
+  <h3 th:text="'아이디 : ' + ${userId}"></h3>
+  <h3 th:text="'이메일 : ' + ${userEmail}"></h3>
+  <div style="border : 1px solid black" width = 200px height = 100px>
+    <div th:text="${text}" style="margin : 20px"></div>
+  </div>
+
+</body>
+</html>
