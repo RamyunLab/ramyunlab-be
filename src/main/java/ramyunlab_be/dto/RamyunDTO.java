@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ramyunlab_be.entity.BrandEntity;
 
 @Getter
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,6 +32,7 @@ public class RamyunDTO {
   private Double avgRate;
   private Long reviewCount;
   private Long brandIdx;
+  private Boolean isLiked;
 
   @Override
   public String toString() {

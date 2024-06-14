@@ -1,10 +1,14 @@
 package ramyunlab_be.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -21,6 +25,7 @@ import ramyunlab_be.dto.RamyunFilterDTO;
 
 import static ramyunlab_be.entity.QRamyunEntity.ramyunEntity;
 import static ramyunlab_be.entity.QReviewEntity.reviewEntity;
+import static ramyunlab_be.entity.QFavoriteEntity.favoriteEntity;
 
 @AllArgsConstructor
 @Slf4j
@@ -60,12 +65,12 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   }
 
   @Override
-  public Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filterDTO){
+  public Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filterDTO, Long userIdx){
 
     NumberExpression<Double> avgRate = reviewEntity.rate.avg().coalesce(0.0);
     NumberExpression<Long> reviewCount = reviewEntity.rate.count().coalesce(0L);
 
-    // Sorting 정보 추가
+     // Sorting 정보 추가
     OrderSpecifier<?> orderSpecifier;
     switch (sort != null ? sort : "default") {
       case "name":
@@ -97,12 +102,14 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
             ramyunEntity.ramyunNa,
             ramyunEntity.scoville,
             avgRate.as("avgRate"),
-            reviewCount.as("reviewCount")))
-        .from(ramyunEntity)
-        .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-        .where(filterConditions(filterDTO))
-        .groupBy(ramyunEntity.ramyunIdx)
-        .orderBy(orderSpecifier);
+            reviewCount.as("reviewCount")
+            ,ExpressionUtils.as(isLikeExist(userIdx), "isLiked")
+           ))
+                   .from(ramyunEntity)
+                   .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
+                   .where(filterConditions(filterDTO))
+                   .groupBy(ramyunEntity.ramyunIdx)
+                   .orderBy(orderSpecifier);
 
     // 페이지네이션 적용
     List<RamyunDTO> results = query
@@ -111,18 +118,27 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         .fetch();
 
     // 총 데이터 개수
-    long total = jpaQueryFactory
-        .select(ramyunEntity.ramyunIdx.count())
-        .from(ramyunEntity)
-        .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-        .groupBy(ramyunEntity.ramyunIdx)
-        .fetch().size();
+    long total = query.fetch().size();
+    log.info("{조회된 총 쿼리 데이터 수 {}}", total);
 
-    log.info("총 개수::: {}", total);
     return new PageImpl<>(results, pageable, total);
   }
 
-
+  /* 찜 목록 조회 */
+  private BooleanExpression isLikeExist(Long userIdx){
+    log.info("useridx {}", userIdx);
+    if (userIdx == null){ return Expressions.asBoolean(false); }
+    return new CaseBuilder()
+        .when(
+            JPAExpressions.select(favoriteEntity.favIdx.count())
+                          .from(favoriteEntity)
+                          .where(favoriteEntity.ramyun.ramyunIdx.eq(ramyunEntity.ramyunIdx)
+                                                                .and(favoriteEntity.user.userIdx.eq(userIdx)))
+                          .gt(0L)
+             )
+        .then(true)
+        .otherwise(false);
+  }
 
   /* 조회 조건 */
   private BooleanBuilder filterConditions(RamyunFilterDTO conditions){

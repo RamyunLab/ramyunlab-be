@@ -50,15 +50,26 @@ public class MainController {
   })
   @GetMapping
   public ResponseEntity<ResDTO<Object>> getAllList (@Parameter(name="page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
-                                            @RequestParam(name="page", required = false) Integer page,
-                                            @Parameter(name="sort", description = "정렬 기준", in = ParameterIn.QUERY, example = "name")
-                                            @RequestParam(value="sort", required = false) String sort,
-                                            @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
-                                            @RequestParam(value = "direction", required = false) String direction,
-                                            @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
-                                              RamyunFilterDTO filter){
+                                                      @RequestParam(name="page", required = false) Integer page,
+                                                    @Parameter(name="sort", description = "정렬 기준", in = ParameterIn.QUERY, example = "name")
+                                                      @RequestParam(value="sort", required = false) String sort,
+                                                    @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
+                                                      @RequestParam(value = "direction", required = false) String direction,
+                                                    @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
+                                                      RamyunFilterDTO filter,
+                                                      @AuthenticationPrincipal String userIdx){
+    Long user = null;
+    if(userIdx != null && !userIdx.equals("anonymousUser")) {
+      user = Long.parseLong(userIdx);
+    }
+
+    if(userIdx != null && !userIdx.equals("anonymousUser")) {
+      userIdx = null;
+    }
+
+    // 라면 목록 조회
     if(page == null) page = 1;
-    Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter);
+    Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter, user);
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
@@ -82,10 +93,17 @@ public class MainController {
                                                           @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
                                                             @RequestParam(value = "direction", required = false) String direction,
                                                           @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
-                                                            RamyunFilterDTO filter){
+                                                            RamyunFilterDTO filter,
+                                                          @AuthenticationPrincipal String userIdx){
+
+      Long user = null;
+      if(userIdx != null && !userIdx.equals("anonymousUser")) {
+        user = Long.parseLong(userIdx);
+      }
+
       if(page == null) page = 1;
-      log.info("filter data:: {}", filter);
-      Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter);
+
+      Page<RamyunDTO> result = mainService.getRamyunList(page, sort, direction, filter, user);
       return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK).message("데이터 조회 성공").data(result).build());
     }
 
