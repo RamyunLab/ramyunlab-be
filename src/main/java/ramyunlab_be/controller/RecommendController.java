@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ramyunlab_be.dto.RecReviewDTO;
 import ramyunlab_be.dto.RecommendDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.entity.RecommendEntity;
@@ -65,6 +67,18 @@ public class RecommendController {
            .statusCode(StatusCode.OK)
            .message("공감 삭제 성공")
            .build());
+    }
+
+    @GetMapping("/recReview")
+    public ResponseEntity<ResDTO> getRecReview(@RequestParam(name = "page", required = false) Integer pageNo,
+                                               @AuthenticationPrincipal String userIdx) {
+        if(pageNo == null) pageNo = 1;
+        Page<RecReviewDTO> Lists = recommendService.getMyRecReview(pageNo,userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+                .statusCode(StatusCode.OK)
+                .message("목록 호출 완료")
+                .data(Lists)
+                .build());
     }
 
     @ExceptionHandler(ValidationException.class)
