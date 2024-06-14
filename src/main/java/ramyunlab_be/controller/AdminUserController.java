@@ -23,10 +23,12 @@ import ramyunlab_be.service.AdminUserService;
 import ramyunlab_be.service.EmailService;
 import ramyunlab_be.vo.StatusCode;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/admin", produces="application/json; charset=utf8")
-@Tag(name = "Admin", description = "관리자 관련 API")
+@Tag(name = "AdminUser", description = "관리자 관련 API")
 public class AdminUserController {
 
     final private AdminUserService adminUserService;
@@ -53,6 +55,17 @@ public class AdminUserController {
             .data(results)
             .message("사용자 목록 호출 완료")
             .build());
+    }
+
+    @GetMapping("/searchUser")
+    public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
+                                             ,@AuthenticationPrincipal String userIdx) {
+        List<UserEntity> results = adminUserService.searchUser(keyword, userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+           .statusCode(StatusCode.OK)
+           .data(results)
+           .message("사용자 목록 호출 완료")
+           .build());
     }
 
     @Operation(summary = "사용자 삭제")
