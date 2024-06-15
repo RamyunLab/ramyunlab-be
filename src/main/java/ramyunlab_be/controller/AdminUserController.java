@@ -108,10 +108,11 @@ public class AdminUserController {
         adminUserService.changeIsReported(rvIdx);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
-           .message("리뷰 누적 횟수 초기화 성공!")
+           .message("리뷰 신고 누적 횟수 초기화 성공!")
            .build());
     }
 
+    // 신고된 리뷰 삭제 api 굳이 필요한지...??
     @Operation(summary = "신고된 리뷰 삭제")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "신고된 리뷰 삭제 성공"),
