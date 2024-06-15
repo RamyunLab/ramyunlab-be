@@ -243,7 +243,8 @@ public class ReviewService {
 
             log.warn("신고 횟수 {}", totalReport);
             if(totalReport > 4){
-            reviewRepository.changeIsReported(rvIdx);
+                reviewRepository.incrementRvReportCount(rvIdx);
+                reviewRepository.changeIsReported(rvIdx);
             }else{
                 reviewRepository.incrementRvReportCount(rvIdx);
             }

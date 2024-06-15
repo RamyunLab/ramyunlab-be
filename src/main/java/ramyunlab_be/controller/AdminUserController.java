@@ -98,6 +98,20 @@ public class AdminUserController {
             .build());
     }
 
+    @Operation(summary = "신고된 리뷰 누적횟수 초기화", description = "requestBody : rvIdx")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "리뷰 누적 횟수 초기화 성공"),
+        @ApiResponse(responseCode = "400", description = "리뷰 누적 횟수 초기화 실패")
+    })
+    @PatchMapping("/review/{rvIdx}")
+    public ResponseEntity<ResDTO> changeIsReported(@PathVariable Long rvIdx){
+        adminUserService.changeIsReported(rvIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+           .statusCode(StatusCode.OK)
+           .message("리뷰 누적 횟수 초기화 성공!")
+           .build());
+    }
+
     @Operation(summary = "신고된 리뷰 삭제")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "신고된 리뷰 삭제 성공"),
