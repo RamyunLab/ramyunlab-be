@@ -239,11 +239,12 @@ public class ReviewService {
         } else{
 
             Long totalReport = reviewRepository.findRvReportCountByRvIdx(rvIdx)
-                .orElseThrow(()->new IllegalStateException("널..."));
+                .orElseThrow(()->new IllegalStateException("SERVER ERROR"));
 
             log.warn("신고 횟수 {}", totalReport);
             if(totalReport > 4){
-            reviewRepository.changeIsReported(rvIdx);
+                reviewRepository.incrementRvReportCount(rvIdx);
+                reviewRepository.changeIsReported(rvIdx);
             }else{
                 reviewRepository.incrementRvReportCount(rvIdx);
             }

@@ -56,6 +56,17 @@ public class AdminUserService {
         return reviewRepository.findReportedReviewByReviewIdx(null, pageable);
     }
 
+    public void changeIsReported(final Long rvIdx) {
+        reviewRepository.checkReportedReviewByIdx(rvIdx)
+               .orElseThrow(()-> new RuntimeException("신고된 리뷰가 아닙니다."));
+
+        reviewRepository.resetReportedCount(rvIdx);
+        reviewRepository.resetIsReported(rvIdx);
+
+        return;
+
+    }
+
     public ReviewEntity deleteReportedReview(final Long rvIdx,
                                      final String userIdx) {
         userRepository.findByUserIdx(Long.valueOf(userIdx))

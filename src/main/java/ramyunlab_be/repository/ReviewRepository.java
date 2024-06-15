@@ -28,7 +28,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvRecommendCount >= 10 AND rv.rvDeletedAt IS NULL ORDER BY rv.rvRecommendCount DESC, rv.rvCreatedAt ASC")
     Optional<List<ReviewEntity>> findBestReviewByRamyunIdx (Long ramyunIdx, Pageable pageable);
 
-    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported IS NOT NULL ORDER BY rv.rvIsReported DESC")
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported = TRUE ORDER BY rv.rvIsReported DESC")
     Page<ReviewEntity> findReportedReviewByReviewIdx(Long reviewIdx, Pageable pageable);
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported IS NOT NULL AND rv.rvIdx = :rvIdx")
@@ -46,4 +46,14 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     @Transactional
     @Query(value = "UPDATE review SET rv_is_reported = 1 WHERE rv_idx = :rvIdx", nativeQuery = true)
     Integer changeIsReported(Long rvIdx);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE review SET rv_report_count = 0 WHERE rv_idx = :rvIdx", nativeQuery = true)
+    Integer resetReportedCount(Long rvIdx);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE review SET rv_is_reported = 0 WHERE rv_idx = :rvIdx", nativeQuery = true)
+    Integer resetIsReported(Long rvIdx);
 }
