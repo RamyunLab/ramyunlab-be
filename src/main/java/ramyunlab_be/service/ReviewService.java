@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +16,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ramyunlab_be.dto.ReportDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
+import ramyunlab_be.entity.ReportEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.RamyunRepository;
+import ramyunlab_be.repository.ReportRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagenation;
@@ -27,19 +32,23 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@Transactional
 public class ReviewService {
 
     final private ReviewRepository reviewRepository;
     final private RamyunRepository ramyunRepository;
     final private UserRepository userRepository;
+    final private ReportRepository reportRepository;
 
     @Autowired
     public ReviewService(final ReviewRepository reviewRepository,
                          final RamyunRepository ramyunRepository,
-                         final UserRepository userRepository) {
+                         final UserRepository userRepository,
+                         final ReportRepository reportRepository) {
         this.reviewRepository = reviewRepository;
         this.ramyunRepository = ramyunRepository;
         this.userRepository = userRepository;
+        this.reportRepository = reportRepository;
     }
 
     @Autowired
@@ -58,6 +67,7 @@ public class ReviewService {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
         Integer rate = Integer.valueOf(reviewDTO.getRate());
+
         if (file!= null){
         UUID uuid = UUID.randomUUID();
         String fileName = uuid + "_" + file.getOriginalFilename();
@@ -74,6 +84,9 @@ public class ReviewService {
             .reviewPhotoUrl(fileUrl)
             .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
+            .rvRecommendCount(0)
+            .rvReportCount(0)
+            .rvIsReported(false)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -83,6 +96,9 @@ public class ReviewService {
             .reviewContent(reviewDTO.getReviewContent())
             .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
+                .rvReportCount(0)
+                .rvRecommendCount(0)
+                .rvIsReported(false)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -203,4 +219,45 @@ public class ReviewService {
                 .rvRecommendCount(reviewEntity.getRvRecommendCount())
                 .build();
     }
+
+    public ReportEntity complaint(final Long rvIdx,
+                                   final String userIdx,
+                                   final ReportDTO reportDTO){
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        ReviewEntity review = reviewRepository.findById(rvIdx)
+            .orElseThrow(()-> new RuntimeException("리뷰가 존재하지 않습니다."));
+
+        boolean blockSelfReport = review.getUser().getUserIdx().equals(user.getUserIdx());
+        ReportEntity duplicateReport = reportRepository.findReportedReviewByRvIdx(rvIdx, user.getUserIdx());
+
+        if(blockSelfReport){
+            throw new RuntimeException("자신의 리뷰는 신고할 수 없습니다.");
+        } else if (duplicateReport != null) {
+            throw new RuntimeException("이미 신고한 리뷰입니다.");
+        } else{
+
+            Long totalReport = reviewRepository.findRvReportCountByRvIdx(rvIdx)
+                .orElseThrow(()->new IllegalStateException("널..."));
+
+            log.warn("신고 횟수 {}", totalReport);
+            if(totalReport > 4){
+            reviewRepository.changeIsReported(rvIdx);
+            }else{
+                reviewRepository.incrementRvReportCount(rvIdx);
+            }
+
+        ReportEntity report = ReportEntity.builder()
+            .reportReason(reportDTO.getReportReason())
+            .reportCreatedAt(reportDTO.getReportCreatedAt())
+            .user(user)
+            .review(review)
+            .build();
+
+        return reportRepository.save(report);
+        }
+
+    }
+
 }
