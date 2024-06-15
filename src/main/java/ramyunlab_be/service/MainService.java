@@ -1,7 +1,5 @@
 package ramyunlab_be.service;
 
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -10,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
-import ramyunlab_be.entity.FavoriteEntity;
 import ramyunlab_be.repository.FavoriteRepository;
 import ramyunlab_be.repository.MainRepository;
 import ramyunlab_be.vo.Pagenation;
@@ -30,8 +27,7 @@ public class MainService {
 
     // 라면 데이터 조회
     Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter, userIdx);
-
-    Boolean isLike = false;
+//    Boolean isLike = false;
 //    for(RamyunDTO ramyun : result.getContent()){
 //      log.info("RAMYUN IDX {}",ramyun.getRamyunIdx());
 //      Optional<FavoriteEntity> fav = favoriteRepository.findLikedRamyun(userIdx, ramyun.getRamyunIdx());

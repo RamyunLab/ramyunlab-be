@@ -2,6 +2,7 @@ package ramyunlab_be.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +34,7 @@ public class GameController {
       @ApiResponse(responseCode = "500", description = "라면 목록 조회 실패")
   })
   @GetMapping("/worldCup/{round}")
-  public ResponseEntity<ResDTO> getRandomWorldCupList (@Parameter(description = "라운드 수(16/32/64 중에서 전송)")
+  public ResponseEntity<ResDTO<Object>> getRandomWorldCupList (@Parameter(description = "라운드 수(16/32/64 중에서 전송)")
                                                            @PathVariable int round){
     List<GameDTO> result = gameService.getRandomWorldCupList(round);
     return ResponseEntity.ok().body(ResDTO.builder()
@@ -59,8 +60,24 @@ public class GameController {
 
   }
 
+  @Operation(summary = "게임 결과 조회", description = "결과 라면 조회하기")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "라면 조회 성공"),
+      @ApiResponse(responseCode = "500", description = "라면 조회 실패")
+  })
+  @GetMapping("/result/{ramyunIdx}")
+  public ResponseEntity<ResDTO<Object>> getResult (@Parameter(name = "라면 인덱스", in = ParameterIn.PATH)
+                                                     @PathVariable Long ramyunIdx){
+    GameDTO result = gameService.getResult(ramyunIdx);
+    return ResponseEntity.ok().body(ResDTO.builder()
+                                          .statusCode(StatusCode.OK)
+                                          .message("라면 조회 성공")
+                                          .data(result)
+                                          .build());
+  }
+
   @ExceptionHandler(ValidationException.class)
-  public ResponseEntity<ResDTO<?>> handleValidationException (ValidationException e) {
+  public ResponseEntity<ResDTO<Object>> handleValidationException (ValidationException e) {
     return ResponseEntity
         .badRequest()
         .body(ResDTO.builder()
