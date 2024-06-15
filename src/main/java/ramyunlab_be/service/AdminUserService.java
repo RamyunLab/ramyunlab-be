@@ -39,6 +39,12 @@ public class AdminUserService {
         return userRepository.searchByUserId(keyword);
     }
 
+//    public List<UserEntity> searchUser(final String keyword) {
+//
+//
+//        return userRepository.searchByUserId(keyword);
+//    }
+
     public UserEntity deleteUser(final Long userIdx,
                                  final String admin){
         userRepository.findByUserIdx(Long.valueOf(admin))

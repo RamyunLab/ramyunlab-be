@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>Ramyunlab - 관리자 페이지</title>
+</head>
+<body>
+  <h1>Ramyun lab - 회원 관리</h1>
+  <h2>회원 목록</h2>
+  <form action="/admin/searchUser" method="get" id="form_searchUser">
+  <input type="text" placeholder="회원 검색" name="keyword">
+  <button type="button" onclick="searchUser()">검색</button>
+  </form>
+  <table id="userTable">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 사용자 데이터가 여기에 동적으로 추가됩니다 -->
+    </tbody>
+  </table>
+  <div id="pagination">
+    <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+              const token = localStorage.getItem('jwtToken');
+
+              if (!token) {
+                  console.error('토큰이 없습니다.');
+                  return;
+              }
+
+              axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+              fetchUsers(0);
+              console.log(token);
+
+              async function fetchUsers(page) {
+                  try {
+                      const res = await axios.get(`/admin/users?page=${page}`);
+                      console.log(res.data);
+                      const users = res.data.data.content;
+                      const userTableBody = document.querySelector('#userTable tbody');
+                      userTableBody.innerHTML = '';
+
+                      users.forEach(user => {
+                          const row = `
+                              <tr>
+                                  <td>${user.userIdx}</td>
+                                  <td>${user.userId}</td>
+                              </tr>
+                          `;
+                          userTableBody.insertAdjacentHTML('beforeend', row);
+                      });
+
+                      updatePagination(response.data.data);
+                  } catch (error) {
+                      console.error('사용자 목록 조회 실패', error);
+                  }
+              }
+
+              function updatePagination(pageData) {
+                  const pagination = document.querySelector('#pagination');
+                  pagination.innerHTML = '';
+
+                  for (let i = 0; i < pageData.totalPages; i++) {
+                      const pageButton = `<button onclick="fetchUsers(${i})">${i + 1}</button>`;
+                      pagination.insertAdjacentHTML('beforeend', pageButton);
+                  }
+              }
+
+              window.fetchUsers = fetchUsers; // 페이지네이션 버튼에서 fetchUsers 함수를 사용할 수 있도록 설정
+          });
+
+     async function searchUser(){
+     try{
+       const form = document.getElementById("form_searchUser");
+       const data = {
+       keyword : form.keyword.value
+       }
+       console.log(data);
+       axios.get("/admin/searchUser", data).then((res) => console.log(res.data));
+     }catch(error) {
+     console.error('사용자 검색 실패', error);
+     }
+    }
+  </script>
+</body>
+</html>

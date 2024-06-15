@@ -67,6 +67,16 @@ public class AdminUserController {
            .message("사용자 목록 호출 완료")
            .build());
     }
+//    @GetMapping("/searchUser")
+//    public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
+//                                           ) {
+//        List<UserEntity> results = adminUserService.searchUser(keyword);
+//        return ResponseEntity.ok().body(ResDTO.builder()
+//           .statusCode(StatusCode.OK)
+//           .data(results)
+//           .message("사용자 목록 호출 완료")
+//           .build());
+//    }
 
     @Operation(summary = "사용자 삭제")
     @ApiResponses(value = {
