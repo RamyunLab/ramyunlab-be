@@ -18,4 +18,10 @@ public class AdminPageController {
         return "adminUser";
     }
 
+    @GetMapping("/goodsPage")
+    public String adminGoodsPage(Model model,
+                                @AuthenticationPrincipal String userIdx) {
+        return "adminGoods";
+    }
+
 }

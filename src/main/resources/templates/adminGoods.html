@@ -6,12 +6,17 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <title>Ramyunlab - 관리자 페이지(회원)</title>
+  <title>Ramyunlab - 관리자 페이지(상품)</title>
   <style>
+    #table_container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
     table, th, td {
       border: 1px solid black;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin: 20px;
     }
     th, td {
       padding: 10px;
@@ -21,23 +26,29 @@
       position: absolute;
       right: 30px;
     }
+    #pagination {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
-  <a th:href="@{/goodsPage}" style="text-align : end">상품 관리</a>
-  <h1 style="text-align : center">Ramyun lab - 회원 관리</h1>
-  <h2 style="text-align : center">회원 목록</h2>
-  <form action="/admin/searchUser" method="get" id="form_searchUser">
-  <input type="text" placeholder="회원 검색" name="keyword" style="text-align : center">
-  <button type="button" onclick="searchUser()" style="text-align : center">검색</button><br/>
-  </form>
-  <table id="userTable">
+  <a th:href="@{/userPage}" style="text-align : end">회원 관리</a>
+  <h1 style="text-align : center">Ramyun lab - 상품 관리</h1>
+  <h2 style="text-align : center">상품 목록</h2>
+  <div id="table_container">
+  <table id="goodsTable">
     <thead>
     <tr>
       <th>ID</th>
-      <th>Name</th>
-      <th>Nickname</th>
-      <th>isAdmin</th>
+      <th>상품명</th>
+      <th>이미지</th>
+      <th>칼로리</th>
+      <th>면종류</th>
+      <th>isCup</th>
+      <th>요리방법</th>
+      <th>나트륨</th>
     </tr>
     </thead>
     <tbody>
@@ -46,6 +57,7 @@
   </table>
   <div id="pagination">
     <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+  </div>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -58,29 +70,32 @@
 
               axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-              fetchUsers(0);
+              fetchGoods(0);
               console.log(token);
 
-              async function fetchUsers(page) {
+              async function fetchGoods(page) {
                   try {
-                      const res = await axios.get(`/admin/users?page=${page}`);
+                      const res = await axios.get(`/admin/goods?page=${page}`);
                       console.log(res.data);
-                      const users = res.data.data.content;
-                      const userTableBody = document.querySelector('#userTable tbody');
-                      userTableBody.innerHTML = '';
+                      const goods = res.data.data.content;
+                      const goodsTableBody = document.querySelector('#goodsTable tbody');
+                      goodsTableBody.innerHTML = '';
 
-                      users.forEach(user => {
+                      goods.forEach(goods => {
                           const row = `
                               <tr>
-                                  <td>${user.userIdx}</td>
-                                  <td>${user.userId}</td>
-                                  <td>${user.nickname}</td>
-                                  <td>${user.isAdmin}</td>
+                                  <td>${goods.ramyunIdx}</td>
+                                  <td>${goods.ramyunName}</td>
+                                  <td>${goods.ramyunImg}</td>
+                                  <td>${goods.ramyunKcal}</td>
+                                  <td>${goods.noodle}</td>
+                                  <td>${goods.isCup}</td>
+                                  <td>${goods.cooking}</td>
+                                  <td>${goods.ramyunNa}</td>
                               </tr>
                           `;
-                          userTableBody.insertAdjacentHTML('beforeend', row);
+                          goodsTableBody.insertAdjacentHTML('beforeend', row);
                       });
-
                       updatePagination(res.data.data);
                   } catch (error) {
                       console.error('사용자 목록 조회 실패', error);
@@ -92,26 +107,14 @@
                   pagination.innerHTML = '';
 
                   for (let i = 0; i < pageData.totalPages; i++) {
-                      const pageButton = `<button onclick="fetchUsers(${i})">${i + 1}</button>`;
+                      const pageButton = `<button onclick="fetchGoods(${i})">${i + 1}</button>`;
                       pagination.insertAdjacentHTML('beforeend', pageButton);
                   }
               }
 
-              window.fetchUsers = fetchUsers; // 페이지네이션 버튼에서 fetchUsers 함수를 사용할 수 있도록 설정
+              window.fetchGoods = fetchGoods; // 페이지네이션 버튼에서 fetchGoods 함수를 사용할 수 있도록 설정
           });
 
-     async function searchUser(){
-     try{
-       const form = document.getElementById("form_searchUser");
-       const data = {
-       keyword : form.keyword.value
-       }
-       console.log(data);
-       axios.get("/admin/searchUser", data).then((res) => console.log(res.data));
-     }catch(error) {
-     console.error('사용자 검색 실패', error);
-     }
-    }
   </script>
 </body>
 </html>
