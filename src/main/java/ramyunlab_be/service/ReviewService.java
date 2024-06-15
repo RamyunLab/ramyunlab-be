@@ -86,6 +86,7 @@ public class ReviewService {
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
             .rvRecommendCount(0)
             .rvReportCount(0)
+            .rvIsReported(false)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -97,6 +98,7 @@ public class ReviewService {
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
                 .rvReportCount(0)
                 .rvRecommendCount(0)
+                .rvIsReported(false)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -239,6 +241,7 @@ public class ReviewService {
             Long totalReport = reviewRepository.findRvReportCountByRvIdx(rvIdx)
                 .orElseThrow(()->new IllegalStateException("널..."));
 
+            log.warn("신고 횟수 {}", totalReport);
             if(totalReport > 4){
             reviewRepository.changeIsReported(rvIdx);
             }else{
