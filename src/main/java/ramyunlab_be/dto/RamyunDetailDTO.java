@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "라면 페이지 정보", description = "라면 페이지 정보 (라면, 리뷰)")
-public class RamyunInfo {
+public class RamyunDetailDTO {
   @Schema(name = "라면 정보", description = "라면 정보 DTO")
   private RamyunDTO ramyun;
   @Schema(name = "리뷰 목록", description = "특정 라면에 대한 리뷰 목록")

@@ -12,7 +12,7 @@ import ramyunlab_be.entity.FavoriteEntity;
 @Repository
 public interface FavoriteRepository extends JpaRepository<FavoriteEntity,Long> {
     // @Query("SELECT f FROM FavoriteEntity f Where f.userIdx = :userIdx");
-    Page<FavoriteEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
+    Page<FavoriteEntity> findByUser_UserIdx (Pageable pageable, Long userIdx);
 
     // 찜 조회
     @Query("SELECT fv FROM FavoriteEntity fv WHERE fv.user.userIdx = :userIdx AND fv.ramyun.ramyunIdx = :ramyunIdx")

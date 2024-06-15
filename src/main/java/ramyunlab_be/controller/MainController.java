@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ramyunlab_be.dto.RamyunDTO;
-import ramyunlab_be.dto.RamyunInfo;
+import ramyunlab_be.dto.RamyunDetailDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.FavoriteService;
+import ramyunlab_be.service.GameService;
 import ramyunlab_be.service.MainService;
 import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
@@ -48,6 +49,9 @@ public class MainController {
 
   @Autowired
   private TokenProvider tokenProvider;
+
+  @Autowired
+  private GameService gameService;
 
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
@@ -117,7 +121,6 @@ public class MainController {
   public ResponseEntity<ResDTO<Object>> getRamyunInfo (@Parameter(name="ramyunIdx", description = "라면 인덱스", example = "1")
                                                          @PathVariable Long ramyunIdx,
                                                        @AuthenticationPrincipal String userIdx){
-
    // 로그인 유저 판별 후 찜 추가 여부 확인
     boolean isLiked = false;
     if(userIdx != null && !userIdx.equals("anonymousUser")) {
@@ -136,14 +139,14 @@ public class MainController {
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("데이터 조회 성공")
-                                          .data(RamyunInfo.builder().ramyun(ramyun)
-                                                          .bestReview(bestReview).review(reviews)
-                                                          .isLiked(isLiked).build())
+                                          .data(RamyunDetailDTO.builder().ramyun(ramyun)
+                                                               .bestReview(bestReview).review(reviews)
+                                                               .isLiked(isLiked).build())
                                           .build());
   }
 
   @Operation(summary = "라면 리뷰 조회",
-             description = "특정 라면에 대한 리뷰 정보를 조회함 (페이지네이션)")
+             description = "특정 라면에 대한 리뷰 정보를 조회함 (리뷰 페이지 버튼 클릭 시 해당 API로 연결 필요)")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
   })
@@ -159,11 +162,11 @@ public class MainController {
 
     return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK)
                                           .message("리뷰 조회 성공")
-                                          .data(RamyunInfo.builder().review(result).build()).build());
+                                          .data(RamyunDetailDTO.builder().review(result).build()).build());
   }
 
   @ExceptionHandler(ValidationException.class)
-  public ResponseEntity<ResDTO> handleValidationException (ValidationException e) {
+  public ResponseEntity<ResDTO<Object>> handleValidationException (ValidationException e) {
     return ResponseEntity
         .badRequest()
         .body(ResDTO.builder()
