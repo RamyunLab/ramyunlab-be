@@ -111,20 +111,15 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
                    .groupBy(ramyunEntity.ramyunIdx)
                    .orderBy(orderSpecifier);
 
+    // 총 데이터 개수
+    long total = query.fetch().size();
+    log.info("총 개수 {}", total);
+
     // 페이지네이션 적용
     List<RamyunDTO> results = query
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
-
-    // 총 데이터 개수
-    long total = jpaQueryFactory
-        .select(ramyunEntity.ramyunIdx.count())
-        .from(ramyunEntity)
-        .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-        .groupBy(ramyunEntity.ramyunIdx)
-        .fetch().size();
-    log.info("{조회된 총 쿼리 데이터 수 {}}", total);
 
     return new PageImpl<>(results, pageable, total);
   }
