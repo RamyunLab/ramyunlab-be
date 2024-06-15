@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@Transactional
 public class ReviewService {
 
     final private ReviewRepository reviewRepository;
@@ -64,6 +67,7 @@ public class ReviewService {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
         Integer rate = Integer.valueOf(reviewDTO.getRate());
+
         if (file!= null){
         UUID uuid = UUID.randomUUID();
         String fileName = uuid + "_" + file.getOriginalFilename();
@@ -80,6 +84,8 @@ public class ReviewService {
             .reviewPhotoUrl(fileUrl)
             .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
+            .rvRecommendCount(0)
+            .rvReportCount(0)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -89,6 +95,8 @@ public class ReviewService {
             .reviewContent(reviewDTO.getReviewContent())
             .rate(rate)
             .rvCreatedAt(reviewDTO.getRvCreatedAt())
+                .rvReportCount(0)
+                .rvRecommendCount(0)
             .ramyun(ramyun)
             .user(user)
             .build();
@@ -227,6 +235,15 @@ public class ReviewService {
         } else if (duplicateReport != null) {
             throw new RuntimeException("이미 신고한 리뷰입니다.");
         } else{
+
+            Long totalReport = reviewRepository.findRvReportCountByRvIdx(rvIdx)
+                .orElseThrow(()->new IllegalStateException("널..."));
+
+            if(totalReport > 4){
+            reviewRepository.changeIsReported(rvIdx);
+            }else{
+                reviewRepository.incrementRvReportCount(rvIdx);
+            }
 
         ReportEntity report = ReportEntity.builder()
             .reportReason(reportDTO.getReportReason())

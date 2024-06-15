@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ramyunlab_be.dto.ReportDTO;
-import ramyunlab_be.dto.ResDTO;
-import ramyunlab_be.dto.ReviewDTO;
-import ramyunlab_be.dto.ReviewUploadPhotoDTO;
+import ramyunlab_be.dto.*;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReportEntity;
 import ramyunlab_be.entity.ReviewEntity;
@@ -33,6 +30,9 @@ import ramyunlab_be.vo.StatusCode;
 public class ReviewController {
 
     final private ReviewService reviewService;
+    private Integer rvRecommendCount = 0;
+    private Integer rvReportCount = 0;
+
 
     @Autowired
     public ReviewController(final ReviewService reviewService){
@@ -49,7 +49,8 @@ public class ReviewController {
                                             @Valid @RequestPart ReviewDTO reviewDTO,
                                             @PathVariable Long ramyunIdx,
                                             @AuthenticationPrincipal String userIdx) throws Exception{
-        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx, reviewDTO, file);
+
+        ReviewEntity createdReview = reviewService.create( ramyunIdx, userIdx,  reviewDTO, file);
 
 
         ReviewDTO responseReviewDTO = ReviewDTO.builder()
@@ -58,6 +59,8 @@ public class ReviewController {
             .rvCreatedAt(createdReview.getRvCreatedAt())
             .rate(createdReview.getRate().toString())
             .rvIdx(createdReview.getRvIdx())
+            .rvRecommendCount(createdReview.getRvRecommendCount())
+            .rvReportCount(createdReview.getRvReportCount())
             .userIdx(createdReview.getUser().getUserIdx())
             .ramyunIdx(createdReview.getRamyun().getRamyunIdx())
             .build();

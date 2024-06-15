@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -50,13 +51,15 @@ public class ReviewEntity {
     @Column(name = "rv_deleted_at")
     private Timestamp rvDeletedAt;
 
-    @Column(name = "rv_recommend_count", columnDefinition = "int default 0")
+    @Column(name = "rv_recommend_count", nullable = false, columnDefinition = "int default 0")
+    @ColumnDefault(value = "0")
     private Integer rvRecommendCount;
 
     @Column(name = "rv_is_reported")
     private Boolean rvIsReported;
 
-    @Column(name = "rv_report_count")
+    @Column(name = "rv_report_count", nullable = false, columnDefinition = "int default 0")
+    @ColumnDefault(value = "0")
     private Integer rvReportCount;
 
     @ManyToOne

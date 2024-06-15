@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
@@ -43,6 +44,9 @@ public class ReviewDTO {
 
     @Schema(description = "공감 수", example = "1")
     private Integer rvRecommendCount;
+//
+    @Schema(description = "신고 수", example = "1")
+    private Integer rvReportCount;
 
     @Schema(description = "회원 인덱스", example = "1")
     private Long userIdx;
