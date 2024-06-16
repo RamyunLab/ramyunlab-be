@@ -8,10 +8,33 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <title>Ramyunlab - 관리자 페이지(회원)</title>
   <style>
+    #table_container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #form_searchUser {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+     }
+     input {
+      width: 400px;
+      height: 30px;
+      margin: 10px;
+      text-align: center;
+     }
+     #searchBTN {
+      width: 100px;
+      height: 30px;
+      margin: 10px;
+      text-align: center;
+
+     }
     table, th, td {
       border: 1px solid black;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin: 20px;
     }
     th, td {
       padding: 10px;
@@ -21,23 +44,30 @@
       position: absolute;
       right: 30px;
     }
+    #pagination {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
   <a th:href="@{/goodsPage}" style="text-align : end">상품 관리</a>
   <h1 style="text-align : center">Ramyun lab - 회원 관리</h1>
   <h2 style="text-align : center">회원 목록</h2>
+  <div id="table_container">
   <form action="/admin/searchUser" method="get" id="form_searchUser">
-  <input type="text" placeholder="회원 검색" name="keyword" style="text-align : center">
-  <button type="button" onclick="searchUser()" style="text-align : center">검색</button><br/>
+  <input type="text" placeholder="회원 검색" name="keyword">
+  <button type="button" onclick="searchUser()" id = "searchBTN">검색</button><br/>
   </form>
   <table id="userTable">
     <thead>
     <tr>
+      <th></th>
       <th>ID</th>
-      <th>Name</th>
       <th>Nickname</th>
-      <th>isAdmin</th>
+      <th>Review</th>
+      <th>삭제</th>
     </tr>
     </thead>
     <tbody>
@@ -46,6 +76,7 @@
   </table>
   <div id="pagination">
     <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+  </div>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -65,22 +96,7 @@
                   try {
                       const res = await axios.get(`/admin/users?page=${page}`);
                       console.log(res.data);
-                      const users = res.data.data.content;
-                      const userTableBody = document.querySelector('#userTable tbody');
-                      userTableBody.innerHTML = '';
-
-                      users.forEach(user => {
-                          const row = `
-                              <tr>
-                                  <td>${user.userIdx}</td>
-                                  <td>${user.userId}</td>
-                                  <td>${user.nickname}</td>
-                                  <td>${user.isAdmin}</td>
-                              </tr>
-                          `;
-                          userTableBody.insertAdjacentHTML('beforeend', row);
-                      });
-
+                      updateTable(res.data.data.content);
                       updatePagination(res.data.data);
                   } catch (error) {
                       console.error('사용자 목록 조회 실패', error);
@@ -98,6 +114,7 @@
               }
 
               window.fetchUsers = fetchUsers; // 페이지네이션 버튼에서 fetchUsers 함수를 사용할 수 있도록 설정
+              document.getElementById("searchBTN").addEventListener("click", searchUser);
           });
 
      async function searchUser(){
@@ -107,11 +124,35 @@
        keyword : form.keyword.value
        }
        console.log(data);
-       axios.get("/admin/searchUser", data).then((res) => console.log(res.data));
+        const response = await axios.get("/admin/searchUser", {
+                params: data
+            });
+        console.log(response.data);
+        updateTable(response.data.data);
      }catch(error) {
      console.error('사용자 검색 실패', error);
      }
     }
+
+    function updateTable(users) {
+    const tableBody = document.querySelector("#userTable tbody");
+    // 기존 테이블 내용 지우기
+    tableBody.innerHTML = "";
+
+    // 새로운 사용자 데이터 추가
+    users.forEach(user => {
+            const row = `
+                <tr>
+                    <td>${user.userIdx}</td>
+                    <td>${user.userId}</td>
+                    <td>${user.nickname}</td>
+                    <td>${user.reviews}</td>
+                    <td><button onclick="deleteUser(${user.userIdx})">삭제</button></td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+}
   </script>
 </body>
 </html>

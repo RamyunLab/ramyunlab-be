@@ -64,7 +64,7 @@ public class AdminUserController {
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .data(results)
-           .message("사용자 목록 호출 완료")
+           .message("검색한 사용자 목록 호출 완료")
            .build());
     }
 //    @GetMapping("/searchUser")
