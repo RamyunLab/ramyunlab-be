@@ -43,6 +43,11 @@ public class GameService {
     return convertToDTO(result);
   }
 
+  public Long getRandomRamyunIdx(){
+    List<RamyunEntity> result =  gameRepository.findRandomListByRound(1);
+    return result.get(0).getRamyunIdx();
+  }
+
   public GameDTO convertToDTO(RamyunEntity entity){
     return GameDTO.builder()
                          .r_idx(entity.getRamyunIdx())

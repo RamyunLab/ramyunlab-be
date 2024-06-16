@@ -165,6 +165,12 @@ public class MainController {
                                           .data(RamyunDetailDTO.builder().review(result).build()).build());
   }
 
+    @GetMapping("/random")
+    public ResponseEntity<ResDTO<Object>> getRandomRamyunIdx(@AuthenticationPrincipal String userIdx){
+      Long result = gameService.getRandomRamyunIdx();
+      return getRamyunInfo(result, userIdx);
+    }
+
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ResDTO<Object>> handleValidationException (ValidationException e) {
     return ResponseEntity
