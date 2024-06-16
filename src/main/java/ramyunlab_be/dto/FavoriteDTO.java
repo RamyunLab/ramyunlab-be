@@ -21,6 +21,8 @@ public class FavoriteDTO{
     private String ramyunName;
     private String ramyunImg;
     private Timestamp favCreatedAt;
+    private Double avgRate;
+    private Integer reviewCount;
 
     public FavoriteDTO(Long userIdx, Long ramyunIdx){
         this.userIdx = userIdx;

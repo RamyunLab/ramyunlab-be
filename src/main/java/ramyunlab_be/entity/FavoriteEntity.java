@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.List;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Getter
@@ -28,6 +29,12 @@ public class FavoriteEntity {
     @Column(name = "fav_created_at", nullable = false)
     @CreationTimestamp
     private Timestamp favCreatedAt;
+
+    @Formula("(SELECT COALESCE(AVG(rv.rv_rate), 0) FROM review rv WHERE rv.r_idx = r_idx)")
+    private Double avgRate;
+
+    @Formula("(SELECT COALESCE(COUNT(rv.rv_rate), 0) FROM review rv WHERE rv.r_idx = r_idx)")
+    private Integer reviewCount;
 
     @ManyToOne
     @JoinColumn(name = "u_idx", nullable = false)

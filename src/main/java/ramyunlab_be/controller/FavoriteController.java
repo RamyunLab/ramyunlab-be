@@ -41,7 +41,7 @@ public class FavoriteController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @GetMapping("/user/favorite")
-    public ResponseEntity<ResDTO> getFavoriteList(@Parameter(name = "page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
+    public ResponseEntity<ResDTO<Object>> getFavoriteList(@Parameter(name = "page", description = "현재 페이지 번호", in = ParameterIn.QUERY, example = "1")
                                                     @RequestParam(name = "page", required = false) Integer pageNo,
                                                   @AuthenticationPrincipal String userIdx) {
         if(pageNo == null) pageNo = 1;
@@ -104,7 +104,7 @@ public class FavoriteController {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
+    public ResponseEntity<ResDTO<Object>> handleValidationException(ValidationException e) {
         return ResponseEntity
                 .badRequest()
                 .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());

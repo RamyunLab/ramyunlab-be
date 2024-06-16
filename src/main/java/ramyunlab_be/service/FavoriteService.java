@@ -18,6 +18,7 @@ import ramyunlab_be.vo.Pagenation;
 @Slf4j
 @Service
 public class FavoriteService {
+
     @Autowired
     private FavoriteRepository favoriteRepository;
 
@@ -38,6 +39,8 @@ public class FavoriteService {
                 .ramyunImg(favoriteEntity.getRamyun().getRamyunImg())
                 .ramyunName(favoriteEntity.getRamyun().getRamyunName())
                 .favCreatedAt(favoriteEntity.getFavCreatedAt())
+                .avgRate(favoriteEntity.getAvgRate())
+                .reviewCount(favoriteEntity.getReviewCount())
                 .build();
     }
 
