@@ -24,4 +24,11 @@ public class AdminPageController {
         return "adminGoods";
     }
 
+    @GetMapping("/brandPage")
+    public String adminbrandPage(Model model,
+                                @AuthenticationPrincipal String userIdx) {
+        return "adminBrand";
+    }
+
+
 }

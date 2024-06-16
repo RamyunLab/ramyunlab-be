@@ -22,9 +22,10 @@
       padding: 10px;
       text-align: center;
     }
-    .toUser {
+    .toUser, .toBrand {
       position: absolute;
       right: 30px;
+      margin : 10px;
     }
     #pagination {
       display: flex;
@@ -106,16 +107,50 @@
     font-size: 16px;
     align-self: center;
 }
-button:hover {
-    background-color: #0056b3;
+.updateBTN, .deleteBTN{
+    border-radius: 5px;
+    padding: 5px 10px;
+    border : 1px solid #888;
+    }
+.updateBTN:hover {
+    background-color: #acc4e3;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
 }
+    .deleteBTN:hover {
+    background-color: #fc6d62;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+
+    }
+    .addBTN {
+      position: absolute;
+      right: 30px;
+      top: 130px;
+    border-radius: 5px;
+    padding: 10px 20px;
+     border : 1px solid #888;
+    }
+    .addBTN:hover {
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    padding: 10px 20px;
+    background-color: #f5ab16;
+    }
+
   </style>
 </head>
 <body>
-  <a th:href="@{/userPage}" style="text-align : end" class="toUser">회원 관리</a>
+  <a th:href="@{/userPage}" style="text-align : end" class="toUser">회원 관리</a></br>
+  <a th:href="@{/brandPage}" style="text-align : end" class="toBrand">브랜드 관리</a>
   <h1 style="text-align : center">Ramyun lab - 상품 관리</h1>
   <h2 style="text-align : center">상품 목록</h2>
+  <button style="text-align : end" class="addBTN" onclick="openAddModal()">상품 추가</button>
   <div id="table_container">
   <table id="goodsTable">
     <thead>
@@ -128,6 +163,7 @@ button:hover {
       <th>isCup</th>
       <th>요리방법</th>
       <th>나트륨</th>
+      <th>브랜드</th>
       <th>수정</th>
       <th>삭제</th>
     </tr>
@@ -140,7 +176,7 @@ button:hover {
     <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
   </div>
   </div>
-
+<!--상품 수정 모달-->
   <div id="editModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
@@ -179,6 +215,44 @@ button:hover {
       </form>
     </div>
   </div>
+<!--  상품 추가 모달-->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span id="closeSpan" class="close">&times;</span>
+      <h2 style="text-align : center">상품 추가</h2>
+      <form id="addForm" style="text-align : center">
+        <div class="form-group">
+          <label for="ramyunName">이름</label>
+          <input type="text" id="newRamyunName" name="ramyunName">
+        </div>
+        <div class="form-group">
+          <label for="ramyunUpdateImg">이미지 URL</label>
+          <input type="file" id="newRamyunUpdateImg" name="ramyunUpdateImg">
+        </div>
+        <div class="form-group">
+          <label for="ramyunKcal">칼로리(kcal)</label>
+          <input type="number" id="newRamyunKcal" name="ramyunKcal">
+        </div>
+        <div class="form-group">
+          <label for="noodle">면</label>
+          <input type="text" id="newNoodle" name="noodle" placeholder="true(유탕면)/false(건면)">
+        </div>
+        <div class="form-group">
+          <label for="isCup">컵라면 여부</label>
+          <input type="text" id="newIsCup" name="isCup" placeholder="true(컵라면)/false(봉지라면)">
+        </div>
+        <div class="form-group">
+          <label for="cooking">요리법</label>
+          <input type="text" id="newCooking" name="cooking" placeholder="true(국물)/false(비빔 OR 볶음)">
+        </div>
+        <div class="form-group">
+          <label for="ramyunNa">나트륨</label>
+          <input type="number" id="newRamyunNa" name="ramyunNa">
+        </div>
+        <button type="button" onclick="addGoods()" class="saveBTN">추가</button>
+      </form>
+    </div>
+  </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
               const token = localStorage.getItem('jwtToken');
@@ -206,14 +280,15 @@ button:hover {
                               <tr>
                                   <td>${goods.ramyunIdx}</td>
                                   <td>${goods.ramyunName}</td>
-                                  <td><a href="${goods.ramyunImg}" target="_blank">${goods.ramyunImg}</a></td>
+                                  <td><a href="${goods.ramyunImg}" target="_blank">${extractFilename(goods.ramyunImg)}</a></td>
                                   <td>${goods.ramyunKcal}</td>
-                                  <td>${goods.noodle}</td>
-                                  <td>${goods.isCup}</td>
-                                  <td>${goods.cooking}</td>
+                                  <td>${goods.noodle ? '유탕면' : '건면'}</td>
+                                  <td>${goods.isCup ? '컵라면' : '봉지라면'}</td>
+                                  <td>${goods.cooking ? '국물' : '비빔/볶음'}</td>
                                   <td>${goods.ramyunNa}</td>
-                                  <td><button onclick="updateGoods(${goods.ramyunIdx})">수정</button></td>
-                                  <td><button onclick="confirmDeleteGoods(${goods.ramyunIdx})">삭제</button></td>
+                                  <td>${goods.brandName}</td>
+                                  <td><button onclick="updateGoods(${goods.ramyunIdx})" class="updateBTN">수정</button></td>
+                                  <td><button onclick="confirmDeleteGoods(${goods.ramyunIdx})" class="deleteBTN">삭제</button></td>
                               </tr>
                           `;
                           goodsTableBody.insertAdjacentHTML('beforeend', row);
@@ -222,6 +297,12 @@ button:hover {
                   } catch (error) {
                       console.error('사용자 목록 조회 실패', error);
                   }
+              }
+              function extractFilename(url) {
+                // URL에서 파일 이름 추출
+                let startIndex = url.lastIndexOf('/') + 1; // 마지막 '/' 다음 위치부터
+                let filename = url.substring(startIndex); // 파일 이름 추출
+                return filename;
               }
 
               function updatePagination(pageData) {
@@ -238,17 +319,67 @@ button:hover {
           });
 
     // 모달 관련 스크립트
-        const modal = document.getElementById('editModal');
+        const editModal = document.getElementById('editModal');
+        const addModal = document.getElementById('addModal');
         const span = document.getElementsByClassName('close')[0];
+        const closeSpan = document.getElementsByClassName('close')[1];
 
         span.onclick = function() {
-            modal.style.display = 'none';
+            editModal.style.display = 'none';
+        }
+        closeSpan.onclick = function() {
+            addModal.style.display = 'none';
         }
 
         window.onclick = function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+            }else if(event.target === addModal){
+            addModal.style.display = 'none';
             }
+        }
+
+        // 상품 추가 모달 열기
+        function openAddModal() {
+          const modal = document.getElementById('addModal');
+          modal.style.display = 'block';
+        }
+
+        function closeModal() {
+          const modal = document.getElementById('addModal');
+          modal.style.display = 'none';
+        }
+
+        async function addGoods(){
+            const form = document.getElementById('addForm');
+            const data = {
+              ramyunName : document.getElementById('newRamyunName').value,
+              ramyunImg : document.getElementById('newRamyunUpdateImg').value,
+              ramyunKcal : document.getElementById('newRamyunKcal').value,
+              noodle : document.getElementById('newNoodle').value,
+              isCup : document.getElementById('newIsCup').value,
+              cooking : document.getElementById('newCooking').value,
+              ramyunNa : document.getElementById('newRamyunNa').value
+            }
+
+            try {
+                const response = await axios.post('/admin/addGoods', {
+                  ramyunName,
+                  ramyunImg,
+                  ramyunKcal,
+                  noodle,
+                  isCup,
+                  cooking,
+                  ramyunNa
+                });
+
+                console.log('상품 추가 성공:', response.data);
+                closeModal();
+
+                // 추가한 상품을 화면에 표시하거나 필요한 처리를 추가할 수 있습니다.
+              } catch (error) {
+                console.error('상품 추가 실패:', error);
+             }
         }
 
         // 상품 정보 수정 모달 열기
@@ -274,7 +405,7 @@ button:hover {
 
                     document.getElementById('editForm').dataset.ramyunIdx = ramyunIdx;
 
-                    modal.style.display = 'block';
+                    editModal.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('상품 정보 조회 실패', error);
@@ -313,7 +444,7 @@ button:hover {
             });
                     if (response.data.statusCode === 200) {
                         console.log('상품 수정 성공');
-                        modal.style.display = 'none';
+                        editModal.style.display = 'none';
                         fetchGoods(0); // 수정 후 상품 목록 갱신
                     } else {
                         console.error('상품 수정 실패', response.data.message);
