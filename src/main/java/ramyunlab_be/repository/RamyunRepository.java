@@ -13,5 +13,5 @@ public interface RamyunRepository extends JpaRepository<RamyunEntity, Long> {
     @Override
     List<RamyunEntity> findAll();
 
-//    Page<RamyunEntity> findByAddress(String address, Pageable pageable);
+
 }

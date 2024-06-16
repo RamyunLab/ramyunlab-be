@@ -43,25 +43,29 @@ public class AdminGoodsController {
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
         Page<RamyunEntity> results = AdminGoodsService.getGoodsList(pageable);
-//        List<RamyunEntity> responseResult = results.stream()
-//            .map(result -> RamyunEntity.builder()
-//                .ramyunIdx(result.getRamyunIdx())
-//                .ramyunName(result.getRamyunName())
-//                .ramyunImg(result.getRamyunImg())
-//                .ramyunKcal(result.getRamyunKcal())
-//                .noodle(result.getNoodle())
-//                .isCup(result.getIsCup())
-//                .cooking(result.getCooking())
-//                .gram(result.getGram())
-//                .ramyunNa(result.getRamyunNa())
-//                .build())
-//            .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .message("전체 상품 리스트 조회 성공")
             .data(results)
             .build());
+    }
+
+
+    @Operation(summary = "선택된 상품 조회", description = "라면 인덱스, 토큰필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "선택된 상품 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "선택된 상품 조회 실패")
+    })
+    @GetMapping("/goods/{ramyunIdx}")
+    public ResponseEntity<ResDTO> getGoods(@PathVariable Long ramyunIdx,
+                                           @AuthenticationPrincipal String userIdx){
+        RamyunEntity result = adminGoodsService.getGoods(ramyunIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO.builder()
+           .statusCode(StatusCode.OK)
+           .message("선택된 상품 조회 성공")
+           .data(result)
+           .build());
     }
 
     @Operation(summary = "상품 추가", description = "라면 모든 정보, 사진 파일, 토큰 필요")

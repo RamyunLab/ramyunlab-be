@@ -22,7 +22,7 @@
       padding: 10px;
       text-align: center;
     }
-    a {
+    .toUser {
       position: absolute;
       right: 30px;
     }
@@ -31,10 +31,89 @@
       flex-direction: row;
       justify-content: center;
     }
+            /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 30px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px 30px 20px 20px;
+            border: 1px solid #888;
+            width: 40%;
+            height: 60%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+  #editForm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-group label {
+    width: 120px; /* 레이블 너비 고정 */
+    text-align: right;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.form-group input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.saveBTN {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    align-self: center;
+}
+button:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+}
   </style>
 </head>
 <body>
-  <a th:href="@{/userPage}" style="text-align : end">회원 관리</a>
+  <a th:href="@{/userPage}" style="text-align : end" class="toUser">회원 관리</a>
   <h1 style="text-align : center">Ramyun lab - 상품 관리</h1>
   <h2 style="text-align : center">상품 목록</h2>
   <div id="table_container">
@@ -49,6 +128,7 @@
       <th>isCup</th>
       <th>요리방법</th>
       <th>나트륨</th>
+      <th>수정</th>
       <th>삭제</th>
     </tr>
     </thead>
@@ -59,6 +139,45 @@
   <div id="pagination">
     <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
   </div>
+  </div>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 style="text-align : center">상품 수정</h2>
+      <form id="editForm" style="text-align : center">
+        <div class="form-group">
+          <label for="ramyunName">이름</label>
+          <input type="text" id="ramyunName" name="ramyunName">
+        </div>
+        <div class="form-group">
+          <label for="ramyunImg">이미지 URL</label>
+          <input type="text" id="ramyunImg" name="ramyunImg">
+          <input type="file" id="ramyunUpdateImg" name="ramyunUpdateImg">
+        </div>
+        <div class="form-group">
+          <label for="ramyunKcal">칼로리(kcal)</label>
+          <input type="number" id="ramyunKcal" name="ramyunKcal">
+        </div>
+        <div class="form-group">
+          <label for="noodle">면</label>
+          <input type="text" id="noodle" name="noodle" placeholder="true(유탕면)/false(건면)">
+        </div>
+        <div class="form-group">
+          <label for="isCup">컵라면 여부</label>
+          <input type="text" id="isCup" name="isCup" placeholder="true(컵라면)/false(봉지라면)">
+        </div>
+        <div class="form-group">
+          <label for="cooking">요리법</label>
+          <input type="text" id="cooking" name="cooking" placeholder="true(국물)/false(비빔 OR 볶음)">
+        </div>
+        <div class="form-group">
+          <label for="ramyunNa">나트륨</label>
+          <input type="number" id="ramyunNa" name="ramyunNa">
+        </div>
+        <button type="button" onclick="saveGoods()" class="saveBTN">저장</button>
+      </form>
+    </div>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -87,12 +206,13 @@
                               <tr>
                                   <td>${goods.ramyunIdx}</td>
                                   <td>${goods.ramyunName}</td>
-                                  <td>${goods.ramyunImg}</td>
+                                  <td><a href="${goods.ramyunImg}" target="_blank">${goods.ramyunImg}</a></td>
                                   <td>${goods.ramyunKcal}</td>
                                   <td>${goods.noodle}</td>
                                   <td>${goods.isCup}</td>
                                   <td>${goods.cooking}</td>
                                   <td>${goods.ramyunNa}</td>
+                                  <td><button onclick="updateGoods(${goods.ramyunIdx})">수정</button></td>
                                   <td><button onclick="confirmDeleteGoods(${goods.ramyunIdx})">삭제</button></td>
                               </tr>
                           `;
@@ -117,13 +237,99 @@
               window.fetchGoods = fetchGoods; // 페이지네이션 버튼에서 fetchGoods 함수를 사용할 수 있도록 설정
           });
 
+    // 모달 관련 스크립트
+        const modal = document.getElementById('editModal');
+        const span = document.getElementsByClassName('close')[0];
+
+        span.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 상품 정보 수정 모달 열기
+        function updateGoods(ramyunIdx) {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                console.error('토큰이 없습니다.');
+                return;
+            }
+
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            axios.get(`/admin/goods/${ramyunIdx}`)
+                .then(response => {
+                    const goods = response.data.data;
+                    document.getElementById('ramyunName').value = goods.ramyunName;
+                    document.getElementById('ramyunImg').value = goods.ramyunImg;
+                    document.getElementById('ramyunKcal').value = goods.ramyunKcal;
+                    document.getElementById('noodle').value = goods.noodle;
+                    document.getElementById('isCup').value = goods.isCup;
+                    document.getElementById('cooking').value = goods.cooking;
+                    document.getElementById('ramyunNa').value = goods.ramyunNa;
+
+                    document.getElementById('editForm').dataset.ramyunIdx = ramyunIdx;
+
+                    modal.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('상품 정보 조회 실패', error);
+                });
+        }
+
+        // 상품 정보 저장
+        async function saveGoods() {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                console.error('토큰이 없습니다.');
+                return;
+            }
+
+            const form = document.getElementById('editForm');
+            const ramyunIdx = form.dataset.ramyunIdx;
+            const formData = new FormData(form);
+<!--            const data = {-->
+<!--                ramyunName: form.ramyunName.value,-->
+<!--                ramyunImg: form.ramyunImg.value,-->
+<!--                ramyunKcal: form.ramyunKcal.value,-->
+<!--                noodle: form.noodle.value,-->
+<!--                isCup: form.isCup.value,-->
+<!--                cooking: form.cooking.value,-->
+<!--                ramyunNa: form.ramyunNa.value-->
+<!--            };-->
+
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            try{
+            const res = await axios.patch(`/admin/goods/${ramyunIdx}`, formData,{
+              headers: {
+                'Content-Type':'multipart/form-data',
+                'Authorization': 'Bearer ${token}'
+              }
+            });
+                    if (response.data.statusCode === 200) {
+                        console.log('상품 수정 성공');
+                        modal.style.display = 'none';
+                        fetchGoods(0); // 수정 후 상품 목록 갱신
+                    } else {
+                        console.error('상품 수정 실패', response.data.message);
+                    }
+                }catch(error){
+                    console.error('상품 수정 실패', error);
+                }
+        };
+
     function confirmDeleteGoods(ramyunIdx) {
         if (confirm("정말 삭제하시겠습니까?")) {
             deleteGoods(ramyunIdx);
         }
       }
 
-       async function deleteGoods(ramyunIdx) {
+    async function deleteGoods(ramyunIdx) {
     const token = localStorage.getItem('jwtToken');
 
     if (!token) {

@@ -48,6 +48,13 @@ public class AdminGoodsService {
         return ramyunRepository.findAll(pageable);
     }
 
+    public RamyunEntity getGoods(final Long ramyunIdx,
+                                 final String userIdx) {
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        return ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+    }
+
     public RamyunEntity addGoods(final RamyunDTO ramyunDTO,
                                  final MultipartFile file,
                                  final String userIdx) throws Exception {
