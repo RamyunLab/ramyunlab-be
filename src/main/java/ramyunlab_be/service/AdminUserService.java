@@ -28,7 +28,6 @@ public class AdminUserService {
 
     public static Page<UserEntity> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
-
     }
 
     public List<UserEntity> searchUser(final String keyword,

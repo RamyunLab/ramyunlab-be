@@ -49,7 +49,7 @@ public class AdminUserController {
     @GetMapping("/users")
     public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
         Page<UserEntity> results = AdminUserService.getUsers(pageable);
-
+//        log.warn("논리 삭제 확인 {}", results.stream().toList());
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .data(results)

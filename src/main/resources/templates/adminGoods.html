@@ -49,6 +49,7 @@
       <th>isCup</th>
       <th>요리방법</th>
       <th>나트륨</th>
+      <th>삭제</th>
     </tr>
     </thead>
     <tbody>
@@ -92,6 +93,7 @@
                                   <td>${goods.isCup}</td>
                                   <td>${goods.cooking}</td>
                                   <td>${goods.ramyunNa}</td>
+                                  <td><button onclick="confirmDeleteGoods(${goods.ramyunIdx})">삭제</button></td>
                               </tr>
                           `;
                           goodsTableBody.insertAdjacentHTML('beforeend', row);
@@ -115,6 +117,37 @@
               window.fetchGoods = fetchGoods; // 페이지네이션 버튼에서 fetchGoods 함수를 사용할 수 있도록 설정
           });
 
+    function confirmDeleteGoods(ramyunIdx) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            deleteGoods(ramyunIdx);
+        }
+      }
+
+       async function deleteGoods(ramyunIdx) {
+    const token = localStorage.getItem('jwtToken');
+
+    if (!token) {
+        console.error('토큰이 없습니다.');
+        return;
+    }
+
+    try {
+        const response = await axios.delete(`/admin/goods/${ramyunIdx}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (response.data.statusCode === 200) {
+            console.log("상품 삭제 성공");
+            fetchGoods(0); // 삭제 후 전체 상품 목록을 갱신합니다.
+        } else {
+            console.error("상품 삭제 실패", response.data.message);
+        }
+    } catch (error) {
+        console.error('상품 삭제 실패', error);
+    }
+}
   </script>
 </body>
 </html>
