@@ -2,6 +2,7 @@ package ramyunlab_be.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +18,12 @@ import ramyunlab_be.vo.Pagenation;
 @Service
 public class MainService {
 
-  private final MainRepository mainRepository;
-  private final FavoriteRepository favoriteRepository;
+  private MainRepository mainRepository;
+
+  @Autowired
+  public MainService(MainRepository mainRepository){
+    this.mainRepository = mainRepository;
+  }
 
   /* 라면 데이터 목록 조회 */
   public Page<RamyunDTO> getRamyunList (int pageNo, String sort, String direction, RamyunFilterDTO filter, Long userIdx){

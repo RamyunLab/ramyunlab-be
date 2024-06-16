@@ -57,7 +57,8 @@ public class ReviewController {
             .reviewContent(createdReview.getReviewContent())
             .reviewPhotoUrl(createdReview.getReviewPhotoUrl())
             .rvCreatedAt(createdReview.getRvCreatedAt())
-            .rate(createdReview.getRate().toString())
+            .rate(createdReview.getRate())
+//            .rate(createdReview.getRate().toString())
             .rvIdx(createdReview.getRvIdx())
             .rvRecommendCount(createdReview.getRvRecommendCount())
             .rvReportCount(createdReview.getRvReportCount())
@@ -79,7 +80,7 @@ public class ReviewController {
         @ApiResponse(responseCode = "400")
     })
     @PatchMapping("/review/{ramyunIdx}/{rvIdx}")
-    public ResponseEntity<ResDTO> updateReview(@RequestPart(required = false) MultipartFile file,
+    public ResponseEntity<ResDTO<Object>> updateReview(@RequestPart(required = false) MultipartFile file,
                                                @Valid @RequestPart ReviewDTO reviewDTO,
                                                @PathVariable Long rvIdx,
                                                @PathVariable Long ramyunIdx,
@@ -152,7 +153,7 @@ public class ReviewController {
 
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ResDTO> handleValidationException(ValidationException e) {
+    public ResponseEntity<ResDTO<Object>> handleValidationException(ValidationException e) {
         return ResponseEntity
             .badRequest()
             .body(ResDTO.builder().statusCode(StatusCode.BAD_REQUEST).message(e.getMessage()).build());

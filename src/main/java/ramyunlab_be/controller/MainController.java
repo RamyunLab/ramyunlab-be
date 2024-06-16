@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,12 @@ import ramyunlab_be.dto.RamyunDetailDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.dto.ReviewDTO;
+import ramyunlab_be.globalExceptionHandler.Util;
 import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.FavoriteService;
 import ramyunlab_be.service.GameService;
 import ramyunlab_be.service.MainService;
+import ramyunlab_be.service.RecommendService;
 import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
 
@@ -40,18 +43,24 @@ import ramyunlab_be.vo.StatusCode;
 @RequestMapping("/main")
 public class MainController {
 
-  private final MainService mainService;
-  private final ReviewService reviewService;
-  private final FavoriteService favoriteService;
+  private MainService mainService;
+  private ReviewService reviewService;
+  private FavoriteService favoriteService;
+  private GameService gameService;
+
+  @Autowired
+  public MainController (MainService mainService, ReviewService reviewService, FavoriteService favoriteService, GameService gameService){
+    this.mainService = mainService;
+    this.gameService = gameService;
+    this.reviewService = reviewService;
+    this.favoriteService = favoriteService;
+  }
 
   @Autowired
   private HttpServletRequest request;
 
   @Autowired
   private TokenProvider tokenProvider;
-
-  @Autowired
-  private GameService gameService;
 
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
@@ -85,8 +94,7 @@ public class MainController {
   }
 
     @Operation(summary = "필터링된 라면 정보 조회",
-               description = "조건을 걸어 필터링한 라면 정보를 조회함 (+페이지네이션)\n"
-                             + "리뷰 페이지네이션 시 page 추가")
+               description = "조건을 걸어 필터링한 라면 정보를 조회함 (+페이지네이션)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공"),
         @ApiResponse(responseCode = "400", useReturnTypeSchema = true, description = "데이터 조회 실패")
@@ -121,26 +129,32 @@ public class MainController {
   public ResponseEntity<ResDTO<Object>> getRamyunInfo (@Parameter(name="ramyunIdx", description = "라면 인덱스", example = "1")
                                                          @PathVariable Long ramyunIdx,
                                                        @AuthenticationPrincipal String userIdx){
-   // 로그인 유저 판별 후 찜 추가 여부 확인
+   // 로그인 유저 판별
+    Long user = null;
     boolean isLiked = false;
     if(userIdx != null && !userIdx.equals("anonymousUser")) {
-      isLiked = favoriteService.isLiked(Long.parseLong(userIdx), ramyunIdx);
+      user = Long.parseLong(userIdx);
+      isLiked = favoriteService.isLiked(user, ramyunIdx);
     }
+    log.info("상세페이지 userIdx {}", user);
 
     // 라면 + 평점 조회
     RamyunDTO ramyun = mainService.getRamyun(ramyunIdx);
+    log.info("ramyun {}", ramyun.toString());
 
     // 리뷰 조회
-    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, 1);
+    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, 1);
+    log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
-    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx);
+    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("데이터 조회 성공")
                                           .data(RamyunDetailDTO.builder().ramyun(ramyun)
-                                                               .bestReview(bestReview).review(reviews)
+                                                               .bestReview(bestReview)
+                                                               .review(reviews)
                                                                .isLiked(isLiked).build())
                                           .build());
   }
@@ -158,12 +172,19 @@ public class MainController {
                                                          @AuthenticationPrincipal String userIdx){
     // 리뷰 조회
     if(page == null) page = 1;
-    Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, page);
+    Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, Long.parseLong(userIdx), page);
 
     return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK)
                                           .message("리뷰 조회 성공")
                                           .data(RamyunDetailDTO.builder().review(result).build()).build());
   }
+
+  @Operation(summary = "라면 상세페이지 랜덤 조회", description = "라면 상세페이지 랜덤 조회, 토큰 필요함")
+    @GetMapping("/random")
+    public ResponseEntity<ResDTO<Object>> getRandomRamyunIdx(@AuthenticationPrincipal String userIdx){
+      Long result = gameService.getRandomRamyunIdx();
+      return getRamyunInfo(result, userIdx);
+    }
 
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ResDTO<Object>> handleValidationException (ValidationException e) {

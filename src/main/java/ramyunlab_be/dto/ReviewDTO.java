@@ -6,15 +6,15 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.sql.Timestamp;
-import java.util.List;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "리뷰 DTO")
 public class ReviewDTO {
@@ -28,7 +28,8 @@ public class ReviewDTO {
     @NotNull(message = "별점을 입력해주세요.")
     @Min(value = 1, message = "별점은 최소 1이어야 합니다.")
     @Max(value = 5, message = "별점은 최대 5이어야 합니다.")
-    private String rate;
+//    private String rate;
+    private Integer rate;
 
     @Schema(description = "사진 url", example = "dsfafa.png", nullable = true)
     private String reviewPhotoUrl;
@@ -44,7 +45,7 @@ public class ReviewDTO {
 
     @Schema(description = "공감 수", example = "1")
     private Integer rvRecommendCount;
-//
+
     @Schema(description = "신고 수", example = "1")
     private Integer rvReportCount;
 
@@ -56,6 +57,9 @@ public class ReviewDTO {
 
     @Schema(description = "라면 인덱스", example = "1")
     private Long ramyunIdx;
+
+    @Schema(description = "댓글 추천 여부", example = "true")
+    private Boolean isRecommended = false;
 
     @Override
     public String toString() {

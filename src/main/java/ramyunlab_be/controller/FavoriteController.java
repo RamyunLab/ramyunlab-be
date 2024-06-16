@@ -28,8 +28,13 @@ import ramyunlab_be.vo.StatusCode;
 @RequestMapping("/api")
 @Tag(name="Favorite", description = "찜 기능 관련 API")
 public class FavoriteController {
-    @Autowired
+
     private FavoriteService favoriteService;
+
+    @Autowired
+    public FavoriteController(FavoriteService favoriteService) {
+        this.favoriteService = favoriteService;
+    }
 
     @Operation(summary = "찜 목록 호출", description = "마이페이지의 찜목록에서 내가 찜한 라면들을 조회.(페이지네이션)<br />" +
             "pageable.pageNumber :: 현재 페이지 번호. +1해서 쓰면 됨.<br />" +

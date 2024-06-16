@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,12 @@ import ramyunlab_be.vo.StatusCode;
 @RequestMapping("/game")
 public class GameController {
 
-  private final GameService gameService;
+  private GameService gameService;
+
+  @Autowired
+  public GameController(GameService gameService) {
+    this.gameService = gameService;
+  }
 
   @Operation(summary = "라면 랜덤 조회", description = "이상형 월드컵 라면 랜덤 조회 (16/32/64강 중 라운드 선택)")
   @ApiResponses(value = {
