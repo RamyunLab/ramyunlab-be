@@ -178,29 +178,26 @@ public class ReviewService {
         return result.map(this::convert);
     }
 
-    public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, int pageNo){
-        Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
-        Page<ReviewEntity> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, pageable);
-        return result.map(this::convert);
-//      return result.map(review -> ReviewDTO.builder()
-//                                             .rvIdx(review.getRvIdx())
-//                                             .userIdx(review.getUser().getUserIdx())
-//                                             .userNickname(review.getUser().getNickname())
-//                                             .ramyunIdx(review.getRamyun().getRamyunIdx())
-//                                             .reviewContent(review.getReviewContent())
-//                                             .rate(Integer.toString(review.getRate()))
-//                                             .reviewPhotoUrl(review.getReviewPhotoUrl())
-//                                             .rvCreatedAt(review.getRvCreatedAt())
-//                                             .rvRecommendCount(review.getRvRecommendCount())
-//                                             .build());
+    public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, Long userIdx, int pageNo){
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
+            Page<ReviewDTO> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, userIdx, pageable);
+            log.info("service::: {}", result.toString());
+            return result;
+        }catch (Exception e){
+            log.error("ERROR:: {}\n{}\n{}", e.getMessage(), e.getStackTrace(), e.getCause());
+            throw new RuntimeException("쿼리 오류");
+        }
+//        return result.map(this::convert);
     }
 
-    public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx){
+    public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx, Long userIdx){
         Pageable pageable = PageRequest.of(0, 3);
-        Optional<List<ReviewEntity>> result = reviewRepository.findBestReviewByRamyunIdx(ramyunIdx, pageable);
+        Optional<List<ReviewDTO>> result = reviewRepository.findBestReviewByRamyunIdx(ramyunIdx, userIdx, pageable);
         log.info("resutl???? {}",result);
         if(result.isPresent()){
-            return result.get().stream().map(this::convert).collect(Collectors.toList());
+            return result.get();
+//            return result.get().stream().map(this::convert).collect(Collectors.toList());
         }
         return null;
     }
@@ -212,7 +209,8 @@ public class ReviewService {
                 .ramyunIdx(reviewEntity.getRamyun().getRamyunIdx())
                 .reviewPhotoUrl(reviewEntity.getReviewPhotoUrl())
                 .reviewContent(reviewEntity.getReviewContent())
-                .rate(String.valueOf(reviewEntity.getRate()))
+                .rate(reviewEntity.getRate())
+//                .rate(String.valueOf(reviewEntity.getRate()))
                 .rvCreatedAt(reviewEntity.getRvCreatedAt())
                 .rvUpdatedAt(reviewEntity.getRvUpdatedAt())
                 .rvDeletedAt(reviewEntity.getRvDeletedAt())
