@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.dto.GameDTO;
 import ramyunlab_be.dto.RamyunDTO;
@@ -15,7 +16,12 @@ import ramyunlab_be.repository.GameRepository;
 @Service
 public class GameService {
 
-  private final GameRepository gameRepository;
+  private GameRepository gameRepository;
+
+  @Autowired
+  public GameService(GameRepository gameRepository) {
+    this.gameRepository = gameRepository;
+  }
 
   public List<GameDTO> getRandomWorldCupList (int round){
     log.info("service round: {}", round);

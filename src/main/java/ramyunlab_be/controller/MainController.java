@@ -32,6 +32,7 @@ import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.FavoriteService;
 import ramyunlab_be.service.GameService;
 import ramyunlab_be.service.MainService;
+import ramyunlab_be.service.RecommendService;
 import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
 
@@ -42,18 +43,24 @@ import ramyunlab_be.vo.StatusCode;
 @RequestMapping("/main")
 public class MainController {
 
-  private final MainService mainService;
-  private final ReviewService reviewService;
-  private final FavoriteService favoriteService;
+  private MainService mainService;
+  private ReviewService reviewService;
+  private FavoriteService favoriteService;
+  private GameService gameService;
+
+  @Autowired
+  public MainController (MainService mainService, ReviewService reviewService, FavoriteService favoriteService, GameService gameService){
+    this.mainService = mainService;
+    this.gameService = gameService;
+    this.reviewService = reviewService;
+    this.favoriteService = favoriteService;
+  }
 
   @Autowired
   private HttpServletRequest request;
 
   @Autowired
   private TokenProvider tokenProvider;
-
-  @Autowired
-  private GameService gameService;
 
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
@@ -172,6 +179,7 @@ public class MainController {
                                           .data(RamyunDetailDTO.builder().review(result).build()).build());
   }
 
+  @Operation(summary = "라면 상세페이지 랜덤 조회", description = "라면 상세페이지 랜덤 조회, 토큰 필요함")
     @GetMapping("/random")
     public ResponseEntity<ResDTO<Object>> getRandomRamyunIdx(@AuthenticationPrincipal String userIdx){
       Long result = gameService.getRandomRamyunIdx();

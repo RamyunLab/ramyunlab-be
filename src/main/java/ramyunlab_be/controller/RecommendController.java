@@ -16,6 +16,7 @@ import ramyunlab_be.dto.RecommendDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.entity.RecommendEntity;
 import ramyunlab_be.service.RecommendService;
+import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
 
 @Slf4j
@@ -26,11 +27,13 @@ import ramyunlab_be.vo.StatusCode;
 @Tag(name = "Recommend", description = "공감 관련 API")
 public class RecommendController {
 
-    final private RecommendService recommendService;
+    private final RecommendService recommendService;
+    private final ReviewService reviewService;
 
     @Autowired
-    public RecommendController(final RecommendService recommendService){
+    public RecommendController (final RecommendService recommendService, ReviewService reviewService){
         this.recommendService = recommendService;
+        this.reviewService = reviewService;
     }
 
     @Operation(summary = "공감 추가", description = "토큰만 있으면 됩니다.")

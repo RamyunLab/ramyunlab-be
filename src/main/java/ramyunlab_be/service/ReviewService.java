@@ -202,6 +202,16 @@ public class ReviewService {
         return null;
     }
 
+    /* 리뷰 추천/추천 취소 시 추천 수 변경 */
+    public Integer changeRecommendCount(Long rvIdx, String status){
+        if(status.equals("add")){
+            reviewRepository.plusRecommendCount(rvIdx);
+        }else if(status.equals("delete")){
+            reviewRepository.minusRecommendCount(rvIdx);
+        }
+        return reviewRepository.getReviewRecommendCount(rvIdx);
+    }
+
     private ReviewDTO convert(ReviewEntity reviewEntity) {
         return ReviewDTO.builder()
                 .rvIdx(reviewEntity.getRvIdx())
