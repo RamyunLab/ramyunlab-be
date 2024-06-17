@@ -2,6 +2,7 @@ package ramyunlab_be.repository;
 
 import java.util.List;
 
+import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +22,9 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, Rev
     Page<ReviewEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
     /* 라면별 리뷰 조회 */
-//    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvDeletedAt IS NULL ORDER BY rv.rvCreatedAt DESC")
     Page<ReviewDTO> findReviewByRamyunIdx (Long ramyunIdx, Long userIdx, Pageable pageable);
 
     /* 라면별 베스트 리뷰 조회  */
-//    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvRecommendCount >= 10 AND rv.rvDeletedAt IS NULL ORDER BY rv.rvRecommendCount DESC, rv.rvCreatedAt ASC")
     Optional<List<ReviewDTO>> findBestReviewByRamyunIdx (Long ramyunIdx, Long userIdx, Pageable pageable);
 
     /* 리뷰 추천 시 추천수 변경 */
@@ -47,11 +46,10 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, Rev
     Integer getReviewRecommendCount(Long rvIdx);
 
     /* 내 리뷰 순서 조회 */
-//    @Modifying
-//    @Query("SELECT reviewNo "
-//           + "FROM (SELECT ROW_NUMBER() OVER() AS reviewNo FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :r_idx AND rv.rvDeletedAt IS NULL AND rv.rvIsReported = false ORDER BY rv.rvCreatedAt) "
-//           + "WHERE rv.user.userIdx = :userIdx")
-//    Integer getMyReviewNumber(Long ramyunIdx, Long userIdx);
+    @Query(value = "SELECT reviewNo "
+           + "FROM (SELECT ROW_NUMBER() OVER() AS reviewNo, rv_idx FROM review rv WHERE rv.r_idx = :ramyunIdx AND rv.rv_deleted_at IS NULL ORDER BY rv.rv_created_at) rvpage "
+           + "WHERE rvpage.rv_idx = :rvIdx ", nativeQuery = true)
+    Integer getMyReviewNumber (@Param("ramyunIdx") Long ramyunIdx, @Param("rvIdx") Long rvIdx);
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported = TRUE ORDER BY rv.rvIsReported DESC")
     Page<ReviewEntity> findReportedReviewByReviewIdx(Long reviewIdx, Pageable pageable);

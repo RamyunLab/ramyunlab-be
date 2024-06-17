@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,7 @@ import ramyunlab_be.repository.RamyunRepository;
 import ramyunlab_be.repository.ReportRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
-import ramyunlab_be.vo.Pagenation;
+import ramyunlab_be.vo.Pagination;
 
 import java.util.UUID;
 
@@ -171,7 +170,7 @@ public class ReviewService {
     }
 
     public Page<ReviewDTO> getMyReviewList(Integer pageNo, String userIdx) {
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
 
         Page<ReviewEntity> result = reviewRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 
@@ -180,15 +179,12 @@ public class ReviewService {
 
     public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, Long userIdx, int pageNo){
         try {
-            Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
+            Pageable pageable = PageRequest.of(pageNo - 1, Pagination.REVIEW_PAGE_SIZE);
             Page<ReviewDTO> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, userIdx, pageable);
-            log.info("service::: {}", result.toString());
             return result;
         }catch (Exception e){
-            log.error("ERROR:: {}\n{}\n{}", e.getMessage(), e.getStackTrace(), e.getCause());
             throw new RuntimeException("쿼리 오류");
         }
-//        return result.map(this::convert);
     }
 
     public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx, Long userIdx){
@@ -202,10 +198,12 @@ public class ReviewService {
         return null;
     }
 
-//    public Integer goMyReview(Long ramyunIdx, Long userIdx){
-//        Integer reviewNo = reviewRepository.getMyReviewNumber(ramyunIdx, userIdx);
-//        return (int) Math.ceil((double) reviewNo / Pagenation.REVIEW_PAGE_SIZE);
-//    }
+    public Integer goMyReview (Long ramyunIdx, Long rvIdx){
+        Integer reviewNo = reviewRepository.getMyReviewNumber(ramyunIdx, rvIdx);
+        // 페이지 계산
+        Integer page = (int) Math.ceil((double) reviewNo / Pagination.REVIEW_PAGE_SIZE);
+        return page;
+    }
 
     /* 리뷰 추천/추천 취소 시 추천 수 변경 */
     public Integer changeRecommendCount(Long rvIdx, String status){
