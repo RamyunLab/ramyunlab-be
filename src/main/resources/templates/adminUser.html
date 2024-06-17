@@ -18,6 +18,9 @@
       flex-direction: row;
       justify-content: center;
      }
+     h1 {
+     text-align : center;
+     }
      input {
       width: 400px;
       height: 30px;
@@ -29,7 +32,6 @@
       height: 30px;
       margin: 10px;
       text-align: center;
-
      }
     table, th, td {
       border: 1px solid black;
@@ -52,7 +54,7 @@
   </style>
 </head>
 <body>
-  <a th:href="@{/goodsPage}" style="text-align : end">상품 관리</a>
+  <a  th:href="@{/goodsPage}" style="text-align : end">상품 관리</a>
   <h1 style="text-align : center">Ramyun lab - 회원 관리</h1>
   <h2 style="text-align : center">회원 목록</h2>
   <div id="table_container">
@@ -189,4 +191,7 @@
 }
   </script>
 </body>
+<!--<body sec:authorize="isAnonymous()">-->
+<!--  <h1>관리자로 로그인 해주세요.</h1>-->
+<!--</body>-->
 </html>

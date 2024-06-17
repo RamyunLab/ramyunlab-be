@@ -74,8 +74,8 @@ public class AdminGoodsController {
         @ApiResponse(responseCode = "400", description = "상품 추가 실패")
     })
     @PostMapping("/goods")
-    public ResponseEntity<ResDTO> addGoods(@RequestPart RamyunDTO ramyunDTO,
-                                           @RequestPart(required = false)MultipartFile file,
+    public ResponseEntity<ResDTO> addGoods(@RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
+                                           @RequestPart(value = "file", required = false)MultipartFile file,
                                            @AuthenticationPrincipal String userIdx) throws Exception{
         RamyunEntity addedRamyun = adminGoodsService.addGoods(ramyunDTO, file, userIdx);
 
