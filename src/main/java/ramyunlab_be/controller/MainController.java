@@ -171,8 +171,12 @@ public class MainController {
                                                          @RequestParam(value = "page", required = false) Integer page,
                                                          @AuthenticationPrincipal String userIdx){
     // 리뷰 조회
+    Long user = null;
     if(page == null) page = 1;
-    Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, Long.parseLong(userIdx), page);
+    if(userIdx != null && !userIdx.equals("anonymousUser")) {
+      user = Long.parseLong(userIdx);
+    }
+    Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, user, page);
 
     return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK)
                                           .message("리뷰 조회 성공")
