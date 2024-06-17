@@ -22,4 +22,6 @@ public class RamyunDetailDTO {
   private List<ReviewDTO> bestReview;
   @Schema(name = "찜 여부", description = "사용자의 찜 여부를 확인\n비로그인 유저 - false, 로그인 유저 - 찜 여부 조회 후 true/false 판별")
   private Boolean isLiked;
+  @Schema(name = "리뷰 인덱스", description = "리뷰 인덱스 번호\n마이페이지에서 리뷰 조회 시")
+  private Long reviewNo;
 }

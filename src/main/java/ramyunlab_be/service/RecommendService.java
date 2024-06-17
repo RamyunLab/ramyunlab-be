@@ -8,15 +8,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.dto.RecReviewDTO;
 import ramyunlab_be.dto.RecommendDTO;
-import ramyunlab_be.dto.ReviewDTO;
-import ramyunlab_be.entity.FavoriteEntity;
 import ramyunlab_be.entity.RecommendEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.RecommendRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
-import ramyunlab_be.vo.Pagenation;
+import ramyunlab_be.vo.Pagination;
 
 @Service
 @Slf4j
@@ -70,7 +68,7 @@ public class RecommendService {
 
     // 내가 공감한 리뷰 목록 호출
     public Page<RecReviewDTO> getMyRecReview(Integer pageNo, String userIdx) {
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "recCreatedAt"));
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "recCreatedAt"));
 
         Page<RecommendEntity> result = recommendRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 

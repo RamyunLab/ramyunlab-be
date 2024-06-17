@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,6 +129,10 @@ public class MainController {
   @GetMapping("/ramyun/{ramyunIdx}")
   public ResponseEntity<ResDTO<Object>> getRamyunInfo (@Parameter(name="ramyunIdx", description = "라면 인덱스", example = "1")
                                                          @PathVariable Long ramyunIdx,
+                                                       @Parameter(name="page", description = "리뷰 페이지", example="1")
+                                                       @RequestParam(value = "page", required = false) Integer page,
+                                                       @Parameter(name="reviewNo", description = "리뷰 번호", example = "20")
+                                                         @RequestParam(value="reviewNo", required = false) Long reviewNo,
                                                        @AuthenticationPrincipal String userIdx){
    // 로그인 유저 판별
     Long user = null;
@@ -136,14 +141,18 @@ public class MainController {
       user = Long.parseLong(userIdx);
       isLiked = favoriteService.isLiked(user, ramyunIdx);
     }
-    log.info("상세페이지 userIdx {}", user);
 
     // 라면 + 평점 조회
     RamyunDTO ramyun = mainService.getRamyun(ramyunIdx);
     log.info("ramyun {}", ramyun.toString());
 
+    if(page == null){
+      page = 1;
+    }
+    log.info("page {}", page);
+
     // 리뷰 조회
-    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, 1);
+    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, page);
     log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
@@ -155,7 +164,8 @@ public class MainController {
                                           .data(RamyunDetailDTO.builder().ramyun(ramyun)
                                                                .bestReview(bestReview)
                                                                .review(reviews)
-                                                               .isLiked(isLiked).build())
+                                                               .isLiked(isLiked)
+                                                               .reviewNo(reviewNo).build())
                                           .build());
   }
 
@@ -169,6 +179,8 @@ public class MainController {
                                                          @PathVariable Long ramyunIdx,
                                                          @Parameter(name="page", description = "페이지", example = "1")
                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                         @Parameter(name="reviewNo", description = "리뷰 번호", example = "20")
+                                                         @RequestParam(value="reviewNo", required = false) Long reviewNo,
                                                          @AuthenticationPrincipal String userIdx){
     // 리뷰 조회
     Long user = null;
@@ -176,6 +188,7 @@ public class MainController {
     if(userIdx != null && !userIdx.equals("anonymousUser")) {
       user = Long.parseLong(userIdx);
     }
+
     Page<ReviewDTO> result = reviewService.getReviewByRamyun(ramyunIdx, user, page);
 
     return ResponseEntity.ok().body(ResDTO.builder().statusCode(StatusCode.OK)
@@ -183,11 +196,21 @@ public class MainController {
                                           .data(RamyunDetailDTO.builder().review(result).build()).build());
   }
 
+  @Operation(summary = "내 리뷰 조회", description = "마이페이지에서 리뷰 클릭 시 상세페이지에서 조회, 라면인덱스(ramyunIdx), 리뷰인덱스(reviewNo) 필요")
+  @GetMapping("/ramyun/{ramyunIdx}/my")
+  public ResponseEntity<ResDTO<Object>> getReviewPage(@PathVariable Long ramyunIdx,
+                                                      @RequestParam(required = true) Long reviewNo,
+                                                      @AuthenticationPrincipal String userIdx){
+    Integer page = reviewService.goMyReview(ramyunIdx, reviewNo);
+    log.info("리뷰 조회 시 페이지 {}", page);
+    return getRamyunInfo(ramyunIdx, page, reviewNo, userIdx);
+  }
+
   @Operation(summary = "라면 상세페이지 랜덤 조회", description = "라면 상세페이지 랜덤 조회, 토큰 필요함")
     @GetMapping("/random")
     public ResponseEntity<ResDTO<Object>> getRandomRamyunIdx(@AuthenticationPrincipal String userIdx){
       Long result = gameService.getRandomRamyunIdx();
-      return getRamyunInfo(result, userIdx);
+      return getRamyunInfo(result, null, null, userIdx);
     }
 
   @ExceptionHandler(ValidationException.class)
