@@ -142,7 +142,7 @@ public class ReviewController {
             .userIdx(createdReport.getUser().getUserIdx())
             .reviewIdx(createdReport.getReview().getRvIdx())
             .build();
-
+        log.warn("userIdx : {}", responseReportDTO.getUserIdx());
         return ResponseEntity.ok().body(ResDTO.builder()
                .statusCode(StatusCode.OK)
                 .data(responseReportDTO)

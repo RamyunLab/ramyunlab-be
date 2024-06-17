@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
+import ramyunlab_be.dto.RamyunProjection;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.repository.BrandRepository;
@@ -44,8 +45,16 @@ public class AdminGoodsService {
     @Value("${cloudfront-domain-name}")
     private String cloudfront;
 
-    public static Page<RamyunEntity> getGoodsList(Pageable pageable) {
-        return ramyunRepository.findAll(pageable);
+    public static Page<RamyunProjection> getGoodsList(Pageable pageable) {
+        return ramyunRepository.findAllWithBrand(pageable);
+    }
+
+    public RamyunProjection getGoods(final Long ramyunIdx,
+                                 final String userIdx) {
+        userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
+
+        RamyunProjection result = ramyunRepository.findByRamyunIdx(Long.valueOf(ramyunIdx)).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
+        return result;
     }
 
     public RamyunEntity addGoods(final RamyunDTO ramyunDTO,

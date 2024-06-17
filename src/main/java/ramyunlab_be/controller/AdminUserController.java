@@ -49,7 +49,7 @@ public class AdminUserController {
     @GetMapping("/users")
     public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
         Page<UserEntity> results = AdminUserService.getUsers(pageable);
-
+//        log.warn("논리 삭제 확인 {}", results.stream().toList());
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .data(results)
@@ -64,9 +64,19 @@ public class AdminUserController {
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .data(results)
-           .message("사용자 목록 호출 완료")
+           .message("검색한 사용자 목록 호출 완료")
            .build());
     }
+//    @GetMapping("/searchUser")
+//    public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
+//                                           ) {
+//        List<UserEntity> results = adminUserService.searchUser(keyword);
+//        return ResponseEntity.ok().body(ResDTO.builder()
+//           .statusCode(StatusCode.OK)
+//           .data(results)
+//           .message("사용자 목록 호출 완료")
+//           .build());
+//    }
 
     @Operation(summary = "사용자 삭제")
     @ApiResponses(value = {

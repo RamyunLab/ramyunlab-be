@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
+import ramyunlab_be.dto.RamyunProjection;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
@@ -42,20 +43,7 @@ public class AdminGoodsController {
     })
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
-        Page<RamyunEntity> results = AdminGoodsService.getGoodsList(pageable);
-//        List<RamyunEntity> responseResult = results.stream()
-//            .map(result -> RamyunEntity.builder()
-//                .ramyunIdx(result.getRamyunIdx())
-//                .ramyunName(result.getRamyunName())
-//                .ramyunImg(result.getRamyunImg())
-//                .ramyunKcal(result.getRamyunKcal())
-//                .noodle(result.getNoodle())
-//                .isCup(result.getIsCup())
-//                .cooking(result.getCooking())
-//                .gram(result.getGram())
-//                .ramyunNa(result.getRamyunNa())
-//                .build())
-//            .collect(Collectors.toList());
+        Page<RamyunProjection> results = AdminGoodsService.getGoodsList(pageable);
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
@@ -64,15 +52,35 @@ public class AdminGoodsController {
             .build());
     }
 
+
+    @Operation(summary = "선택된 상품 조회", description = "라면 인덱스, 토큰필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "선택된 상품 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "선택된 상품 조회 실패")
+    })
+    @GetMapping("/goods/{ramyunIdx}")
+    public ResponseEntity<ResDTO> getGoods(@PathVariable Long ramyunIdx,
+                                           @AuthenticationPrincipal String userIdx){
+        log.warn("controller : {}", ramyunIdx);
+        RamyunProjection result = adminGoodsService.getGoods(ramyunIdx, userIdx);
+        log.warn("result : {}", result);
+        return ResponseEntity.ok().body(ResDTO.builder()
+           .statusCode(StatusCode.OK)
+           .message("선택된 상품 조회 성공")
+           .data(result)
+           .build());
+    }
+
     @Operation(summary = "상품 추가", description = "라면 모든 정보, 사진 파일, 토큰 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "상품 추가 성공"),
         @ApiResponse(responseCode = "400", description = "상품 추가 실패")
     })
     @PostMapping("/goods")
-    public ResponseEntity<ResDTO> addGoods(@RequestPart RamyunDTO ramyunDTO,
-                                           @RequestPart(required = false)MultipartFile file,
+    public ResponseEntity<ResDTO> addGoods(@RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
+                                           @RequestPart(value = "file", required = false)MultipartFile file,
                                            @AuthenticationPrincipal String userIdx) throws Exception{
+        log.warn("/admin/goods : {}", ramyunDTO);
         RamyunEntity addedRamyun = adminGoodsService.addGoods(ramyunDTO, file, userIdx);
 
         RamyunDTO responseRamyunDTO = RamyunDTO.builder()

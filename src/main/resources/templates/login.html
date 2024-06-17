@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await axios.post('/auth/login', {
+                    userId,
+                    password
+                });
+
+
+                if (response.data.statusCode === 200) {
+                    const token = response.data.data.token;
+                    localStorage.setItem('jwtToken', token);
+                    window.location.href = '/userPage'; // 로그인 성공 시 관리자 페이지로 이동
+                } else {
+                    console.error('로그인 실패', response.data.message);
+                }
+            } catch (error) {
+                console.error('로그인 요청 실패', error);
+            }
+        });
+    });
+  </script>
+</head>
+<body>
+  <h1>Login Page</h1>
+  <form id="loginForm">
+    <label for="userId">userId:</label>
+    <input type="text" id="userId" name="userId" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Login</button>
+  </form>
+</body>
+</html>
