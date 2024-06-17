@@ -59,7 +59,7 @@ public class ReviewDTO {
     private Long ramyunIdx;
 
     @Schema(description = "댓글 추천 여부", example = "true")
-    private Boolean isRecommended = false;
+    private Boolean isRecommended;
 
     @Override
     public String toString() {
