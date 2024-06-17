@@ -50,7 +50,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
         .where(reviewEntity.ramyun.ramyunIdx.eq(ramyunIdx)
                                             .and(reviewEntity.rvDeletedAt.isNull())
-                                            .and(reviewEntity.rvReportCount.loe(5)))
+                                            .and(reviewEntity.rvIsReported.eq(false)))
         .orderBy(reviewEntity.rvCreatedAt.asc());
 
     long total = query.fetch().size();
@@ -81,7 +81,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
         .where(reviewEntity.ramyun.ramyunIdx.eq(ramyunIdx)
                                             .and(reviewEntity.rvDeletedAt.isNull())
-                                            .and(reviewEntity.rvReportCount.loe(5))
+                                            .and(reviewEntity.rvIsReported.eq(false))
                                             .and(reviewEntity.rvRecommendCount.goe(10)))
         .orderBy(reviewEntity.rvRecommendCount.desc(), reviewEntity.rvCreatedAt.asc());
 
