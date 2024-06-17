@@ -202,14 +202,25 @@ public class ReviewService {
         return null;
     }
 
+//    public Integer goMyReview(Long ramyunIdx, Long userIdx){
+//        Integer reviewNo = reviewRepository.getMyReviewNumber(ramyunIdx, userIdx);
+//        return (int) Math.ceil((double) reviewNo / Pagenation.REVIEW_PAGE_SIZE);
+//    }
+
     /* 리뷰 추천/추천 취소 시 추천 수 변경 */
     public Integer changeRecommendCount(Long rvIdx, String status){
+        Integer count = null;
+        log.info("status {}", status);
         if(status.equals("add")){
-            reviewRepository.plusRecommendCount(rvIdx);
+            count = reviewRepository.plusRecommendCount(rvIdx);
         }else if(status.equals("delete")){
-            reviewRepository.minusRecommendCount(rvIdx);
+            count = reviewRepository.minusRecommendCount(rvIdx);
         }
-        return reviewRepository.getReviewRecommendCount(rvIdx);
+        log.info("리뷰 추천///추천삭제    {}", count);
+        Integer result = reviewRepository.getReviewRecommendCount(rvIdx);
+//        ReviewEntity result = reviewRepository.findByrvIdx(rvIdx);
+        return result;
+//        return convert(result);
     }
 
     private ReviewDTO convert(ReviewEntity reviewEntity) {
@@ -220,6 +231,7 @@ public class ReviewService {
                 .reviewPhotoUrl(reviewEntity.getReviewPhotoUrl())
                 .reviewContent(reviewEntity.getReviewContent())
                 .rate(reviewEntity.getRate())
+                .nickname(reviewEntity.getUser().getNickname())
 //                .rate(String.valueOf(reviewEntity.getRate()))
                 .rvCreatedAt(reviewEntity.getRvCreatedAt())
                 .rvUpdatedAt(reviewEntity.getRvUpdatedAt())

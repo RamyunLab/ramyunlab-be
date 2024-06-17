@@ -29,16 +29,29 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, Rev
     Optional<List<ReviewDTO>> findBestReviewByRamyunIdx (Long ramyunIdx, Long userIdx, Pageable pageable);
 
     /* 리뷰 추천 시 추천수 변경 */
+    @Modifying
     @Query("UPDATE ReviewEntity rv SET rv.rvRecommendCount = rv.rvRecommendCount + 1 WHERE rv.rvIdx = :rvIdx")
     int plusRecommendCount(Long rvIdx);
 
     /* 리뷰 추천 삭제 시 추천수 변경 */
+    @Modifying
     @Query("UPDATE ReviewEntity rv SET rv.rvRecommendCount = rv.rvRecommendCount - 1 WHERE rv.rvIdx = :rvIdx")
     int minusRecommendCount(Long rvIdx);
+
+    /* 리뷰 조회 */
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIdx = :rvIdx")
+    ReviewEntity findByrvIdx(Long rvIdx);
 
     /* 리뷰 공감수 조회 */
     @Query("SELECT rv.rvRecommendCount FROM ReviewEntity rv WHERE rv.rvIdx = :rvIdx")
     Integer getReviewRecommendCount(Long rvIdx);
+
+    /* 내 리뷰 순서 조회 */
+//    @Modifying
+//    @Query("SELECT reviewNo "
+//           + "FROM (SELECT ROW_NUMBER() OVER() AS reviewNo FROM ReviewEntity rv WHERE rv.ramyun.ramyunIdx = :r_idx AND rv.rvDeletedAt IS NULL AND rv.rvIsReported = false ORDER BY rv.rvCreatedAt) "
+//           + "WHERE rv.user.userIdx = :userIdx")
+//    Integer getMyReviewNumber(Long ramyunIdx, Long userIdx);
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.rvIsReported = TRUE ORDER BY rv.rvIsReported DESC")
     Page<ReviewEntity> findReportedReviewByReviewIdx(Long reviewIdx, Pageable pageable);

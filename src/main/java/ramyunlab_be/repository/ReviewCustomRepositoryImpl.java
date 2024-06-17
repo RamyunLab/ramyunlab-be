@@ -45,12 +45,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
             reviewEntity.user.userIdx,
             reviewEntity.user.nickname,
             reviewEntity.rvRecommendCount,
+            reviewEntity.rvIsReported,
             ExpressionUtils.as(isRecommendExist(userIdx), "isRecommended")))
         .from(reviewEntity)
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
         .where(reviewEntity.ramyun.ramyunIdx.eq(ramyunIdx)
-                                            .and(reviewEntity.rvDeletedAt.isNull())
-                                            .and(reviewEntity.rvIsReported.eq(false)))
+                                            .and(reviewEntity.rvDeletedAt.isNull()))
         .orderBy(reviewEntity.rvCreatedAt.asc());
 
     long total = query.fetch().size();
@@ -76,12 +76,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
             reviewEntity.user.userIdx,
             reviewEntity.user.nickname,
             reviewEntity.rvRecommendCount,
+            reviewEntity.rvIsReported,
             ExpressionUtils.as(isRecommendExist(userIdx), "isRecommended")))
         .from(reviewEntity)
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
         .where(reviewEntity.ramyun.ramyunIdx.eq(ramyunIdx)
                                             .and(reviewEntity.rvDeletedAt.isNull())
-                                            .and(reviewEntity.rvIsReported.eq(false))
                                             .and(reviewEntity.rvRecommendCount.goe(10)))
         .orderBy(reviewEntity.rvRecommendCount.desc(), reviewEntity.rvCreatedAt.asc());
 
