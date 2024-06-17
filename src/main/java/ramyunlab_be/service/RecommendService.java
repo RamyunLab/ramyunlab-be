@@ -36,7 +36,7 @@ public class RecommendService {
         this.userRepository = userRepository;
     }
 
-    public RecommendEntity create(final Long rvIdx, final String userIdx){
+    public RecommendDTO create(final Long rvIdx, final String userIdx){
 
         ReviewEntity review = reviewRepository.findById(rvIdx)
             .orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
@@ -44,19 +44,22 @@ public class RecommendService {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
             .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
-        RecommendEntity recommend = RecommendEntity.builder()
-            .review(review)
-            .user(user)
-            .build();
+        RecommendEntity recommend = RecommendEntity.builder().review(review).user(user).build();
+        RecommendEntity addRecommend = recommendRepository.save(recommend);
 
-        return recommendRepository.save(recommend);
+        return RecommendDTO.builder()
+                           .recommendIdx(addRecommend.getRecommendIdx())
+                           .userIdx(addRecommend.getUser().getUserIdx())
+                           .recCreatedAt(addRecommend.getRecCreatedAt())
+                           .reviewIdx(addRecommend.getReview().getRvIdx())
+                           .build();
     }
 
-    public RecommendEntity delete(final Long recommendIdx, final String userIdx) {
-        RecommendEntity recommend = recommendRepository.findById(recommendIdx)
+    public RecommendEntity delete(final Long rvIdx, final Long userIdx) {
+        RecommendEntity recommend = recommendRepository.findRecommend(rvIdx, userIdx)
             .orElseThrow(() -> new RuntimeException("SERVER ERROR!"));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+        UserEntity user = userRepository.findByUserIdx(userIdx)
             .orElseThrow(() -> new RuntimeException("로그인을 진행해주세요."));
 
         if (user != null && recommend != null) {

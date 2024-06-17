@@ -42,32 +42,29 @@ public class RecommendController {
         @ApiResponse(responseCode = "400")
     })
     @PostMapping("/recReview/{rvIdx}")
-    public ResponseEntity<ResDTO> recommend(@PathVariable Long rvIdx,
+    public ResponseEntity<ResDTO<Object>> recommend(@PathVariable Long rvIdx,
                                             @AuthenticationPrincipal String userIdx){
-        RecommendEntity addRecommend = recommendService.create(rvIdx, userIdx);
+        log.info("추천!!!???");
+        RecommendDTO responseRecommendDTO = recommendService.create(rvIdx, userIdx);
+        Integer count = reviewService.changeRecommendCount(rvIdx, "add");
 
-        RecommendDTO responseRecommendDTO = RecommendDTO.builder()
-            .recommendIdx(addRecommend.getRecommendIdx())
-            .userIdx(addRecommend.getUser().getUserIdx())
-            .recCreatedAt(addRecommend.getRecCreatedAt())
-            .reviewIdx(addRecommend.getReview().getRvIdx())
-            .build();
-
-        return ResponseEntity.ok().body(ResDTO
-            .builder()
-            .statusCode(StatusCode.OK)
-            .data(responseRecommendDTO)
-            .message("공감 추가 성공")
-            .build());
+        return ResponseEntity.ok().body(ResDTO.builder()
+                                              .statusCode(StatusCode.OK)
+                                              .data(count)
+                                              .message("공감 추가 성공")
+                                              .build());
     }
 
-    @DeleteMapping("/recReview/{recommendIdx}")
-    public ResponseEntity<ResDTO> deleteRecommend(@PathVariable Long recommendIdx,
+    @DeleteMapping("/recReview/{rvIdx}")
+    public ResponseEntity<ResDTO<Object>> deleteRecommend(@PathVariable Long rvIdx,
                                                    @AuthenticationPrincipal String userIdx){
-        recommendService.delete(recommendIdx, userIdx);
+        log.info("추천 idx {}", rvIdx);
+        recommendService.delete(rvIdx, Long.parseLong(userIdx));
+        Integer count = reviewService.changeRecommendCount(rvIdx, "delete");
         return ResponseEntity.ok().body(ResDTO
            .builder()
            .statusCode(StatusCode.OK)
+           .data(count)
            .message("공감 삭제 성공")
            .build());
     }
