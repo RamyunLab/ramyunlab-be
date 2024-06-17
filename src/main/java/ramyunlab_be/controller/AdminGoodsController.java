@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
+import ramyunlab_be.dto.RamyunProjection;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
@@ -42,7 +43,7 @@ public class AdminGoodsController {
     })
     @GetMapping("/goods")
     public ResponseEntity<ResDTO> getGoodsList(Pageable pageable){
-        Page<RamyunEntity> results = AdminGoodsService.getGoodsList(pageable);
+        Page<RamyunProjection> results = AdminGoodsService.getGoodsList(pageable);
 
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
@@ -60,7 +61,9 @@ public class AdminGoodsController {
     @GetMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> getGoods(@PathVariable Long ramyunIdx,
                                            @AuthenticationPrincipal String userIdx){
-        RamyunEntity result = adminGoodsService.getGoods(ramyunIdx, userIdx);
+        log.warn("controller : {}", ramyunIdx);
+        RamyunProjection result = adminGoodsService.getGoods(ramyunIdx, userIdx);
+        log.warn("result : {}", result);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .message("선택된 상품 조회 성공")
@@ -77,6 +80,7 @@ public class AdminGoodsController {
     public ResponseEntity<ResDTO> addGoods(@RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
                                            @RequestPart(value = "file", required = false)MultipartFile file,
                                            @AuthenticationPrincipal String userIdx) throws Exception{
+        log.warn("/admin/goods : {}", ramyunDTO);
         RamyunEntity addedRamyun = adminGoodsService.addGoods(ramyunDTO, file, userIdx);
 
         RamyunDTO responseRamyunDTO = RamyunDTO.builder()
