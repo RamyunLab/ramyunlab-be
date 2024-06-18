@@ -140,6 +140,7 @@ public class AdminGoodsService {
                 .ramyunNa(ramyunDTO.getRamyunNa())
                 .isCup(ramyunDTO.getIsCup())
                 .noodle(ramyunDTO.getNoodle())
+                .cooking(ramyunDTO.getCooking())
                 .gram(ramyunDTO.getGram())
                 .ramyunKcal(ramyunDTO.getRamyunKcal())
                 .brand(brand)

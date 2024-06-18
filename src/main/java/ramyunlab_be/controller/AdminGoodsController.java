@@ -93,6 +93,7 @@ public class AdminGoodsController {
             .cooking(addedRamyun.getCooking())
             .gram(addedRamyun.getGram())
             .ramyunNa(addedRamyun.getRamyunNa())
+            .brandName(addedRamyun.getBrand().getBrandName())
             .build();
 
         return ResponseEntity.ok().body(ResDTO.builder()
@@ -132,8 +133,8 @@ public class AdminGoodsController {
     })
     @PatchMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
-                                              @RequestPart RamyunDTO ramyunDTO,
-                                              @RequestPart(required = false)MultipartFile file,
+                                              @RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
+                                              @RequestPart(value = "file") MultipartFile file,
                                               @AuthenticationPrincipal String userIdx) throws Exception{
         RamyunEntity updatedRamyun = adminGoodsService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
 
@@ -147,6 +148,7 @@ public class AdminGoodsController {
             .cooking(updatedRamyun.getCooking())
             .gram(updatedRamyun.getGram())
             .ramyunNa(updatedRamyun.getRamyunNa())
+            .brandName(updatedRamyun.getBrand().getBrandName())
             .build();
 
         return ResponseEntity.ok().body(ResDTO.builder()

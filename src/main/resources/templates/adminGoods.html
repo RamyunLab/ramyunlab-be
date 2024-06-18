@@ -192,7 +192,7 @@
         </div>
         <div class="form-group">
           <label for="ramyunImg">이미지 URL</label>
-          <input type="text" id="ramyunImg" name="ramyunImg">
+          <input type="text" id="ramyunImg" name="ramyunImg" readonly>
           <input type="file" id="ramyunUpdateImg" name="ramyunUpdateImg">
         </div>
         <div class="form-group">
@@ -472,6 +472,11 @@
              }
         }
 
+ function closeEditModal() {
+          const modal = document.getElementById('editModal');
+          modal.style.display = 'none';
+        }
+
         // 상품 정보 수정 모달 열기
         function updateGoods(ramyunIdx) {
     const token = localStorage.getItem('jwtToken');
@@ -487,6 +492,7 @@
             const goods = response.data.data;
 
             document.getElementById('ramyunName').value = goods.ramyunName;
+            document.getElementById('ramyunImg').value = goods.ramyunImg;
             document.getElementById('ramyunKcal').value = goods.ramyunKcal;
             document.getElementById('ramyunNa').value = goods.ramyunNa;
             document.getElementById('gram').value = goods.gram;
@@ -513,33 +519,75 @@
 
 //상품 정보 저장
  async function saveGoods() {
-      try {
-        const form = document.getElementById('editForm');
-        const formData = new FormData(form);
 
-        // Append the file manually if needed
-        const fileInput = document.getElementById('ramyunUpdateImg');
-        if (fileInput.files.length > 0) {
-          formData.append('file', fileInput.files[0]);
-        }
+  const form = document.getElementById('editForm');
+const formData = new FormData();
 
-        // Convert some fields to boolean if necessary
-        formData.set('noodle', formData.get('noodle') === 'true');
-        formData.set('isCup', formData.get('isCup') === 'true');
-        formData.set('cooking', formData.get('cooking') === 'true');
+const ramyunName = document.getElementById('ramyunName').value;
+const ramyunKcal = document.getElementById('ramyunKcal').value;
+const gram = document.getElementById('gram').value;
+const noodle = document.querySelector('input[name="noodle"]:checked').value;
+const isCup = document.querySelector('input[name="isCup"]:checked').value;
+const cooking = document.querySelector('input[name="cooking"]:checked').value;
+const ramyunNa = document.getElementById('ramyunNa').value;
+const scoville = document.getElementById('scoville').value;
+const brand = document.querySelector('input[name="brandName"]:checked').value;
 
-        const ramyunIdx = form.dataset.ramyunIdx;
-        const url = `/admin/goods/${ramyunIdx}`;
+<!--console.log("============= " + document.getElementById('ramyunUpdateImg').files[0]);-->
+<!--console.log("********" + document.getElementById('ramyunImg').value);-->
+<!--console.log("ramyunImg" + ramyunImg);-->
 
-        const response = await axios.patch(url, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }
-        });
+const ramyunDTO = {
+        ramyunName,
+        ramyunKcal,
+        noodle,
+        isCup,
+        cooking,
+        gram,
+        scoville,
+        ramyunNa,
+        brand
+    };
+<!--    console.log("ramyunDTO______" + JSON.stringify(ramyunDTO));-->
+const ramyunImg = document.getElementById('ramyunUpdateImg').files[0] === undefined ? document.getElementById('ramyunImg').value : document.getElementById('ramyunUpdateImg').files[0]; // 파일 선택
+
+
+
+<!--    // Convert to JSON string and add as a blob to FormData-->
+    formData.set('ramyunDTO', new Blob([JSON.stringify(ramyunDTO)], { type: 'application/json' }));
+
+<!--    // Add file if it exists-->
+        formData.set('file', ramyunImg);
+<!--    const ramyunImgInput = document.getElementById('ramyunUpdateImg');-->
+<!--    if (ramyunImgInput.files.length > 0) {-->
+<!--    }-->
+
+<!--formData.append('ramyunDTO', new Blob([JSON.stringify(ramyunDTO)], { type: 'application/json' }));-->
+
+    // Add file if it exists
+<!--    const ramyunImgInput = document.getElementById('ramyunUpdateImg');-->
+<!--    if (ramyunImgInput && ramyunImgInput.files.length > 0) {-->
+<!--        formData.append('file', ramyunImgInput.files[0], ramyunImgInput.files[0].name);-->
+<!--    } else {-->
+<!--        const existingImg = document.getElementById('ramyunImg').value;-->
+<!--        formData.append('file', new Blob([existingImg], { type: 'text/plain' }), 'existingImg.txt');-->
+<!--    }-->
+
+    console.log([...formData.entries()]);
+
+
+const ramyunIdx = form.dataset.ramyunIdx;
+const url = `/admin/goods/${ramyunIdx}`;
+
+       try {
+            const response = await axios.patch(url, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        console.log('상품 추가 성공:', response.data);
+        closeEditModal();
         fetchGoods(0);
-
-        console.log(response.data);
-        alert('상품 수정 성공');
         // Handle the success response, e.g., redirect or update the UI
       } catch (error) {
         console.error(error);
@@ -547,30 +595,6 @@
         // Handle the error response
       }
     }
-<!--async function saveGoods() {-->
-<!--    const form = document.getElementById('editForm');-->
-<!--    const formData = new FormData(form);-->
-
-<!--    const userIdx = localStorage.getItem('userIdx');-->
-<!--    formData.append('userIdx', userIdx);-->
-
-<!--    const ramyunIdx = form.dataset.ramyunIdx;-->
-
-<!--    try {-->
-<!--        const response = await axios.patch(`/admin/goods/${ramyunIdx}`, formData, {-->
-<!--            headers: {-->
-<!--                'Content-Type': 'multipart/form-data'-->
-<!--            }-->
-<!--        });-->
-
-<!--        console.log('상품 수정 성공:', response.data);-->
-<!--        closeModal();-->
-
-<!--        // 수정한 상품을 화면에 업데이트하거나 필요한 처리를 추가할 수 있습니다.-->
-<!--    } catch (error) {-->
-<!--        console.error('상품 수정 실패:', error);-->
-<!--    }-->
-<!--}-->
 
     function confirmDeleteGoods(ramyunIdx) {
         if (confirm("정말 삭제하시겠습니까?")) {
