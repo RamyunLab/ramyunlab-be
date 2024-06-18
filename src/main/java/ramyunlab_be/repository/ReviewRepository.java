@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.ReviewEntity;
+import ramyunlab_be.entity.UserEntity;
 
 import java.util.Optional;
 
@@ -21,6 +22,8 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, ReviewCustomRepository {
     Page<ReviewEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
+    @Query(value = "SELECT * FROM review WHERE u_idx = :userIdx", nativeQuery = true)
+    ReviewEntity findReviewByUserIdx(Long userIdx);
     /* 라면별 리뷰 조회 */
     Page<ReviewDTO> findReviewByRamyunIdx (Long ramyunIdx, Long userIdx, Pageable pageable);
 
