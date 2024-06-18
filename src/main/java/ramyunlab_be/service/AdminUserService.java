@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.ReviewRepository;
@@ -26,11 +27,11 @@ public class AdminUserService {
         this.reviewRepository = reviewRepository;
     }
 
-    public static Page<UserEntity> getUsers(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public static Page<UserProjection> getUsers(Pageable pageable) {
+        return userRepository.findAllUsers(pageable);
     }
 
-    public List<UserEntity> searchUser(final String keyword,
+    public List<UserProjection> searchUser(final String keyword,
                                        final String userIdx) {
         userRepository.findByUserIdx(Long.valueOf(userIdx))
             .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));

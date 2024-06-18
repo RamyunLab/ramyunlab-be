@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.mail.EmailMessage;
@@ -48,7 +49,7 @@ public class AdminUserController {
     })
     @GetMapping("/users")
     public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
-        Page<UserEntity> results = AdminUserService.getUsers(pageable);
+        Page<UserProjection> results = AdminUserService.getUsers(pageable);
 //        log.warn("논리 삭제 확인 {}", results.stream().toList());
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
@@ -60,7 +61,7 @@ public class AdminUserController {
     @GetMapping("/searchUser")
     public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
                                              ,@AuthenticationPrincipal String userIdx) {
-        List<UserEntity> results = adminUserService.searchUser(keyword, userIdx);
+        List<UserProjection> results = adminUserService.searchUser(keyword, userIdx);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .data(results)

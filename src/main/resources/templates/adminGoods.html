@@ -200,6 +200,10 @@
           <input type="number" id="ramyunKcal" name="ramyunKcal">
         </div>
         <div class="form-group">
+          <label for="gram">중량(g)</label>
+          <input type="number" id="gram" name="gram">
+        </div>
+        <div class="form-group">
           <label for="noodle">면종류</label><br>
           <label for="noodleTrue">유탕면</label>
           <input type="radio" id="noodleTrue" name="noodle" value="true">
@@ -225,9 +229,13 @@
           <input type="number" id="ramyunNa" name="ramyunNa">
         </div>
         <div class="form-group">
-          <label for="brandName">브랜드</label>
-          <input type="text" id="brandName" name="brandName">
+          <label for="scoville">스코빌</label>
+          <input type="number" id="scoville" name="scoville">
         </div>
+<!--        <div class="form-group">-->
+<!--          <label for="brandName">브랜드</label>-->
+<!--          <input type="text" id="brandName" name="brandName">-->
+<!--        </div>-->
         <div class="form-group" >
           <label for="brandName">브랜드</label><br>
           <div class=" newBrand">
@@ -444,7 +452,6 @@
                         ramyunNa,
                         brandName
                     };
-                    console.log("************", JSON.stringify(ramyunDTO));
 
                     formData.append('ramyunDTO', new Blob([JSON.stringify(ramyunDTO)], { type: 'application/json' }));
                     formData.append('file', ramyunImg); // 파일 추가
@@ -482,10 +489,10 @@
             document.getElementById('ramyunName').value = goods.ramyunName;
             document.getElementById('ramyunKcal').value = goods.ramyunKcal;
             document.getElementById('ramyunNa').value = goods.ramyunNa;
-            document.getElementById('brandName').value = goods.brandName;
             document.getElementById('gram').value = goods.gram;
             document.getElementById('scoville').value = goods.scoville;
 
+            document.querySelector(`input[name="brandName"][value="${goods.brandName}"]`).checked = true;
                // Set the correct radio button for noodle
             document.querySelector(`input[name="noodle"][value="${goods.noodle}"]`).checked = true;
 
@@ -505,30 +512,65 @@
 }
 
 //상품 정보 저장
-async function saveGoods() {
-    const form = document.getElementById('editForm');
-    const formData = new FormData(form);
+ async function saveGoods() {
+      try {
+        const form = document.getElementById('editForm');
+        const formData = new FormData(form);
 
-    const userIdx = localStorage.getItem('userIdx');
-    formData.append('userIdx', userIdx);
+        // Append the file manually if needed
+        const fileInput = document.getElementById('ramyunUpdateImg');
+        if (fileInput.files.length > 0) {
+          formData.append('file', fileInput.files[0]);
+        }
 
-    const ramyunIdx = form.dataset.ramyunIdx;
+        // Convert some fields to boolean if necessary
+        formData.set('noodle', formData.get('noodle') === 'true');
+        formData.set('isCup', formData.get('isCup') === 'true');
+        formData.set('cooking', formData.get('cooking') === 'true');
 
-    try {
-        const response = await axios.patch(`/admin/goods/${ramyunIdx}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+        const ramyunIdx = form.dataset.ramyunIdx;
+        const url = `/admin/goods/${ramyunIdx}`;
+
+        const response = await axios.patch(url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
         });
+        fetchGoods(0);
 
-        console.log('상품 수정 성공:', response.data);
-        closeModal();
-
-        // 수정한 상품을 화면에 업데이트하거나 필요한 처리를 추가할 수 있습니다.
-    } catch (error) {
-        console.error('상품 수정 실패:', error);
+        console.log(response.data);
+        alert('상품 수정 성공');
+        // Handle the success response, e.g., redirect or update the UI
+      } catch (error) {
+        console.error(error);
+        alert('상품 수정 실패');
+        // Handle the error response
+      }
     }
-}
+<!--async function saveGoods() {-->
+<!--    const form = document.getElementById('editForm');-->
+<!--    const formData = new FormData(form);-->
+
+<!--    const userIdx = localStorage.getItem('userIdx');-->
+<!--    formData.append('userIdx', userIdx);-->
+
+<!--    const ramyunIdx = form.dataset.ramyunIdx;-->
+
+<!--    try {-->
+<!--        const response = await axios.patch(`/admin/goods/${ramyunIdx}`, formData, {-->
+<!--            headers: {-->
+<!--                'Content-Type': 'multipart/form-data'-->
+<!--            }-->
+<!--        });-->
+
+<!--        console.log('상품 수정 성공:', response.data);-->
+<!--        closeModal();-->
+
+<!--        // 수정한 상품을 화면에 업데이트하거나 필요한 처리를 추가할 수 있습니다.-->
+<!--    } catch (error) {-->
+<!--        console.error('상품 수정 실패:', error);-->
+<!--    }-->
+<!--}-->
 
     function confirmDeleteGoods(ramyunIdx) {
         if (confirm("정말 삭제하시겠습니까?")) {
