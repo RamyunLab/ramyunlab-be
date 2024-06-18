@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.UserEntity;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Boolean existsByUserId(String userId);
 
     Boolean existsByNickname(String nickname);
+
+    @Query("SELECT u.userDeletedAt FROM UserEntity u WHERE u.userId = :userId")
+    Timestamp findUserDeletedAtByUserId(String userId);
 
 //    UserEntity findByUserId(String userId);
 
