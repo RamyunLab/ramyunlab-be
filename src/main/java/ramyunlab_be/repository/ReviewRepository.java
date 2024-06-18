@@ -3,6 +3,8 @@ package ramyunlab_be.repository;
 import java.util.List;
 
 import java.util.Map;
+
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +24,11 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, ReviewCustomRepository {
     Page<ReviewEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
-    @Query(value = "SELECT * FROM review WHERE u_idx = :userIdx", nativeQuery = true)
-    ReviewEntity findReviewByUserIdx(Long userIdx);
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.userIdx = :userIdx AND rv.ramyun.ramyunIdx = :ramyunIdx")
+    List<ReviewEntity> findByUserIdxAndRamyunIdx(@Param("userIdx") Long user,@Param("ramyunIdx") Long ramyunIdx);
+
+//    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.idx = :userIdx")
+//    ReviewEntity findByUserIdx(Long userIdx);
     /* 라면별 리뷰 조회 */
     Page<ReviewDTO> findReviewByRamyunIdx (Long ramyunIdx, Long userIdx, Pageable pageable);
 
