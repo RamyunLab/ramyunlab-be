@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface RamyunRepository extends JpaRepository<RamyunEntity, Long> {
-    @Query("SELECT r.ramyunIdx as ramyunIdx, r.ramyunName as ramyunName, r.ramyunImg as ramyunImg, r.ramyunKcal as ramyunKcal, r.noodle as noodle, r.isCup as isCup, r.cooking as cooking, r.ramyunNa as ramyunNa, b.brandName as brandName FROM RamyunEntity r JOIN r.brand b")
+    @Query("SELECT r.ramyunIdx as ramyunIdx, r.ramyunName as ramyunName, r.ramyunImg as ramyunImg, r.ramyunKcal as ramyunKcal, r.noodle as noodle, r.isCup as isCup, r.cooking as cooking, r.ramyunNa as ramyunNa, r.gram as gram, r.scoville as scoville, r.ramyunDeletedAt as ramyunDeletedAt, b.brandName as brandName FROM RamyunEntity r JOIN r.brand b")
     Page<RamyunProjection> findAllWithBrand(Pageable pageable);
 
     @Query("SELECT r.ramyunName as ramyunName, r.ramyunImg as ramyunImg, r.ramyunKcal as ramyunKcal, r.noodle as noodle, r.isCup as isCup, r.cooking as cooking, r.ramyunNa as ramyunNa, r.gram as gram, r.scoville as scoville, r.ramyunDeletedAt as ramyunDeletedAt, b.brandName as brandName FROM RamyunEntity r JOIN r.brand b WHERE r.ramyunIdx = :ramyunIdx")

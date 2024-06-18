@@ -69,6 +69,7 @@
       <th>ID</th>
       <th>Nickname</th>
       <th>Review</th>
+      <th>삭제일자</th>
       <th>삭제</th>
     </tr>
     </thead>
@@ -83,6 +84,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
               const token = localStorage.getItem('jwtToken');
+
 
               if (!token) {
                   console.error('토큰이 없습니다.');
@@ -145,10 +147,13 @@
     users.forEach(user => {
             const row = `
                 <tr>
-                    <td>${user.userIdx}</td>
+                    <td style = "${user.isAdmin === true ? 'background-color : yellow;' : ''}">${user.userIdx}</td>
                     <td>${user.userId}</td>
                     <td>${user.nickname}</td>
                     <td>${user.reviews}</td>
+                    <td style="${user.userDeletedAt === null ? '' : 'background-color: grey;'}">
+                                  ${user.userDeletedAt  === null ? "-" : user.userDeletedAt}
+                                  </td>
                     <td><button onclick="confirmDeleteUser(${user.userIdx})">삭제</button></td>
                 </tr>
             `;
