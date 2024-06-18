@@ -1,5 +1,6 @@
 package ramyunlab_be.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -34,6 +35,7 @@ public class UserDTO {
     private Integer isAdmin;
 
     @Schema(description = "탈퇴 회원이면 timestamp 아니면 null", example = "null", nullable = true)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private String userDeletedAt;
 
     @Override
