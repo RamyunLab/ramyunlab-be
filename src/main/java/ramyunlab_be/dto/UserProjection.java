@@ -1,5 +1,6 @@
 package ramyunlab_be.dto;
 
+import ramyunlab_be.dto.ReviewProjection.ReviewProjection;
 import ramyunlab_be.entity.ReviewEntity;
 
 import java.sql.Timestamp;
@@ -14,6 +15,7 @@ public interface UserProjection {
     String getNickname();
     Boolean getIsAdmin();
     Timestamp getUserDeletedAt();
+    List<ReviewProjection> getReviews();
 }
 
 

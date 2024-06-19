@@ -28,7 +28,7 @@ public class AdminUserService {
     }
 
     public static Page<UserProjection> getUsers(Pageable pageable) {
-        return userRepository.findAllUsers(pageable);
+        return userRepository.findAllUserswithReview(pageable);
     }
 
     public List<UserProjection> searchUser(final String keyword,

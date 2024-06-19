@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ramyunlab_be.dto.RamyunProjection;
 import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.UserEntity;
 
@@ -14,8 +15,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    @Query("SELECT u FROM UserEntity u")
-    Page<UserProjection> findAllUsers(Pageable pageable);
+    @Query("SELECT u.userIdx as userIdx, u.userId as userId, u.userNickname as userNickname, u.userDeletedAt as userDeletedAt, rv.reviews as review FROM UserEntity u JOIN u.reviews rv")
+    Page<UserProjection> findAllUserswithReview(Pageable pageable);
 
     Boolean existsByUserId(String userId);
 
