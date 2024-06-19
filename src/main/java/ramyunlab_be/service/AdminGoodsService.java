@@ -12,12 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.BrandDTO;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.RamyunProjection;
+import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.repository.BrandRepository;
 import ramyunlab_be.repository.RamyunRepository;
 import ramyunlab_be.repository.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,6 +57,14 @@ public class AdminGoodsService {
 
         RamyunProjection result = ramyunRepository.findByRamyunIdx(Long.valueOf(ramyunIdx)).orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
         return result;
+    }
+
+    public List<RamyunProjection> searchGoods(final String keyword,
+                                           final String userIdx) {
+        userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
+
+        return ramyunRepository.searchBykeyword(keyword);
     }
 
     public RamyunEntity addGoods(final RamyunDTO ramyunDTO,

@@ -13,6 +13,26 @@
       flex-direction: column;
       justify-content: center;
     }
+    #form_searchGoods {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+     }
+     h1 {
+     text-align : center;
+     }
+    #searchInput {
+      width: 400px;
+      height: 30px;
+      margin: 10px;
+      text-align: center;
+     }
+     #searchBTN {
+      width: 100px;
+      height: 30px;
+      margin: 10px;
+      text-align: center;
+     }
     table, th, td {
       border: 1px solid black;
       border-collapse: collapse;
@@ -131,7 +151,7 @@
     .addBTN {
       position: absolute;
       right: 30px;
-      top: 130px;
+      top: 150px;
     border-radius: 5px;
     padding: 10px 20px;
      border : 1px solid #888;
@@ -153,6 +173,10 @@
   <h2 style="text-align : center">상품 목록</h2>
   <button style="text-align : end" class="addBTN" onclick="openAddModal()">상품 추가</button>
   <div id="table_container">
+    <form action="/admin/searchGoods" method="get" id="form_searchGoods">
+      <input type="text" placeholder="상품 검색" name="keyword" id="searchInput">
+      <button type="button" onclick="searchGoods()" id = "searchBTN">검색</button><br/>
+    </form>
   <table id="goodsTable">
     <thead>
     <tr>
@@ -392,6 +416,65 @@
 
               window.fetchGoods = fetchGoods; // 페이지네이션 버튼에서 fetchGoods 함수를 사용할 수 있도록 설정
           });
+
+async function searchGoods(){
+     try{
+       const form = document.getElementById("form_searchGoods");
+       const data = {
+        keyword : form.keyword.value
+       }
+       const token = localStorage.getItem('jwtToken');
+        const response = await axios.get(`/admin/searchGoods?keyword=${form.keyword.value}`, {
+          headers : { "Authorization" :  `Bearer ${token}`}
+        });
+        console.log("************", response.data.data);
+        updateTable(response.data.data);
+
+     }catch(error) {
+     console.error('상품 검색 실패', error);
+     }
+    }
+
+   async function updateTable(goods) {
+    try{
+    const tableBody = document.querySelector("#goodsTable tbody");
+    // 기존 테이블 내용 지우기
+    tableBody.innerHTML = "";
+
+        // 새로운 상품 데이터 추가
+    goods.forEach(g => {
+            const row = `
+                <tr>
+                    <td>${g.ramyunIdx}</td>
+                    <td>${g.ramyunName}</td>
+                    <td><a href="${g.ramyunImg}" target="_blank">${extractFilename(g.ramyunImg)}</a></td>
+                    <td>${g.ramyunKcal}</td>
+                    <td>${g.gram}</td>
+                    <td>${g.noodle ? '유탕면' : '건면'}</td>
+                    <td>${g.isCup ? '컵라면' : '봉지라면'}</td>
+                    <td>${g.cooking ? '국물' : '비빔/볶음'}</td>
+                    <td>${g.ramyunNa}</td>
+                    <td>${g.scoville === null ? "-" : g.scoville}</td>
+                    <td>${g.brandName}</td>
+                    <td style="${g.ramyunDeletedAt === null ? '' : 'background-color: grey;'}">
+                                  ${g.ramyunDeletedAt  === null ? "-" : g.ramyunDeletedAt}
+                                  </td>
+                    <td><button onclick="updateGoods(${goods.ramyunIdx})" class="updateBTN">수정</button></td>
+                    <td><button onclick="confirmDeleteGoods(${g.ramyunIdx})">삭제</button></td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+               function extractFilename(url) {
+                // URL에서 파일 이름 추출
+                let startIndex = url.lastIndexOf('/') + 1; // 마지막 '/' 다음 위치부터
+                let filename = url.substring(startIndex); // 파일 이름 추출
+                return filename;
+              }
+        });
+        }catch(error) {
+        console.error('상품 목록 조회 실패', error);
+        }
+}
 
     // 모달 관련 스크립트
         const editModal = document.getElementById('editModal');

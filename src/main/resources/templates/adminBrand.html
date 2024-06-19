@@ -33,7 +33,7 @@
     }
   </style>
 </head>
-<body sec:authorize="isAuthenticated()">
+<body >
   <a th:href="@{/goodsPage}" style="text-align : end" class="toGoods">상품 관리</a></br>
   <h1 style="text-align : center">Ramyun lab - 브랜드 관리</h1>
   <h2 style="text-align : center">브랜드 목록</h2>
@@ -43,6 +43,7 @@
       <tr>
         <th></th>
         <th>브랜드명</th>
+        <th>삭제일자</th>
         <th>삭제</th>
       </tr>
       </thead>
@@ -56,6 +57,7 @@
   </div>
 </body>
 <!--<body sec:authorize="isAnonymous()">-->
+<!--sec:authorize="isAuthenticated()"-->
 <!--  <h1>관리자로 로그인 해주세요.</h1>-->
 <!--</body>-->
 </html>

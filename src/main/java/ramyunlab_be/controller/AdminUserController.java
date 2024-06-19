@@ -58,10 +58,16 @@ public class AdminUserController {
             .build());
     }
 
+    @Operation(summary = "사용자 검색", description = "keyword로 사용자 검색, 토큰 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "사용자 검색 성공"),
+        @ApiResponse(responseCode = "400", description = "사용자 검색 실패")
+    })
     @GetMapping("/searchUser")
     public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
                                              ,@AuthenticationPrincipal String userIdx) {
         List<UserProjection> results = adminUserService.searchUser(keyword, userIdx);
+        log.warn("keyword : {}", keyword);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .data(results)
