@@ -42,7 +42,7 @@ public class UserEntity {
     private Boolean isAdmin=false;
 
     @Column(name = "u_deleted_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd 'T' HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp userDeletedAt;
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL)

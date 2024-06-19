@@ -1,5 +1,7 @@
 package ramyunlab_be.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Timestamp;
 
 public interface RamyunProjection {
@@ -13,6 +15,7 @@ public interface RamyunProjection {
     Integer getRamyunNa();
     Integer getGram();
     Integer getScoville();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd 'T' HH:mm:ss", timezone = "Asia/Seoul")
     Timestamp getRamyunDeletedAt();
     String getBrandName();
 }

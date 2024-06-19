@@ -1,4 +1,4 @@
-package ramyunlab_be.dto.ReviewProjection;
+package ramyunlab_be.dto;
 
 import java.sql.Timestamp;
 

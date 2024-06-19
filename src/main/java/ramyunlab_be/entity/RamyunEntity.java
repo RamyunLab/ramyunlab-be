@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -55,6 +56,7 @@ public class RamyunEntity {
     private Integer scoville;
 
     @Column(name = "r_deleted_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd 'T' HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp ramyunDeletedAt;
 
     @ManyToOne

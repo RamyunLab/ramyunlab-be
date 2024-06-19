@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.dto.UserDTO;
 import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
@@ -42,15 +43,46 @@ public class AdminUserController {
         this.emailService = emailService;
     }
 
-    @Operation(summary = "사용자 목록 조회")
+//    @Operation(summary = "사용자 목록 조회")
+//    @ApiResponses(value = {
+//        @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
+//        @ApiResponse(responseCode = "400", description = "사용자 목록 조회 실패")
+//    })
+//    @GetMapping("/users")
+//    public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
+//        Page<UserProjection> results = AdminUserService.getUsers(pageable);
+////        log.warn("논리 삭제 확인 {}", results.stream().toList());
+//        return ResponseEntity.ok().body(ResDTO.builder()
+//            .statusCode(StatusCode.OK)
+//            .data(results)
+//            .message("사용자 목록 호출 완료")
+//            .build());
+//    }
+
+//    @Operation(summary = "사용자 목록 조회")
+//    @ApiResponses(value = {
+//        @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
+//        @ApiResponse(responseCode = "400", description = "사용자 목록 조회 실패")
+//    })
+//    @GetMapping("/users")
+//    public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
+//        Page<UserProjection> results = AdminUserService.getUserWithReviews(pageable);
+////        log.warn("논리 삭제 확인 {}", results.stream().toList());
+//        return ResponseEntity.ok().body(ResDTO.builder()
+//            .statusCode(StatusCode.OK)
+//            .data(results)
+//            .message("사용자 목록 호출 완료")
+//            .build());
+//    }
+
+        @Operation(summary = "사용자 목록 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
         @ApiResponse(responseCode = "400", description = "사용자 목록 조회 실패")
     })
     @GetMapping("/users")
     public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
-        Page<UserProjection> results = AdminUserService.getUsers(pageable);
-//        log.warn("논리 삭제 확인 {}", results.stream().toList());
+        Page<UserEntity> results = adminUserService.getUsers(pageable);
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .data(results)
