@@ -144,16 +144,16 @@ public class MainController {
 
     // 라면 + 평점 조회
     RamyunDTO ramyun = mainService.getRamyun(ramyunIdx);
-    log.info("ramyun {}", ramyun.toString());
+//    log.info("ramyun {}", ramyun.toString());
 
     if(page == null){
       page = 1;
     }
-    log.info("page {}", page);
+    log.info("page 번호 {}", page);
 
     // 리뷰 조회
     Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, page);
-    log.info("review {}", reviews.toString());
+//    log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
     List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
@@ -199,11 +199,16 @@ public class MainController {
   @Operation(summary = "내 리뷰 조회", description = "마이페이지에서 리뷰 클릭 시 상세페이지에서 조회, 라면인덱스(ramyunIdx), 리뷰인덱스(reviewNo) 필요")
   @GetMapping("/ramyun/{ramyunIdx}/my")
   public ResponseEntity<ResDTO<Object>> getReviewPage(@PathVariable Long ramyunIdx,
-                                                      @RequestParam(required = true) Long reviewNo,
-                                                      @AuthenticationPrincipal String userIdx){
+                                                      @RequestParam(required = true) Long reviewNo
+//                                                      ,@AuthenticationPrincipal String userIdx
+                                                     ){
     Integer page = reviewService.goMyReview(ramyunIdx, reviewNo);
     log.info("리뷰 조회 시 페이지 {}", page);
-    return getRamyunInfo(ramyunIdx, page, reviewNo, userIdx);
+    return ResponseEntity.ok().body(ResDTO.builder()
+                                          .statusCode(StatusCode.OK)
+                                          .message("페이지 계산 성공")
+                                          .data(page)
+                                          .build());
   }
 
   @Operation(summary = "라면 상세페이지 랜덤 조회", description = "라면 상세페이지 랜덤 조회, 토큰 필요함")
@@ -213,13 +218,4 @@ public class MainController {
       return getRamyunInfo(result, null, null, userIdx);
     }
 
-  @ExceptionHandler(ValidationException.class)
-  public ResponseEntity<ResDTO<Object>> handleValidationException (ValidationException e) {
-    return ResponseEntity
-        .badRequest()
-        .body(ResDTO.builder()
-                    .statusCode(StatusCode.BAD_REQUEST)
-                    .message(e.getMessage())
-                    .build());
-  }
 }
