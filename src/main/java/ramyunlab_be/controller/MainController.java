@@ -150,15 +150,15 @@ public class MainController {
 //    log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
-//    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
+    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("데이터 조회 성공")
                                           .data(RamyunDetailDTO.builder().ramyun(ramyun)
-//                                                               .bestReview(bestReview)
-//                                                               .review(reviews)
+                                                               .bestReview(bestReview)
                                                                .isLiked(isLiked)
+//                                                               .review(reviews)
 //                                                               .reviewNo(reviewNo)
                                                                .build())
                                           .build());
