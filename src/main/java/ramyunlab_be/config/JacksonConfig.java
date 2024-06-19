@@ -18,7 +18,7 @@ public class JacksonConfig {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd 'T' HH:mm:ss"));
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
         return mapper;
     }
 }

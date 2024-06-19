@@ -32,8 +32,9 @@ public class UploadTestController {
   @PostMapping
   public ResponseEntity<String> uploadFile (@RequestParam("file") MultipartFile file) {
     try {
-      String fileName =file.getOriginalFilename();
+      String fileName ="img/review/"+file.getOriginalFilename();
       String fileUrl= "https://" + cloudfront + "/" + fileName;
+      log.info("파일 경로 {}",fileUrl);
       ObjectMetadata metadata= new ObjectMetadata();
       metadata.setContentType(file.getContentType());
       metadata.setContentLength(file.getSize());

@@ -48,7 +48,7 @@ public class RamyunEntity {
     @Column(name = "r_gram", nullable = false)
     private Integer gram;
 
-    @Column(name = "r_Na", nullable = false)
+    @Column(name = "r_na", nullable = false)
     private Integer ramyunNa;
 
     @Column(name = "r_scoville")

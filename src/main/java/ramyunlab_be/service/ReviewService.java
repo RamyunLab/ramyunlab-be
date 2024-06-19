@@ -2,6 +2,7 @@ package ramyunlab_be.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,13 +10,17 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.ReportDTO;
+import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReportEntity;
@@ -28,6 +33,7 @@ import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagination;
 
 import java.util.UUID;
+import ramyunlab_be.vo.StatusCode;
 
 @Service
 @Slf4j
@@ -64,6 +70,11 @@ public class ReviewService {
         RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        Optional<ReviewEntity> duplicateReviews = reviewRepository.findByUserIdxAndRamyunIdx(Long.valueOf(userIdx), ramyunIdx);
+        if(!duplicateReviews.isEmpty()){
+            throw new RuntimeException("이미 리뷰를 작성하셨습니다.");
+        }
 
         Integer rate = Integer.valueOf(reviewDTO.getRate());
 
@@ -200,6 +211,9 @@ public class ReviewService {
 
     public Integer goMyReview (Long ramyunIdx, Long rvIdx){
         Integer reviewNo = reviewRepository.getMyReviewNumber(ramyunIdx, rvIdx);
+        if(reviewNo == null){
+            throw new RuntimeException("해당 리뷰가 존재하지 않습니다.");
+        }
         // 페이지 계산
         Integer page = (int) Math.ceil((double) reviewNo / Pagination.REVIEW_PAGE_SIZE);
         return page;
