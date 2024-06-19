@@ -14,4 +14,6 @@ import lombok.NoArgsConstructor;
 public class BrandDTO {
     private Long brandIdx;
     private String brandName;
+    private String brandCreatedAt;
+    private String brandDeletedAt;
 }

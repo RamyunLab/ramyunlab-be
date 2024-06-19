@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class FavoriteEntity {
 
     @Column(name = "fav_created_at", nullable = false)
     @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private Timestamp favCreatedAt;
 
     @Formula("(SELECT COALESCE(AVG(rv.rv_rate), 0) FROM review rv WHERE rv.r_idx = r_idx)")

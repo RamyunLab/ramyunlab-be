@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,7 @@ import ramyunlab_be.repository.RamyunRepository;
 import ramyunlab_be.repository.ReportRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
-import ramyunlab_be.vo.Pagenation;
+import ramyunlab_be.vo.Pagination;
 
 import java.util.UUID;
 
@@ -65,6 +64,11 @@ public class ReviewService {
         RamyunEntity ramyun = ramyunRepository.findById(ramyunIdx).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        List<ReviewEntity> duplicateReviews = reviewRepository.findByUserIdxAndRamyunIdx(Long.valueOf(userIdx), ramyunIdx);
+        if(!duplicateReviews.isEmpty()){
+            throw new RuntimeException("이미 리뷰를 작성하셨습니다.");
+        }
 
         Integer rate = Integer.valueOf(reviewDTO.getRate());
 
@@ -171,7 +175,7 @@ public class ReviewService {
     }
 
     public Page<ReviewDTO> getMyReviewList(Integer pageNo, String userIdx) {
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
 
         Page<ReviewEntity> result = reviewRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 
@@ -180,15 +184,12 @@ public class ReviewService {
 
     public Page<ReviewDTO> getReviewByRamyun (Long ramyunIdx, Long userIdx, int pageNo){
         try {
-            Pageable pageable = PageRequest.of(pageNo - 1, Pagenation.REVIEW_PAGE_SIZE);
+            Pageable pageable = PageRequest.of(pageNo - 1, Pagination.REVIEW_PAGE_SIZE);
             Page<ReviewDTO> result = reviewRepository.findReviewByRamyunIdx(ramyunIdx, userIdx, pageable);
-            log.info("service::: {}", result.toString());
             return result;
         }catch (Exception e){
-            log.error("ERROR:: {}\n{}\n{}", e.getMessage(), e.getStackTrace(), e.getCause());
             throw new RuntimeException("쿼리 오류");
         }
-//        return result.map(this::convert);
     }
 
     public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx, Long userIdx){
@@ -202,14 +203,27 @@ public class ReviewService {
         return null;
     }
 
+    public Integer goMyReview (Long ramyunIdx, Long rvIdx){
+        Integer reviewNo = reviewRepository.getMyReviewNumber(ramyunIdx, rvIdx);
+        // 페이지 계산
+        Integer page = (int) Math.ceil((double) reviewNo / Pagination.REVIEW_PAGE_SIZE);
+        return page;
+    }
+
     /* 리뷰 추천/추천 취소 시 추천 수 변경 */
     public Integer changeRecommendCount(Long rvIdx, String status){
+        Integer count = null;
+        log.info("status {}", status);
         if(status.equals("add")){
-            reviewRepository.plusRecommendCount(rvIdx);
+            count = reviewRepository.plusRecommendCount(rvIdx);
         }else if(status.equals("delete")){
-            reviewRepository.minusRecommendCount(rvIdx);
+            count = reviewRepository.minusRecommendCount(rvIdx);
         }
-        return reviewRepository.getReviewRecommendCount(rvIdx);
+        log.info("리뷰 추천///추천삭제    {}", count);
+        Integer result = reviewRepository.getReviewRecommendCount(rvIdx);
+//        ReviewEntity result = reviewRepository.findByrvIdx(rvIdx);
+        return result;
+//        return convert(result);
     }
 
     private ReviewDTO convert(ReviewEntity reviewEntity) {
@@ -220,6 +234,7 @@ public class ReviewService {
                 .reviewPhotoUrl(reviewEntity.getReviewPhotoUrl())
                 .reviewContent(reviewEntity.getReviewContent())
                 .rate(reviewEntity.getRate())
+                .nickname(reviewEntity.getUser().getNickname())
 //                .rate(String.valueOf(reviewEntity.getRate()))
                 .rvCreatedAt(reviewEntity.getRvCreatedAt())
                 .rvUpdatedAt(reviewEntity.getRvUpdatedAt())

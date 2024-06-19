@@ -8,16 +8,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import jdk.jshell.Snippet.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.*;
-import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReportEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.service.ReviewService;
@@ -142,7 +141,7 @@ public class ReviewController {
             .userIdx(createdReport.getUser().getUserIdx())
             .reviewIdx(createdReport.getReview().getRvIdx())
             .build();
-
+        log.warn("userIdx : {}", responseReportDTO.getUserIdx());
         return ResponseEntity.ok().body(ResDTO.builder()
                .statusCode(StatusCode.OK)
                 .data(responseReportDTO)

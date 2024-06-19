@@ -1,6 +1,7 @@
 package ramyunlab_be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -27,10 +28,10 @@ public class UserEntity {
     @Column(name = "u_idx", updatable = false)
     private Long userIdx;
 
-    @Column(name = "u_Id", nullable = false, length = 20)
+    @Column(name = "u_id", nullable = false, length = 20)
     private String userId;
 
-    @Column(name = "u_Nickname", nullable = false, length = 30)
+    @Column(name = "u_nickname", nullable = false, length = 30)
     private String nickname;
 
     @Column(name = "u_Password", nullable = true)
@@ -41,6 +42,7 @@ public class UserEntity {
     private Boolean isAdmin=false;
 
     @Column(name = "u_deleted_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private Timestamp userDeletedAt;
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL)

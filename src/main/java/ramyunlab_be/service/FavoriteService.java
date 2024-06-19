@@ -1,6 +1,5 @@
 package ramyunlab_be.service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import ramyunlab_be.entity.FavoriteEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.FavoriteRepository;
-import ramyunlab_be.vo.Pagenation;
+import ramyunlab_be.vo.Pagination;
 
 @Slf4j
 @Service
@@ -24,7 +23,7 @@ public class FavoriteService {
 
     public Page<FavoriteDTO> getFavoriteList(Integer pageNo, String userIdx) {
 
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "favCreatedAt"));
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "favCreatedAt"));
 
         Page<FavoriteEntity> result = favoriteRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 

@@ -8,15 +8,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyunlab_be.dto.RecReviewDTO;
 import ramyunlab_be.dto.RecommendDTO;
-import ramyunlab_be.dto.ReviewDTO;
-import ramyunlab_be.entity.FavoriteEntity;
 import ramyunlab_be.entity.RecommendEntity;
 import ramyunlab_be.entity.ReviewEntity;
 import ramyunlab_be.entity.UserEntity;
 import ramyunlab_be.repository.RecommendRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
-import ramyunlab_be.vo.Pagenation;
+import ramyunlab_be.vo.Pagination;
 
 @Service
 @Slf4j
@@ -36,7 +34,7 @@ public class RecommendService {
         this.userRepository = userRepository;
     }
 
-    public RecommendEntity create(final Long rvIdx, final String userIdx){
+    public RecommendDTO create(final Long rvIdx, final String userIdx){
 
         ReviewEntity review = reviewRepository.findById(rvIdx)
             .orElseThrow(()-> new RuntimeException("SERVER ERROR!"));
@@ -44,19 +42,22 @@ public class RecommendService {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
             .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
-        RecommendEntity recommend = RecommendEntity.builder()
-            .review(review)
-            .user(user)
-            .build();
+        RecommendEntity recommend = RecommendEntity.builder().review(review).user(user).build();
+        RecommendEntity addRecommend = recommendRepository.save(recommend);
 
-        return recommendRepository.save(recommend);
+        return RecommendDTO.builder()
+                           .recommendIdx(addRecommend.getRecommendIdx())
+                           .userIdx(addRecommend.getUser().getUserIdx())
+                           .recCreatedAt(addRecommend.getRecCreatedAt())
+                           .reviewIdx(addRecommend.getReview().getRvIdx())
+                           .build();
     }
 
-    public RecommendEntity delete(final Long recommendIdx, final String userIdx) {
-        RecommendEntity recommend = recommendRepository.findById(recommendIdx)
+    public RecommendEntity delete(final Long rvIdx, final Long userIdx) {
+        RecommendEntity recommend = recommendRepository.findRecommend(rvIdx, userIdx)
             .orElseThrow(() -> new RuntimeException("SERVER ERROR!"));
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
-        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+        UserEntity user = userRepository.findByUserIdx(userIdx)
             .orElseThrow(() -> new RuntimeException("로그인을 진행해주세요."));
 
         if (user != null && recommend != null) {
@@ -67,7 +68,7 @@ public class RecommendService {
 
     // 내가 공감한 리뷰 목록 호출
     public Page<RecReviewDTO> getMyRecReview(Integer pageNo, String userIdx) {
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagenation.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "recCreatedAt"));
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "recCreatedAt"));
 
         Page<RecommendEntity> result = recommendRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
 

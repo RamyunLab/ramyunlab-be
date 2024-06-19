@@ -49,17 +49,20 @@ public class ReviewDTO {
     @Schema(description = "신고 수", example = "1")
     private Integer rvReportCount;
 
+    @Schema(description = "댓글 숨김 여부", example = "true")
+    private Boolean rvIsReported;
+
     @Schema(description = "회원 인덱스", example = "1")
     private Long userIdx;
     
     @Schema(description = "회원 닉네임", example = "테스트계정")
-    private String userNickname;
+    private String nickname;
 
     @Schema(description = "라면 인덱스", example = "1")
     private Long ramyunIdx;
 
     @Schema(description = "댓글 추천 여부", example = "true")
-    private Boolean isRecommended = false;
+    private Boolean isRecommended;
 
     @Override
     public String toString() {

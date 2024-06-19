@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>Ramyunlab - 관리자 페이지(브랜드)</title>
+  <style>
+    #table_container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      margin: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    a {
+      position: absolute;
+      right: 30px;
+    }
+    #pagination {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body sec:authorize="isAuthenticated()">
+  <a th:href="@{/goodsPage}" style="text-align : end" class="toGoods">상품 관리</a></br>
+  <h1 style="text-align : center">Ramyun lab - 브랜드 관리</h1>
+  <h2 style="text-align : center">브랜드 목록</h2>
+  <div id="table_container">
+    <table id="brnadTable">
+      <thead>
+      <tr>
+        <th></th>
+        <th>브랜드명</th>
+        <th>삭제</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- 사용자 데이터가 여기에 동적으로 추가됩니다 -->
+      </tbody>
+    </table>
+    <div id="pagination">
+      <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+    </div>
+  </div>
+</body>
+<!--<body sec:authorize="isAnonymous()">-->
+<!--  <h1>관리자로 로그인 해주세요.</h1>-->
+<!--</body>-->
+</html>

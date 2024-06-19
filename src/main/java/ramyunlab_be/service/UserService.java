@@ -43,16 +43,20 @@ public class UserService {
 
     public UserEntity getByCredentials(final String userId, final String password) {
         UserEntity user = userRepository.findByUserId(userId);
-        if (user != null) {
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return UserEntity.builder().userId(userId).userIdx(user.getUserIdx()).build();
-            } else {
-                throw new RuntimeException("비밀번호가 틀렸습니다.");
-            }
-        } else {
+        Timestamp userDeletedAt = userRepository.findUserDeletedAtByUserId(userId);
+        log.warn("user create service {}, {}, {}, {}", userId, user.getUserId(), password, user.getPassword());
+
+        if (userDeletedAt != null){
+            throw new RuntimeException("탈퇴한 회원입니다.");
+        }else if(user != null && passwordEncoder.matches(password, user.getPassword())){
+            return UserEntity.builder().userId(userId).userIdx(user.getUserIdx()).build();
+        }else if(user == null){
             throw new RuntimeException("존재하지 않는 아이디입니다.");
+        }else if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
         }
-    }
+         return null;
+        }
 
     public UserDTO checkId(UserEntity userEntity) {
 
