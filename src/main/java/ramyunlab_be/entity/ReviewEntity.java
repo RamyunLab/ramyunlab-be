@@ -55,7 +55,7 @@ public class ReviewEntity {
     @ColumnDefault(value = "0")
     private Integer rvRecommendCount;
 
-    @Column(name = "rv_is_reported")
+    @Column(name = "rv_is_reported", columnDefinition = "tinyint(1) default 0")
     private Boolean rvIsReported;
 
     @Column(name = "rv_report_count", columnDefinition = "int default 0")

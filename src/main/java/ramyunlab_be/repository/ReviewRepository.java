@@ -76,15 +76,15 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, Rev
     @Modifying
     @Transactional
     @Query(value = "UPDATE review SET rv_is_reported = 1 WHERE rv_idx = :rvIdx", nativeQuery = true)
-    Integer changeIsReported(Long rvIdx);
+    Integer changeIsReported(@Param("rvIdx") Long rvIdx);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE review SET rv_report_count = 0 WHERE rv_idx = :rvIdx", nativeQuery = true)
-    Integer resetReportedCount(Long rvIdx);
+    Integer resetReportedCount(@Param("rvIdx") Long rvIdx);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE review SET rv_is_reported = 0 WHERE rv_idx = :rvIdx", nativeQuery = true)
-    Integer resetIsReported(Long rvIdx);
+    Integer resetIsReported(@Param("rvIdx") Long rvIdx);
 }
