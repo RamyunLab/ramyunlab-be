@@ -69,7 +69,7 @@
       <th>ID</th>
       <th>Nickname</th>
       <th>삭제일자</th>
-      <th>삭제</th>
+      <th>회원 삭제</th>
     </tr>
     </thead>
     <tbody>
@@ -195,7 +195,7 @@
                     <td>${user.reviews}</td>
                     <td style = "${user.rvIsReported === null || user.rvIsReported === false ? '' : 'color : red;'}">
                     ${user.rvIsReported === null || user.rvIsReported === false ? "X" : "신고처리"}</td>
-                    <td><button onclick="resetIsReported(${user.rvIdx})">초기화</button></td>
+                    <td><button onclick="confirmResetIsReported(${user.rvIdx})">초기화</button></td>
                     <td>${user.rvCreatedAt}</td>
                     <td style="${user.userDeletedAt === undefined || user.userDeletedAt === null ? '' : 'background-color: grey;'}">
                                   ${user.userDeletedAt  === undefined || user.userDeletedAt === null ? "-" : user.userDeletedAt}
@@ -210,7 +210,40 @@
         }
 }
 
+      function confirmResetIsReported(rvIdx){
+        if(confirm("신고 횟수를 초기화하시겠습니까?")){
+          resetIsReported(rvIdx);
+          }
+        }
 
+        async function resetIsReported(rvIdx) {
+         const token = localStorage.getItem('jwtToken');
+
+         if (!token) {
+        console.error('토큰이 없습니다.');
+        return;
+        }
+
+        try {
+        const tableBody = document.querySelector("#userTable tbody");
+
+          const res = await axios.patch(`/admin/review/${rvIdx}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+         });
+
+         if(res.data.statusCode === 200) {
+          console.log("신고 횟수 초기화 성공");
+          tableBody.innerHTML = "";
+          fetchUsers(0); // 삭제 후 전체 사용자 목록을 갱신합니다.
+        } else {
+            console.error("신고 횟수 초기화 실패", res.data.message);
+        }
+    } catch (error) {
+        console.error('신고 횟수 초기화실패', error);
+    }
+}
 
       function confirmDeleteUser(userIdx) {
         if (confirm("정말 삭제하시겠습니까?")) {
