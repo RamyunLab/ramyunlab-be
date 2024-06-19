@@ -19,19 +19,23 @@ public class TokenProvider {
     @Autowired
     private JwtProperties jwtProperties;
 
-    public String create(UserEntity user){
+    public String create(UserEntity user) {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
         log.warn("token create {}", user.getUserIdx());
+
+        boolean isKakao = user.getUserId().startsWith("kakao_");
+
         return Jwts.builder()
             .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretkey())
             .setSubject(String.valueOf(user.getUserIdx()))
             .setIssuer(jwtProperties.getIssuer())
             .setExpiration(expiredDate)
             .setIssuedAt(new Date())
+            .claim("isKaKao", isKakao)
             .compact();
     }
 
-    public String validateAndGetUserIdx(String token){
+    public String validateAndGetUserIdx(String token) {
         log.warn("filter validateAndGetUserId check {}", token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtProperties.getSecretkey())
