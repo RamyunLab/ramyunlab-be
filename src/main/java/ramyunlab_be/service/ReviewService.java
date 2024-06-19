@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
-
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +61,7 @@ public class ReviewService {
     private String bucket;
     @Value("${cloudfront-domain-name}")
     private String cloudfront;
+    private static final String RV_DIR = "img/review/";
 
     public ReviewEntity create(final Long ramyunIdx,
                                final String userIdx,
@@ -80,7 +80,7 @@ public class ReviewService {
 
         if (file!= null){
         UUID uuid = UUID.randomUUID();
-        String fileName = uuid + "_" + file.getOriginalFilename();
+        String fileName = RV_DIR + uuid + "_" + file.getOriginalFilename();
 
             String fileUrl= "https://" + cloudfront + "/" + fileName;
             ObjectMetadata metadata= new ObjectMetadata();
@@ -134,7 +134,7 @@ public class ReviewService {
 
 
             UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + file.getOriginalFilename();
+            String fileName = RV_DIR + uuid + "_" + file.getOriginalFilename();
 
             String fileUrl= "https://" + cloudfront + "/" + fileName;
             ObjectMetadata metadata= new ObjectMetadata();

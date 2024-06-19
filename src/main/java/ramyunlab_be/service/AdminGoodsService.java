@@ -46,6 +46,7 @@ public class AdminGoodsService {
     private String bucket;
     @Value("${cloudfront-domain-name}")
     private String cloudfront;
+    private static final String GOODS_DIR = "img/ramyun/";
 
     public static Page<RamyunProjection> getGoodsList(Pageable pageable) {
         return ramyunRepository.findAllWithBrand(pageable);
@@ -78,7 +79,7 @@ public class AdminGoodsService {
         if (file != null) {
 
             UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + file.getOriginalFilename();
+            String fileName = GOODS_DIR + uuid + "_" + file.getOriginalFilename();
             String fileUrl = "https://" + cloudfront + "/" + fileName;
 
             ObjectMetadata metadata = new ObjectMetadata();
@@ -135,7 +136,7 @@ public class AdminGoodsService {
 
         if(file != null){
             UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + file.getOriginalFilename();
+            String fileName = GOODS_DIR + uuid + "_" + file.getOriginalFilename();
             String fileUrl = "https://" + cloudfront + "/" + fileName;
 
             ObjectMetadata metadata = new ObjectMetadata();
