@@ -65,15 +65,22 @@ public class ReviewDTO {
     private Boolean isRecommended;
 
     @Override
-    public String toString() {
+    public String toString () {
         return "ReviewDTO{" +
-            "rvIdx=" + rvIdx +
-            ", reviewContent='" + reviewContent + '\'' +
-            ", rate=" + rate +
-            ", reviewPhotoUrl='" + reviewPhotoUrl + '\'' +
-            ", rvCreatedAt='" + rvCreatedAt + '\'' +
-            ", rvUpdatedAt='" + rvUpdatedAt + '\'' +
-            ", rvDeletedAt='" + rvDeletedAt + '\'' +
-            '}';
+               "rvIdx=" + rvIdx +
+               ", reviewContent='" + reviewContent + '\'' +
+               ", rate=" + rate +
+               ", reviewPhotoUrl='" + reviewPhotoUrl + '\'' +
+               ", rvCreatedAt=" + rvCreatedAt +
+               ", rvUpdatedAt=" + rvUpdatedAt +
+               ", rvDeletedAt=" + rvDeletedAt +
+               ", rvRecommendCount=" + rvRecommendCount +
+               ", rvReportCount=" + rvReportCount +
+               ", rvIsReported=" + rvIsReported +
+               ", userIdx=" + userIdx +
+               ", nickname='" + nickname + '\'' +
+               ", ramyunIdx=" + ramyunIdx +
+               ", isRecommended=" + isRecommended +
+               '}';
     }
 }

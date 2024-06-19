@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ValidationException;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +24,10 @@ import ramyunlab_be.dto.RamyunDetailDTO;
 import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.RamyunFilterDTO;
 import ramyunlab_be.dto.ReviewDTO;
-import ramyunlab_be.globalExceptionHandler.Util;
 import ramyunlab_be.security.TokenProvider;
 import ramyunlab_be.service.FavoriteService;
 import ramyunlab_be.service.GameService;
 import ramyunlab_be.service.MainService;
-import ramyunlab_be.service.RecommendService;
 import ramyunlab_be.service.ReviewService;
 import ramyunlab_be.vo.StatusCode;
 
@@ -122,7 +116,7 @@ public class MainController {
     }
 
   @Operation(summary = "라면 상세페이지 정보 조회",
-             description = "라면 정보 및 라면에 대한 리뷰 첫 페이지를 조회함")
+             description = "라면 정보를 조회함")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공")
   })
@@ -152,20 +146,21 @@ public class MainController {
     log.info("page 번호 {}", page);
 
     // 리뷰 조회
-    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, page);
+//    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, page);
 //    log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
-    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
+//    List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
 
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("데이터 조회 성공")
                                           .data(RamyunDetailDTO.builder().ramyun(ramyun)
-                                                               .bestReview(bestReview)
-                                                               .review(reviews)
+//                                                               .bestReview(bestReview)
+//                                                               .review(reviews)
                                                                .isLiked(isLiked)
-                                                               .reviewNo(reviewNo).build())
+//                                                               .reviewNo(reviewNo)
+                                                               .build())
                                           .build());
   }
 
