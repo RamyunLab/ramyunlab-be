@@ -24,8 +24,8 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, ReviewCustomRepository {
     Page<ReviewEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
-    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.userIdx = :userIdx AND rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvDeletedAt IS NOT NULL ORDER BY rv.rvCreatedAt DESC")
-    List<ReviewEntity> findByUserIdxAndRamyunIdx(@Param("userIdx") Long user,@Param("ramyunIdx") Long ramyunIdx);
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.userIdx = :userIdx AND rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvDeletedAt IS NULL ORDER BY rv.rvCreatedAt DESC")
+    Optional<ReviewEntity> findByUserIdxAndRamyunIdx(@Param("userIdx") Long user,@Param("ramyunIdx") Long ramyunIdx);
 
 //    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.idx = :userIdx")
 //    ReviewEntity findByUserIdx(Long userIdx);

@@ -71,7 +71,7 @@ public class ReviewService {
         // 유효한 유저 인덱스가 없는 경우(토큰 만료)
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
 
-        List<ReviewEntity> duplicateReviews = reviewRepository.findByUserIdxAndRamyunIdx(Long.valueOf(userIdx), ramyunIdx);
+        Optional<ReviewEntity> duplicateReviews = reviewRepository.findByUserIdxAndRamyunIdx(Long.valueOf(userIdx), ramyunIdx);
         if(!duplicateReviews.isEmpty()){
             throw new RuntimeException("이미 리뷰를 작성하셨습니다.");
         }
