@@ -13,14 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ramyunlab_be.dto.BrandDTO;
-import ramyunlab_be.dto.RamyunDTO;
-import ramyunlab_be.dto.RamyunProjection;
-import ramyunlab_be.dto.ResDTO;
+import ramyunlab_be.dto.*;
 import ramyunlab_be.entity.BrandEntity;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.service.AdminGoodsService;
 import ramyunlab_be.vo.StatusCode;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -71,6 +70,25 @@ public class AdminGoodsController {
            .build());
     }
 
+    @Operation(summary = "상품 검색 조회", description = "keyword로 상품 검색, 토큰 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "상품 검색 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "상품 검색 조회 실패")
+    })
+    @GetMapping("/searchGoods")
+    public ResponseEntity<ResDTO> searchGoods(@RequestParam(required = false) String keyword,
+                                             @AuthenticationPrincipal String userIdx) {
+        List<RamyunProjection> results = adminGoodsService.searchGoods(keyword, userIdx);
+        log.warn("controller : {}", keyword);
+        log.warn("controller results : {}", results);
+        return ResponseEntity.ok().body(ResDTO.builder()
+            .statusCode(StatusCode.OK)
+            .data(results)
+            .message("검색한 상품 목록 호출 완료")
+            .build());
+    }
+
+
     @Operation(summary = "상품 추가", description = "라면 모든 정보, 사진 파일, 토큰 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "상품 추가 성공"),
@@ -93,6 +111,7 @@ public class AdminGoodsController {
             .cooking(addedRamyun.getCooking())
             .gram(addedRamyun.getGram())
             .ramyunNa(addedRamyun.getRamyunNa())
+            .brandName(addedRamyun.getBrand().getBrandName())
             .build();
 
         return ResponseEntity.ok().body(ResDTO.builder()
@@ -132,8 +151,8 @@ public class AdminGoodsController {
     })
     @PatchMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
-                                              @RequestPart RamyunDTO ramyunDTO,
-                                              @RequestPart(required = false)MultipartFile file,
+                                              @RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
+                                              @RequestPart(value = "file") MultipartFile file,
                                               @AuthenticationPrincipal String userIdx) throws Exception{
         RamyunEntity updatedRamyun = adminGoodsService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
 
@@ -147,6 +166,7 @@ public class AdminGoodsController {
             .cooking(updatedRamyun.getCooking())
             .gram(updatedRamyun.getGram())
             .ramyunNa(updatedRamyun.getRamyunNa())
+            .brandName(updatedRamyun.getBrand().getBrandName())
             .build();
 
         return ResponseEntity.ok().body(ResDTO.builder()

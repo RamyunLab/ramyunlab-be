@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,11 +34,13 @@ public class UserDTO {
     private String token;
 
     @Schema(description = "관리자 == 1, 회원 == 0", example = "0", nullable = true)
-    private Integer isAdmin;
+    private Boolean isAdmin;
 
     @Schema(description = "탈퇴 회원이면 timestamp 아니면 null", example = "null", nullable = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     private String userDeletedAt;
+
+    private List<GetReviewDTO> reviews;
 
     @Override
     public String toString() {

@@ -99,7 +99,7 @@
               async function fetchUsers(page) {
                   try {
                       const res = await axios.get(`/admin/users?page=${page}`);
-                      console.log(res.data);
+                      console.log(res.data.data);
                       updateTable(res.data.data.content);
                       updatePagination(res.data.data);
                   } catch (error) {
@@ -151,8 +151,8 @@
                     <td>${user.userId}</td>
                     <td>${user.nickname}</td>
                     <td>${user.reviews}</td>
-                    <td style="${user.userDeletedAt === null ? '' : 'background-color: grey;'}">
-                                  ${user.userDeletedAt  === null ? "-" : user.userDeletedAt}
+                    <td style="${user.userDeletedAt === undefined || user.userDeletedAt === null ? '' : 'background-color: grey;'}">
+                                  ${user.userDeletedAt  === undefined || user.userDeletedAt === null ? "-" : user.userDeletedAt}
                                   </td>
                     <td><button onclick="confirmDeleteUser(${user.userIdx})">삭제</button></td>
                 </tr>

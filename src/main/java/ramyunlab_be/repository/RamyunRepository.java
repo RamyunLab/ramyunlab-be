@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ramyunlab_be.dto.RamyunProjection;
+import ramyunlab_be.dto.UserProjection;
 import ramyunlab_be.entity.RamyunEntity;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface RamyunRepository extends JpaRepository<RamyunEntity, Long> {
     @Query("SELECT r.ramyunName as ramyunName, r.ramyunImg as ramyunImg, r.ramyunKcal as ramyunKcal, r.noodle as noodle, r.isCup as isCup, r.cooking as cooking, r.ramyunNa as ramyunNa, r.gram as gram, r.scoville as scoville, r.ramyunDeletedAt as ramyunDeletedAt, b.brandName as brandName FROM RamyunEntity r JOIN r.brand b WHERE r.ramyunIdx = :ramyunIdx")
     Optional<RamyunProjection> findByRamyunIdx(@Param("ramyunIdx") Long ramyunIdx);
 
+    @Query("SELECT r.ramyunIdx as ramyunIdx, r.ramyunName as ramyunName, r.ramyunImg as ramyunImg, r.ramyunKcal as ramyunKcal, r.noodle as noodle, r.isCup as isCup, r.cooking as cooking, r.ramyunNa as ramyunNa, r.gram as gram, r.scoville as scoville, r.ramyunDeletedAt as ramyunDeletedAt, b.brandName as brandName FROM RamyunEntity r JOIN r.brand b WHERE r.ramyunName LIKE %:keyword%")
+    List<RamyunProjection> searchBykeyword(@Param("keyword") String keyword);
 }
