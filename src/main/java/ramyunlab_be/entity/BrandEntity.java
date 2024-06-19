@@ -30,10 +30,6 @@ public class BrandEntity {
     private String brandName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
-    @Column(name = "b_created_at", nullable = false)
-    private Timestamp brandCreatedAt;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Asia/Seoul")
     @Column(name = "b_deleted_at")
     private Timestamp brandDeletedAt;
 
