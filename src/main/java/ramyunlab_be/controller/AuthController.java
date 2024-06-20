@@ -73,12 +73,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResDTO> loginUser(@Valid @RequestBody UserDTO userDTO) {
         UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword());
+        log.info("유저 닉네임 {}",user.getNickname());
         // user 가 있으면 토큰 제공
         if (user != null) {
             String token = tokenProvider.create(user);
             final UserDTO responseUserDTO = UserDTO.builder()
                 .userId(user.getUserId())
                 .userIdx(user.getUserIdx())
+                .nickname(user.getNickname())
                 .token(token)
                 .build();
 
