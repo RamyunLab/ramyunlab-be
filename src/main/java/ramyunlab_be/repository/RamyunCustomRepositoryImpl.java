@@ -38,9 +38,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   @Override
   public RamyunDTO getRamyunInfo (Long ramyunIdx) {
 
-    NumberExpression<Double> avgRate = MathExpressions.round(reviewEntity.rate.avg().coalesce(0.0), 2);
-    NumberExpression<Long> reviewCount = reviewEntity.rate.count().coalesce(0L);
-
     JPAQuery<RamyunDTO> query = jpaQueryFactory
         .select(Projections.fields(
             RamyunDTO.class,
@@ -59,7 +56,8 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
             reviewCount().as("reviewCount")))
         .from(ramyunEntity)
         .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-        .where(ramyunEntity.ramyunIdx.eq(ramyunIdx))
+        .where(ramyunEntity.ramyunIdx.eq(ramyunIdx)
+                                     .and(reviewEntity.rvDeletedAt.isNull()))
         .groupBy(ramyunEntity.ramyunIdx);
 
     return query.fetchOne();
@@ -67,9 +65,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
 
   @Override
   public Page<RamyunDTO> getRamyunList (Pageable pageable, String sort, String direction, RamyunFilterDTO filterDTO, Long userIdx){
-
-//    NumberExpression<Double> avgRate = MathExpressions.round(reviewEntity.rate.avg().coalesce(0.0),2);
-//    NumberExpression<Long> reviewCount = reviewEntity.rate.count().coalesce(0L);
 
      // Sorting 정보 추가
     OrderSpecifier<?> orderSpecifier;
@@ -108,7 +103,8 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
            ))
                    .from(ramyunEntity)
                    .leftJoin(reviewEntity).on(ramyunEntity.ramyunIdx.eq(reviewEntity.ramyun.ramyunIdx))
-                   .where(filterConditions(filterDTO))
+                   .where(filterConditions(filterDTO)
+                              .and(reviewEntity.rvDeletedAt.isNull()))
                    .groupBy(ramyunEntity.ramyunIdx)
                    .orderBy(orderSpecifier);
 
@@ -126,6 +122,7 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   }
 
 
+  
   /* 집계함수 */
   // 평점 계산
   private NumberExpression<Double> avgRate(){
@@ -167,7 +164,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         .and(ramyunGramsRange(conditions.getGram()))
         .and(ramyunKcalRange(conditions.getKcal()))
         .and(ramyunNaRange(conditions.getNa()));
-    log.info("LOG ::: {}",builder);
     return builder;
   }
 
