@@ -235,8 +235,8 @@
 
          if(res.data.statusCode === 200) {
           console.log("신고 횟수 초기화 성공");
-          tableBody.innerHTML = "";
-          fetchUsers(0); // 삭제 후 전체 사용자 목록을 갱신합니다.
+<!--          tableBody.innerHTML = "";-->
+          searchUser(); // 삭제 후 전체 사용자 목록을 갱신합니다.
         } else {
             console.error("신고 횟수 초기화 실패", res.data.message);
         }
