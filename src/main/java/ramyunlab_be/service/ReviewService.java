@@ -2,24 +2,19 @@ package ramyunlab_be.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 import ramyunlab_be.dto.ReportDTO;
-import ramyunlab_be.dto.ResDTO;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.RamyunEntity;
 import ramyunlab_be.entity.ReportEntity;
@@ -30,7 +25,6 @@ import ramyunlab_be.repository.ReportRepository;
 import ramyunlab_be.repository.ReviewRepository;
 import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagination;
-
 import java.util.UUID;
 
 @Service
@@ -199,7 +193,6 @@ public class ReviewService {
         PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
 
         Page<ReviewEntity> result = reviewRepository.findByUser_UserIdx(pageRequest, Long.valueOf(userIdx));
-
         return result.map(this::convert);
     }
 
@@ -245,13 +238,11 @@ public class ReviewService {
         }
         log.info("리뷰 추천///추천삭제    {}", count);
         Integer result = reviewRepository.getReviewRecommendCount(rvIdx);
-//        ReviewEntity result = reviewRepository.findByrvIdx(rvIdx);
         return result;
-//        return convert(result);
     }
 
     private ReviewDTO convert(ReviewEntity reviewEntity) {
-        return ReviewDTO.builder()
+        ReviewDTO result = ReviewDTO.builder()
                 .rvIdx(reviewEntity.getRvIdx())
                 .userIdx(reviewEntity.getUser().getUserIdx())
                 .ramyunIdx(reviewEntity.getRamyun().getRamyunIdx())
@@ -259,12 +250,14 @@ public class ReviewService {
                 .reviewContent(reviewEntity.getReviewContent())
                 .rate(reviewEntity.getRate())
                 .nickname(reviewEntity.getUser().getNickname())
-//                .rate(String.valueOf(reviewEntity.getRate()))
+                .rvIsReported(reviewEntity.getRvIsReported())
                 .rvCreatedAt(reviewEntity.getRvCreatedAt())
                 .rvUpdatedAt(reviewEntity.getRvUpdatedAt())
                 .rvDeletedAt(reviewEntity.getRvDeletedAt())
                 .rvRecommendCount(reviewEntity.getRvRecommendCount())
                 .build();
+        log.info("isReported??? {}",result.toString());
+        return result;
     }
 
     public ReportEntity complaint(final Long rvIdx,
@@ -289,7 +282,7 @@ public class ReviewService {
                 .orElseThrow(()->new IllegalStateException("SERVER ERROR"));
 
             log.warn("신고 횟수 {}", totalReport);
-            if(totalReport > 4){
+            if(totalReport >= 4){
                 reviewRepository.incrementRvReportCount(rvIdx);
                 reviewRepository.changeIsReported(rvIdx);
             }else{
