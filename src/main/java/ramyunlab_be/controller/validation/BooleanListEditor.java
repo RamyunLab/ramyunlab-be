@@ -14,8 +14,12 @@ public class BooleanListEditor extends PropertyEditorSupport {
     String[] items = text.split(",");
     List<Boolean> booleanList = new ArrayList<>();
     for (String item : items) {
-      if ("true".equalsIgnoreCase(item) || "false".equalsIgnoreCase(item) || "1".equals(item) || "0".equals(item)) {
+      if ("true".equalsIgnoreCase(item) || "false".equalsIgnoreCase(item)){
         booleanList.add(Boolean.parseBoolean(item));
+      }else if("1".equals(item)) {
+        booleanList.add(true);
+      }else if("0".equals(item)){
+        booleanList.add(false);
       }
     }
 
