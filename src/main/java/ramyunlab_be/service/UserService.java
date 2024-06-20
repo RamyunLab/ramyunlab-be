@@ -1,3 +1,4 @@
+
 package ramyunlab_be.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -5,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,17 @@ import ramyunlab_be.repository.UserRepository;
 @Slf4j
 public class UserService {
 
-    private static final String CLIENT_ID = "0b89c1228e020ee8d7f6dd8dddeb7a59"; // 카카오 앱 REST API 키
-    private static final String REDIRECT_URI = "http://localhost:3000/loginToKakao"; // 서버의 콜백 URI
-    private static final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";  // 토큰 정보 가져오는 URL
-    private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";    // 유저정보 가져오는 URL
+    @Value("${kakao.client-id}")
+    private String CLIENT_ID; // 카카오 앱 REST API 키
+
+    @Value("${kakao.redirect-uri}")
+    private String REDIRECT_URI ; // 서버의 콜백 URI
+
+    @Value("${kakao.token-request-url}")
+    private String TOKEN_REQUEST_URL;  // 토큰 정보 가져오는 URL
+
+    @Value("${kakao.user-info-url}")
+    private String USER_INFO_URL;    // 유저정보 가져오는 URL
 
     final private UserRepository userRepository;
 
@@ -56,8 +65,8 @@ public class UserService {
         }else if(!passwordEncoder.matches(password, user.getPassword())){
             throw new RuntimeException("비밀번호가 틀렸습니다.");
         }
-         return null;
-        }
+        return null;
+    }
 
     public UserDTO checkId(UserEntity userEntity) {
 
@@ -87,7 +96,7 @@ public class UserService {
 
     public UserEntity delete(final Long userIdx, final String password) {
         UserEntity user = userRepository.findByUserIdx(userIdx)
-            .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
+                                        .orElseThrow(() -> new RuntimeException("로그인을 해주세요."));
 
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
@@ -101,17 +110,17 @@ public class UserService {
     // 닉네임 변경
     public UserEntity updateNickname(String userIdx, UserDTO userDTO) {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
-            .orElseThrow(() -> new RuntimeException("Error shit;;"));
+                                        .orElseThrow(() -> new RuntimeException("Error shit;;"));
         user = user.toBuilder()
-            .nickname(userDTO.getNickname())
-            .build();
+                   .nickname(userDTO.getNickname())
+                   .build();
         return userRepository.save(user);
     }
 
     // 비밀번호 변경 시 비밀번호 확인.
     public boolean confirmPassword(String userIdx, UserDTO userDTO) {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
-            .orElseThrow(() -> new RuntimeException("회원 정보 없음."));
+                                        .orElseThrow(() -> new RuntimeException("회원 정보 없음."));
 
         boolean isMatched = passwordEncoder.matches(userDTO.getPassword(), user.getPassword());
 
@@ -121,11 +130,11 @@ public class UserService {
     // 비밀번호 변경
     public UserEntity updatePassword(String userIdx, UserDTO userDTO) {
         UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
-            .orElseThrow(() -> new RuntimeException("회원 정보 없음."));
+                                        .orElseThrow(() -> new RuntimeException("회원 정보 없음."));
 
         user = user.toBuilder()
-            .password(passwordEncoder.encode(userDTO.getPassword()))
-            .build();
+                   .password(passwordEncoder.encode(userDTO.getPassword()))
+                   .build();
         return userRepository.save(user);
     }
 
@@ -137,6 +146,7 @@ public class UserService {
     public UserEntity handleKakaoCallback(String code) throws Exception {
         // 액세스 토큰 발급
         String accessToken = getAccessToken(code);
+        log.info("access 토큰!! {}", accessToken);
 
         // 사용자 정보 요청
         JsonNode userInfo = getUserInfo(accessToken);
@@ -146,10 +156,10 @@ public class UserService {
 
         // DTO 객체생성 및 데이터 설정
         KakaoUserInfoDTO kakaoUserInfoDTO = KakaoUserInfoDTO.builder()
-            .kakaoId(kakaoId)
-            .accessToken(accessToken)
-            .kakaoName(nickname)
-            .build();
+                                                            .kakaoId(kakaoId)
+                                                            .accessToken(accessToken)
+                                                            .kakaoName(nickname)
+                                                            .build();
 
         // 사용자 정보를 DB에 저장 또는 업데이트
         return processUserLogin(kakaoUserInfoDTO, email);
@@ -161,11 +171,11 @@ public class UserService {
 
         if (user == null) {
             user = UserEntity.builder()
-                .userId(userId)
-                .nickname(kakaoUserInfoDTO.getKakaoName())
-                .isAdmin(false)
-                .userDeletedAt(null)
-                .build();
+                             .userId(userId)
+                             .nickname(kakaoUserInfoDTO.getKakaoName())
+                             .isAdmin(false)
+                             .userDeletedAt(null)
+                             .build();
 
             userRepository.save(user);
         }
@@ -180,9 +190,9 @@ public class UserService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         String body = "grant_type=authorization_code"
-            + "&client_id=" + CLIENT_ID
-            + "&redirect_uri=" + REDIRECT_URI
-            + "&code=" + code;
+                      + "&client_id=" + CLIENT_ID
+                      + "&redirect_uri=" + REDIRECT_URI
+                      + "&code=" + code;
 
         HttpEntity<String> request = new HttpEntity<>(body, headers);
 

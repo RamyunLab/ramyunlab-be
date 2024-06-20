@@ -32,7 +32,6 @@ import ramyunlab_be.repository.UserRepository;
 import ramyunlab_be.vo.Pagination;
 
 import java.util.UUID;
-import ramyunlab_be.vo.StatusCode;
 
 @Service
 @Slf4j
