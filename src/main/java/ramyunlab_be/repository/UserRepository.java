@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 //    @Query("SELECT u FROM UserEntity u WHERE u.userId = :userId")
     UserEntity findByUserId(String userId);
 
-    @Query("SELECT u.userIdx as userIdx, u.userId as userId, u.nickname as nickname, r.reviewContent as reviews, u.userDeletedAt as userDeletedAt " +
+    @Query("SELECT u.userIdx as userIdx, u.userId as userId, u.nickname as nickname, r.reviewContent as reviews, r.rvCreatedAt as rvCreatedAt, r.rvDeletedAt as rvDeletedAt, r.rvIsReported as rvIsReported, r.rvIdx as rvIdx, u.userDeletedAt as userDeletedAt " +
         "FROM UserEntity u LEFT JOIN u.reviews r " +
         "WHERE u.userId LIKE %:keyword%")
     List<UserProjection> searchByUserId(@Param("keyword") String keyword);
