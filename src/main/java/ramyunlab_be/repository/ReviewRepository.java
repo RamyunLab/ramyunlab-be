@@ -4,7 +4,6 @@ import java.util.List;
 
 import java.util.Map;
 
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,13 +14,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ramyunlab_be.dto.ReviewDTO;
 import ramyunlab_be.entity.ReviewEntity;
-import ramyunlab_be.entity.UserEntity;
 
 import java.util.Optional;
 
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, ReviewCustomRepository {
+    @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.userIdx = :userIdx AND rv.rvDeletedAt IS NULL ORDER BY rv.rvCreatedAt DESC")
     Page<ReviewEntity> findByUser_UserIdx(Pageable pageable, Long userIdx);
 
     @Query("SELECT rv FROM ReviewEntity rv WHERE rv.user.userIdx = :userIdx AND rv.ramyun.ramyunIdx = :ramyunIdx AND rv.rvDeletedAt IS NULL ORDER BY rv.rvCreatedAt DESC")
