@@ -31,15 +31,7 @@ public class MainService {
 
     // 라면 데이터 조회
     Page<RamyunDTO> result = mainRepository.getRamyunList(pageable, sort, direction, filter, userIdx);
-//    Boolean isLike = false;
-//    for(RamyunDTO ramyun : result.getContent()){
-//      log.info("RAMYUN IDX {}",ramyun.getRamyunIdx());
-//      Optional<FavoriteEntity> fav = favoriteRepository.findLikedRamyun(userIdx, ramyun.getRamyunIdx());
-//      if(fav.isPresent()){
-//        isLike = true;
-//      }
-//      ramyun.setIsLiked(isLike);
-//    }
+
     return result;
   }
 
