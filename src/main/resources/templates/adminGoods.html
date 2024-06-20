@@ -168,7 +168,7 @@
 </head>
 <body>
   <a th:href="@{/userPage}" style="text-align : end" class="toUser">회원 관리</a></br>
-  <a th:href="@{/brandPage}" style="text-align : end" class="toBrand">브랜드 관리</a>
+<!--  <a th:href="@{/brandPage}" style="text-align : end" class="toBrand">브랜드 관리</a>-->
   <h1 style="text-align : center">Ramyun lab - 상품 관리</h1>
   <h2 style="text-align : center">상품 목록</h2>
   <button style="text-align : end" class="addBTN" onclick="openAddModal()">상품 추가</button>
@@ -285,7 +285,7 @@
       <form id="addForm" style="text-align : center">
         <div class="form-group">
           <label for="ramyunName">이름</label>
-          <input type="text" id="newRamyunName" name="ramyunName">
+          <input type="text" id="newRamyunName" name="ramyunName" value="추추면">
         </div>
         <div class="form-group">
           <label for="newRamyunImg">이미지 URL</label>
@@ -293,16 +293,16 @@
         </div>
         <div class="form-group">
           <label for="newRamyunKcal">칼로리(kcal)</label>
-          <input type="number" id="newRamyunKcal" name="newRamyunKcal">
+          <input type="number" id="newRamyunKcal" name="newRamyunKcal" value="0">
         </div>
         <div class="form-group">
           <label for="newGram">중량(g)</label>
-          <input type="number" id="newGram" name="newGram">
+          <input type="number" id="newGram" name="newGram" value="200">
         </div>
         <div class="form-group">
           <label for="newNoodle">면종류</label>
           <label for="newNoodleTrue">유탕면</label>
-          <input type="radio" id="newNoodleTrue" name="newNoodle" value="true">
+          <input type="radio" id="newNoodleTrue" name="newNoodle" value="true" checked>
           <label for="newNoodleFalse">건면</label>
           <input type="radio" id="newNoodleFalse" name="newNoodle" value="false">
         </div>
@@ -311,22 +311,22 @@
           <label for="newIsCupTrue">컵라면</label>
           <input type="radio" id="newIsCupTrue" name="newIsCup" value="true">
           <label for="newIsCupFalse">봉지라면</label>
-          <input type="radio" id="newIsCupFalse" name="newIsCup" value="false">
+          <input type="radio" id="newIsCupFalse" name="newIsCup" value="false" checked>
         </div>
         <div class="form-group">
           <label for="newCooking">요리법</label><br>
           <label for="newCookingTrue">국물</label>
           <input type="radio" id="newCookingTrue" name="newCooking" value="true">
           <label for="newCookingFalse">비빔 OR 볶음</label>
-          <input type="radio" id="newCookingFalse" name="newCooking" value="false">
+          <input type="radio" id="newCookingFalse" name="newCooking" value="false" checked>
         </div>
         <div class="form-group">
           <label for="newRamyunNa">나트륨</label>
-          <input type="number" id="newRamyunNa" name="newRamyunNa">
+          <input type="number" id="newRamyunNa" name="newRamyunNa" value="1000">
         </div>
         <div class="form-group">
           <label for="newScoville">스코빌</label>
-          <input type="number" id="newScoville" name="newScoville">
+          <input type="number" id="newScoville" name="newScoville" value="3000">
         </div>
 <!--        <div class="form-group">-->
 <!--          <label for="newBrandName">브랜드</label>-->
@@ -341,7 +341,7 @@
           <label for="newBrandName3">팔도</label>
           <input type="radio" id="newBrandName3" name="newBrandName" value="팔도">
           <label for="newBrandName4">삼양</label>
-          <input type="radio" id="newBrandName4" name="newBrandName" value="삼양">
+          <input type="radio" id="newBrandName4" name="newBrandName" value="삼양" checked>
         </div>
         <button type="button" onclick="addGoods()" class="saveBTN">추가</button>
       </form>

@@ -21,7 +21,7 @@ public class TokenProvider {
 
     public String create(UserEntity user) {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
-        log.warn("token create {}", user.getUserIdx());
+        log.warn("token create {}, {}", user.getUserIdx(), user.getNickname());
 
         boolean isKakao = user.getUserId().startsWith("kakao_");
 
