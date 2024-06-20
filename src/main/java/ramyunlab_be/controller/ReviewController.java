@@ -41,7 +41,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 작성", description = "RequestBody 에 rate 필수로 입력(리뷰 내용, 사진은 nullable)해야 합니다. (토큰 필요)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 추가 성공"),
-        @ApiResponse(responseCode = "400")
+        @ApiResponse(responseCode = "400", description = "리뷰 추가 실패")
     })
     @PostMapping("/review/{ramyunIdx}")
     public ResponseEntity<ResDTO> addReview(@RequestPart(required = false) MultipartFile file,
@@ -76,7 +76,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 수정", description = "RequestBody 에 rate 필수로 입력, token 필요")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 수정 성공"),
-        @ApiResponse(responseCode = "400")
+        @ApiResponse(responseCode = "400", description = "리뷰 수정 실패")
     })
     @PatchMapping("/review/{ramyunIdx}/{rvIdx}")
     public ResponseEntity<ResDTO<Object>> updateReview(@RequestPart(required = false) MultipartFile file,
@@ -96,7 +96,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 삭제", description = "토큰만 있으면 됩니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "리뷰 삭제 성공"),
-        @ApiResponse(responseCode = "400")
+        @ApiResponse(responseCode = "400", description = "리뷰 삭제 실패")
     })
     @DeleteMapping("/review/{rvIdx}")
     public ResponseEntity<ResDTO> deleteReview(@PathVariable Long rvIdx,
@@ -106,6 +106,22 @@ public class ReviewController {
            .builder()
            .statusCode(StatusCode.OK)
            .message("리뷰 삭제 성공")
+           .build());
+    }
+
+    @Operation(summary = "리뷰 이미지 삭제", description = "리뷰 인덱스, 토큰 필요")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "리뷰 이미지 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "리뷰 이미지 삭제 실패")
+    })
+    @DeleteMapping("/reviewImg/{rvIdx}")
+    public ResponseEntity<ResDTO> deleteReviewImg(@PathVariable Long rvIdx,
+                                                  @AuthenticationPrincipal String userIdx){
+        reviewService.deleteImg(rvIdx, userIdx);
+        return ResponseEntity.ok().body(ResDTO
+           .builder()
+           .statusCode(StatusCode.OK)
+           .message("리뷰 이미지 삭제 성공")
            .build());
     }
 

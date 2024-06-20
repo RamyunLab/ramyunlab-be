@@ -180,6 +180,22 @@ public class ReviewService {
         } else throw new RuntimeException("리뷰 삭제 실패!");
     }
 
+    public ReviewEntity deleteImg(final Long rvIdx, final String userIdx){
+        ReviewEntity review = reviewRepository.findById(rvIdx)
+            .orElseThrow(() -> new RuntimeException("SERVER ERROR!"));
+        // 유효한 유저 인덱스가 없는 경우(토큰 만료)
+        UserEntity user = userRepository.findByUserIdx(Long.valueOf(userIdx))
+            .orElseThrow(()-> new RuntimeException("로그인을 진행해주세요."));
+
+        if(user != null && review != null){
+            ReviewEntity result = review.toBuilder()
+                .reviewPhotoUrl(null)
+                    .build();
+            reviewRepository.save(result);
+            return result;
+        } else throw new RuntimeException("리뷰 이미지 삭제 실패!");
+    }
+
     public Page<ReviewDTO> getMyReviewList(Integer pageNo, String userIdx) {
         PageRequest pageRequest = PageRequest.of(pageNo - 1, Pagination.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "rvCreatedAt"));
 
