@@ -152,7 +152,7 @@ public class AdminGoodsController {
     @PatchMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> updateGoods(@PathVariable Long ramyunIdx,
                                               @RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
-                                              @RequestPart(value = "file") MultipartFile file,
+                                              @RequestPart(value = "file", required = false) MultipartFile file,
                                               @AuthenticationPrincipal String userIdx) throws Exception{
         RamyunEntity updatedRamyun = adminGoodsService.updateGoods(ramyunIdx, ramyunDTO, file, userIdx);
 
@@ -165,6 +165,7 @@ public class AdminGoodsController {
             .isCup(updatedRamyun.getIsCup())
             .cooking(updatedRamyun.getCooking())
             .gram(updatedRamyun.getGram())
+            .scoville(updatedRamyun.getScoville())
             .ramyunNa(updatedRamyun.getRamyunNa())
             .brandName(updatedRamyun.getBrand().getBrandName())
             .build();

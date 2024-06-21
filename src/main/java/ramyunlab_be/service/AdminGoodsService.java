@@ -134,33 +134,38 @@ public class AdminGoodsService {
         // 등록되지 않은 브랜드인 경우
         BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브랜드입니다."));
 
+        log.warn("abcd {}", file);
+
+        String fileUrl = "";
         if(file != null){
+            log.warn("aaaa {}", file);
+
             UUID uuid = UUID.randomUUID();
             String fileName = GOODS_DIR + uuid + "_" + file.getOriginalFilename();
-            String fileUrl = "https://" + cloudfront + "/" + fileName;
+            fileUrl = "https://" + cloudfront + "/" + fileName;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+        } else {
+            fileUrl = ramyun.getRamyunImg();
+        }
 
-            RamyunEntity updatedGoods = RamyunEntity.builder()
-                .ramyunIdx(ramyun.getRamyunIdx())
-                .ramyunName(ramyunDTO.getRamyunName())
-                .ramyunImg(fileUrl)
-                .ramyunNa(ramyunDTO.getRamyunNa())
-                .isCup(ramyunDTO.getIsCup())
-                .noodle(ramyunDTO.getNoodle())
-                .cooking(ramyunDTO.getCooking())
-                .gram(ramyunDTO.getGram())
-                .ramyunKcal(ramyunDTO.getRamyunKcal())
-                .brand(brand)
-                .build();
-            return ramyunRepository.save(updatedGoods);
-        } else if(file == null && ramyunDTO.getRamyunImg()!= null){
-            throw new RuntimeException("이미지를 추가해주세요.");
-        }else
-            throw new RuntimeException("상품 수정 실패");
+        RamyunEntity updatedGoods = RamyunEntity.builder()
+            .ramyunIdx(ramyun.getRamyunIdx())
+            .ramyunName(ramyunDTO.getRamyunName())
+            .ramyunImg(fileUrl)
+            .ramyunNa(ramyunDTO.getRamyunNa())
+            .isCup(ramyunDTO.getIsCup())
+            .noodle(ramyunDTO.getNoodle())
+            .cooking(ramyunDTO.getCooking())
+            .gram(ramyunDTO.getGram())
+            .ramyunKcal(ramyunDTO.getRamyunKcal())
+            .scoville(ramyunDTO.getScoville())
+            .brand(brand)
+            .build();
+        return ramyunRepository.save(updatedGoods);
     }
 
     public RamyunEntity deleteGoods(final Long ramyunIdx, final String userIdx){
