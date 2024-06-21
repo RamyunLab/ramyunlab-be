@@ -14,11 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ramyunlab_be.controller.validation.BooleanListEditor;
+import ramyunlab_be.controller.validation.IntegerListEditor;
 import ramyunlab_be.dto.RamyunDTO;
 import ramyunlab_be.dto.RamyunDetailDTO;
 import ramyunlab_be.dto.ResDTO;
@@ -57,6 +62,18 @@ public class MainController {
   @Autowired
   private TokenProvider tokenProvider;
 
+  @InitBinder("ramyunFilterDTO")
+  public void initFilterBinder (WebDataBinder webDataBinder) {
+    log.info("필터 쿼리스트링 유효성 체크");
+    webDataBinder.registerCustomEditor(List.class, "brand", new IntegerListEditor());
+    webDataBinder.registerCustomEditor(List.class, "noodle", new BooleanListEditor());
+    webDataBinder.registerCustomEditor(List.class, "isCup", new BooleanListEditor());
+    webDataBinder.registerCustomEditor(List.class, "cooking", new BooleanListEditor());
+    webDataBinder.registerCustomEditor(Integer.class, "kcal", new IntegerListEditor());
+    webDataBinder.registerCustomEditor(Integer.class, "gram", new IntegerListEditor());
+    webDataBinder.registerCustomEditor(Integer.class, "na", new IntegerListEditor());
+  }
+
   @Operation(summary = "모든 라면 정보 조회", description = "메인페이지 전체 라면 정보를 조회함 (+페이지네이션) ")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", useReturnTypeSchema = true, description = "데이터 조회 성공"),
@@ -70,7 +87,7 @@ public class MainController {
                                                     @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
                                                       @RequestParam(value = "direction", required = false) String direction,
                                                     @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
-                                                      RamyunFilterDTO filter,
+                                                      @ModelAttribute RamyunFilterDTO filter,
                                                       @AuthenticationPrincipal String userIdx){
     Long user = null;
     if(userIdx != null && !userIdx.equals("anonymousUser")) {
@@ -102,12 +119,14 @@ public class MainController {
                                                           @Parameter(name="direction", description = "정렬 순서", in = ParameterIn.QUERY, example = "desc")
                                                             @RequestParam(value = "direction", required = false) String direction,
                                                           @Parameter(name="searchDTO", description = "필터링 조건", in = ParameterIn.QUERY)
-                                                            RamyunFilterDTO filter,
+                                                           @ModelAttribute RamyunFilterDTO filter,
                                                           @AuthenticationPrincipal String userIdx){
       Long user = null;
       if(userIdx != null && !userIdx.equals("anonymousUser")) {
         user = Long.parseLong(userIdx);
       }
+
+      log.info("filter dto {}", filter.toString());
 
       if(page == null) page = 1;
 
@@ -212,5 +231,4 @@ public class MainController {
       Long result = gameService.getRandomRamyunIdx();
       return getRamyunInfo(result, null, null, userIdx);
     }
-
 }

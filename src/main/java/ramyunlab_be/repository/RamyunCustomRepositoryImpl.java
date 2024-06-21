@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
@@ -199,45 +200,55 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
 
   // 면 종류
   private BooleanExpression noodleContains(List<Boolean> noodles){
-    if(noodles == null || noodles.size() == 2){
-      return null;
-    }
+    if(noodles == null) return null;
+    setValidList(noodles);
+    if(noodles.size() == 2) return null;
     return ramyunEntity.noodle.eq(noodles.get(0));
   }
 
   // 컵라면 여부
   private BooleanExpression ramyunIsCup(List<Boolean> isCup){
-    if(isCup == null || isCup.size() == 2){
-      return null;
-    }
+    if(isCup == null) return null;
+    setValidList(isCup);
+    if(isCup.size() == 2) return null;
     return ramyunEntity.isCup.eq(isCup.get(0));
   }
 
   // 조리 방식
   private BooleanExpression ramyunCooking(List<Boolean> cooking){
-    if(cooking == null || cooking.size() == 2){
-      return null;
-    }
+    if(cooking == null) return null;
+    setValidList(cooking);
+    if(cooking.size() == 2) return null;
     return ramyunEntity.cooking.eq(cooking.get(0));
   }
 
   // 중량 범위
   private BooleanExpression ramyunGramsRange(List<Integer> grams){
     BooleanExpression query = null;
+    BooleanExpression newQuery = null;
 
-    if(grams == null || grams.size() == 2){
-      log.info("그램 조건 없음!");
-      return null;
+    if(grams == null) return null;
+    setValidList(grams);
+
+    for(Integer gram : grams){
+        switch (gram) {
+          case 1:
+            newQuery = ramyunEntity.gram.loe(100);
+            break;
+          case 2:
+            newQuery = ramyunEntity.gram.goe(100);
+            break;
+          default:
+            newQuery = null;
+            break;
+        }
+
+      if(query != null){
+        if(newQuery != null) query = query.or(newQuery);
+      }else{
+        query = newQuery;
+      }
     }
-    switch (grams.get(0)) {
-      case 1:
-        return query = ramyunEntity.gram.loe(100);
-      case 2:
-        return query = ramyunEntity.gram.goe(100);
-      default:
-        break;
-    };
-    log.info("gram QUERY ::: {}", query);
     return query;
   }
 
@@ -246,9 +257,12 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   private BooleanExpression ramyunKcalRange(List<Integer> kcals){
     BooleanExpression query = null;
     BooleanExpression newQuery;
-    if(kcals == null || kcals.size() == 3){
+    if(kcals == null){
       return null;
     }
+
+    setValidList(kcals);
+
     for(Integer kcal : kcals){
       switch (kcal) {
         case 1:
@@ -264,13 +278,13 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
           newQuery = null;
           break;
       };
+
       if(query != null){
         if(newQuery != null) query = query.or(newQuery);
       }else{
         query = newQuery;
       }
     }
-    log.info("KCAL QUERY::: {}", query);
     return query;
   }
 
@@ -278,18 +292,32 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
   private BooleanExpression ramyunNaRange (List<Integer> nas){
     BooleanExpression query = null;
 
-    if(nas == null || nas.size() == 4){
+    if(nas == null){
       return null;
     }
 
+    setValidList(nas);
+
     for(Integer na : nas){
-      BooleanExpression newQuery = switch (na) {
-        case 1 -> ramyunEntity.ramyunNa.loe(1000);
-        case 2 -> ramyunEntity.ramyunNa.between(1000, 1400);
-        case 3 -> ramyunEntity.ramyunNa.between(1400, 1700);
-        case 4 -> ramyunEntity.ramyunNa.goe(1700);
-        default -> null;
+      BooleanExpression newQuery = null;
+      switch (na) {
+        case 1:
+          newQuery = ramyunEntity.ramyunNa.loe(1000);
+          break;
+        case 2:
+          newQuery = ramyunEntity.ramyunNa.between(1000, 1400);
+          break;
+        case 3:
+          newQuery = ramyunEntity.ramyunNa.between(1400, 1700);
+          break;
+        case 4:
+          newQuery = ramyunEntity.ramyunNa.goe(1700);
+          break;
+        default:
+          newQuery = null;
+          break;
       };
+
       if(query != null){
         if(newQuery != null) query = query.or(newQuery);
       }else{
@@ -299,6 +327,18 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
     log.info("query:: {}", query);
     return query;
   }
+
+  // 쿼리스트링 null 판별
+  private List<?> setValidList(List<?> list){
+    Iterator<?> iterator = list.iterator();
+    while (iterator.hasNext()) {
+      if (iterator.next() == null) {
+        iterator.remove();
+      }
+    }
+    return list;
+  }
+
 
   // NPE 예외 처리
   private BooleanBuilder nullSafeBooleanBuilder(Supplier<BooleanExpression> supplier){
