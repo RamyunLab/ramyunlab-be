@@ -144,6 +144,9 @@ public class ReviewService {
                 .ramyun(ramyun)
                 .user(user)
                 .rvCreatedAt(review.getRvCreatedAt())
+                .rvRecommendCount(review.getRvRecommendCount())
+                .rvReportCount(review.getRvReportCount())
+                .rvIsReported(review.getRvIsReported())
                 .build();
             return reviewRepository.save(reviewWithPhoto);
         }else{
@@ -155,6 +158,9 @@ public class ReviewService {
                 .rvIdx(review.getRvIdx())
                 .ramyun(ramyun)
                 .user(user)
+                .rvRecommendCount(review.getRvRecommendCount())
+                .rvReportCount(review.getRvReportCount())
+                .rvIsReported(review.getRvIsReported())
                 .build();
             return reviewRepository.save(updatedreview);
         }
