@@ -44,7 +44,6 @@ public class RecommendController {
     @PostMapping("/recReview/{rvIdx}")
     public ResponseEntity<ResDTO<Object>> recommend(@PathVariable Long rvIdx,
                                             @AuthenticationPrincipal String userIdx){
-        log.info("추천!!!???");
         RecommendDTO responseRecommendDTO = recommendService.create(rvIdx, userIdx);
         Integer count = reviewService.changeRecommendCount(rvIdx, "add");
 
@@ -58,7 +57,6 @@ public class RecommendController {
     @DeleteMapping("/recReview/{rvIdx}")
     public ResponseEntity<ResDTO<Object>> deleteRecommend(@PathVariable Long rvIdx,
                                                    @AuthenticationPrincipal String userIdx){
-        log.info("추천 idx {}", rvIdx);
         recommendService.delete(rvIdx, Long.parseLong(userIdx));
         Integer count = reviewService.changeRecommendCount(rvIdx, "delete");
         return ResponseEntity.ok().body(ResDTO

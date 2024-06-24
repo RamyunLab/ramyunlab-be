@@ -60,9 +60,7 @@ public class AdminGoodsController {
     @GetMapping("/goods/{ramyunIdx}")
     public ResponseEntity<ResDTO> getGoods(@PathVariable Long ramyunIdx,
                                            @AuthenticationPrincipal String userIdx){
-        log.warn("controller : {}", ramyunIdx);
         RamyunProjection result = adminGoodsService.getGoods(ramyunIdx, userIdx);
-        log.warn("result : {}", result);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .message("선택된 상품 조회 성공")
@@ -79,8 +77,6 @@ public class AdminGoodsController {
     public ResponseEntity<ResDTO> searchGoods(@RequestParam(required = false) String keyword,
                                              @AuthenticationPrincipal String userIdx) {
         List<RamyunProjection> results = adminGoodsService.searchGoods(keyword, userIdx);
-        log.warn("controller : {}", keyword);
-        log.warn("controller results : {}", results);
         return ResponseEntity.ok().body(ResDTO.builder()
             .statusCode(StatusCode.OK)
             .data(results)
@@ -98,7 +94,6 @@ public class AdminGoodsController {
     public ResponseEntity<ResDTO> addGoods(@RequestPart(value = "ramyunDTO") RamyunDTO ramyunDTO,
                                            @RequestPart(value = "file", required = false)MultipartFile file,
                                            @AuthenticationPrincipal String userIdx) throws Exception{
-        log.warn("/admin/goods : {}", ramyunDTO);
         RamyunEntity addedRamyun = adminGoodsService.addGoods(ramyunDTO, file, userIdx);
 
         RamyunDTO responseRamyunDTO = RamyunDTO.builder()
@@ -129,7 +124,6 @@ public class AdminGoodsController {
     @PostMapping("/brand")
     public ResponseEntity<ResDTO> addBrand(@RequestBody BrandDTO brandDTO,
                                            @AuthenticationPrincipal String userIdx){
-        log.warn("brand : {}", brandDTO.getBrandIdx());
         BrandEntity addedBrand = adminGoodsService.addBrand(brandDTO, userIdx);
 
         BrandDTO responseBrandDTO = BrandDTO.builder()

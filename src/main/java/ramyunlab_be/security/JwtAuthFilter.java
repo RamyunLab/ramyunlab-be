@@ -26,12 +26,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
             String token = parseBearerToken(request);
-            log.warn("filter token check {}", token);
 
             // 요청의 Header 에 담겨온 Token 을 뽑아서 유효한지 확인
             if(token != null && !token.equalsIgnoreCase("null")){
                 String userIdx = tokenProvider.validateAndGetUserIdx(token);
-                log.warn("filter token userIdx check {}", userIdx);
                 // SecurityContextHolder 에 UsernamePasswordAuthenticationToken 만들어서 저장
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userIdx, null, AuthorityUtils.NO_AUTHORITIES);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

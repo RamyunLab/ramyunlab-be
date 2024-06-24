@@ -21,7 +21,6 @@ public class TokenProvider {
 
     public String create(UserEntity user) {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
-        log.warn("token create {}, {}", user.getUserIdx(), user.getNickname());
 
         boolean isKakao = user.getUserId().startsWith("kakao_");
 
@@ -36,7 +35,6 @@ public class TokenProvider {
     }
 
     public String validateAndGetUserIdx(String token) {
-        log.warn("filter validateAndGetUserId check {}", token);
         Claims claims = Jwts.parser()
             .setSigningKey(jwtProperties.getSecretkey())
             .parseClaimsJws(token)

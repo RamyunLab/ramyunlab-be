@@ -111,7 +111,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
 
     // 총 데이터 개수
     long total = query.fetch().size();
-    log.info("총 개수 {}", total);
 
     // 페이지네이션 적용
     List<RamyunDTO> results = query
@@ -138,7 +137,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
 
   /* 찜 목록 조회 */
   private BooleanExpression isLikeExist(Long userIdx){
-    log.info("useridx {}", userIdx);
     if (userIdx == null){ return Expressions.asBoolean(false); }
     return new CaseBuilder()
         .when(
@@ -194,7 +192,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         if(newQuery != null) query = query.or(newQuery);
       }
     }
-    log.info("query:: {}", query);
     return query;
   }
 
@@ -324,7 +321,6 @@ public class RamyunCustomRepositoryImpl implements RamyunCustomRepository{
         query = newQuery;
       }
     }
-    log.info("query:: {}", query);
     return query;
   }
 
