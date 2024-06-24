@@ -54,7 +54,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         .orderBy(reviewEntity.rvCreatedAt.asc());
 
     long total = query.fetch().size();
-    log.info("TOTAL {}", total);
 
     List<ReviewDTO> results = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 
@@ -93,7 +92,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
   /* 추천 여부 조회 */
   private BooleanExpression isRecommendExist (Long userIdx){
-    log.info("useridx {}", userIdx);
     if (userIdx == null){ return Expressions.asBoolean(false); }
     return new CaseBuilder()
         .when(

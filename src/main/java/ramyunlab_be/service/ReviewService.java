@@ -215,7 +215,6 @@ public class ReviewService {
     public List<ReviewDTO> getBestReviewByRamyun (Long ramyunIdx, Long userIdx){
         Pageable pageable = PageRequest.of(0, 3);
         Optional<List<ReviewDTO>> result = reviewRepository.findBestReviewByRamyunIdx(ramyunIdx, userIdx, pageable);
-        log.info("resutl???? {}",result);
         if(result.isPresent()){
             return result.get();
 //            return result.get().stream().map(this::convert).collect(Collectors.toList());
@@ -236,13 +235,11 @@ public class ReviewService {
     /* 리뷰 추천/추천 취소 시 추천 수 변경 */
     public Integer changeRecommendCount(Long rvIdx, String status){
         Integer count = null;
-        log.info("status {}", status);
         if(status.equals("add")){
             count = reviewRepository.plusRecommendCount(rvIdx);
         }else if(status.equals("delete")){
             count = reviewRepository.minusRecommendCount(rvIdx);
         }
-        log.info("리뷰 추천///추천삭제    {}", count);
         Integer result = reviewRepository.getReviewRecommendCount(rvIdx);
         return result;
     }
@@ -262,7 +259,6 @@ public class ReviewService {
                 .rvDeletedAt(reviewEntity.getRvDeletedAt())
                 .rvRecommendCount(reviewEntity.getRvRecommendCount())
                 .build();
-        log.info("isReported??? {}",result.toString());
         return result;
     }
 
@@ -287,7 +283,6 @@ public class ReviewService {
             Long totalReport = reviewRepository.findRvReportCountByRvIdx(rvIdx)
                 .orElseThrow(()->new IllegalStateException("SERVER ERROR"));
 
-            log.warn("신고 횟수 {}", totalReport);
             if(totalReport >= 4){
                 reviewRepository.incrementRvReportCount(rvIdx);
                 reviewRepository.changeIsReported(rvIdx);

@@ -73,7 +73,6 @@ public class UserService {
 
         // 아이디 중복 체크\
         if (userRepository.existsByUserId(userId)) {
-            log.warn("이미 존재하는 아이디입니다. {}", userId);
             throw new RuntimeException("userId already exists");
         }
         return UserDTO.builder().userId(userId).build();
@@ -86,7 +85,6 @@ public class UserService {
 
         // 닉네임 중복 체크
         if (userRepository.existsByNickname(nickname)) {
-            log.warn("이미 존재하는 닉네임입니다. {}", nickname);
             throw new RuntimeException("nickname already exists");
         }
 
@@ -145,7 +143,6 @@ public class UserService {
     public UserEntity handleKakaoCallback(String code) throws Exception {
         // 액세스 토큰 발급
         String accessToken = getAccessToken(code);
-        log.info("access 토큰!! {}", accessToken);
 
         // 사용자 정보 요청
         JsonNode userInfo = getUserInfo(accessToken);

@@ -57,15 +57,13 @@ public class FavoriteService {
             // 찜 추가 여부 확인
             Optional<FavoriteEntity> favorite = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
             if(favorite.isPresent()) {
-                log.info("FAVORITE IS PRESENT?? {}",favorite.get());
                 throw new RuntimeException("중복된 요청입니다.");
             }else{
                 FavoriteEntity fv = FavoriteEntity.builder()
                                                         .user(UserEntity.builder().userIdx(userIdx).build())
                                                         .ramyun(RamyunEntity.builder().ramyunIdx(ramyunIdx).build())
                                                         .build();
-                FavoriteEntity result = favoriteRepository.save(fv);
-                log.info("찜 추가 성공? {}", result);
+                favoriteRepository.save(fv);
             }
         } catch(Exception e) {
             log.error(e.getMessage());
@@ -80,7 +78,6 @@ public class FavoriteService {
 //            Optional<FavoriteEntity> result = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx);
             FavoriteEntity favorite = favoriteRepository.findLikedRamyun(userIdx, ramyunIdx)
                                                       .orElseThrow(()->new RuntimeException("찜한 내용을 찾을 수 없습니다."));
-            log.info("IS FAVORITE EXIST {}", favorite);
             favoriteRepository.delete(favorite);
         }catch(Exception e){
             log.error(e.getMessage());

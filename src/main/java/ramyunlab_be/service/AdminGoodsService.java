@@ -110,13 +110,11 @@ public class AdminGoodsService {
     public BrandEntity addBrand(final BrandDTO brandDTO,
                                 final String userIdx){
         userRepository.findByUserIdx(Long.valueOf(userIdx)).orElseThrow(() -> new RuntimeException("관리자로 로그인을 진행해주세요."));
-        log.warn("brand : {}", brandDTO);
 
         BrandEntity newBrand = BrandEntity.builder()
             .brandIdx(brandDTO.getBrandIdx())
             .brandName(brandDTO.getBrandName())
             .build();
-        log.warn("newBrand : {}", newBrand.getBrandIdx());
         return brandRepository.save(newBrand);
     }
     // 유효한 관리자 인덱스가 없는 경우(토큰 만료))
@@ -134,11 +132,9 @@ public class AdminGoodsService {
         // 등록되지 않은 브랜드인 경우
         BrandEntity brand = brandRepository.findByBrandName(ramyunDTO.getBrandName()).orElseThrow(() -> new RuntimeException("등록되지 않은 브랜드입니다."));
 
-        log.warn("abcd {}", file);
 
         String fileUrl = "";
         if(file != null){
-            log.warn("aaaa {}", file);
 
             UUID uuid = UUID.randomUUID();
             String fileName = GOODS_DIR + uuid + "_" + file.getOriginalFilename();

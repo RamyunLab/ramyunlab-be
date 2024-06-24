@@ -43,7 +43,6 @@ public class UserController {
         @RequestBody UserDTO userDTO
     ) {
 //        try {
-            log.warn("userId {}, userDTO {} ", userIdx, userDTO.getPassword());
             UserEntity user = userService.delete(Long.valueOf(userIdx), userDTO.getPassword());
 
 

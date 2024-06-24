@@ -24,7 +24,6 @@ public class GameService {
   }
 
   public List<GameDTO> getRandomWorldCupList (int round){
-    log.info("service round: {}", round);
     List<RamyunEntity> result = gameRepository.findRandomListByRound(round);
     List<GameDTO> worldCupList = new ArrayList<>();
 

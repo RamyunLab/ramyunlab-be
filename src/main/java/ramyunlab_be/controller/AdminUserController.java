@@ -43,37 +43,6 @@ public class AdminUserController {
         this.emailService = emailService;
     }
 
-//    @Operation(summary = "사용자 목록 조회")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
-//        @ApiResponse(responseCode = "400", description = "사용자 목록 조회 실패")
-//    })
-//    @GetMapping("/users")
-//    public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
-//        Page<UserProjection> results = AdminUserService.getUsers(pageable);
-////        log.warn("논리 삭제 확인 {}", results.stream().toList());
-//        return ResponseEntity.ok().body(ResDTO.builder()
-//            .statusCode(StatusCode.OK)
-//            .data(results)
-//            .message("사용자 목록 호출 완료")
-//            .build());
-//    }
-
-//    @Operation(summary = "사용자 목록 조회")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
-//        @ApiResponse(responseCode = "400", description = "사용자 목록 조회 실패")
-//    })
-//    @GetMapping("/users")
-//    public ResponseEntity<ResDTO> getUsers(Pageable pageable) {
-//        Page<UserProjection> results = AdminUserService.getUserWithReviews(pageable);
-////        log.warn("논리 삭제 확인 {}", results.stream().toList());
-//        return ResponseEntity.ok().body(ResDTO.builder()
-//            .statusCode(StatusCode.OK)
-//            .data(results)
-//            .message("사용자 목록 호출 완료")
-//            .build());
-//    }
 
         @Operation(summary = "사용자 목록 조회")
     @ApiResponses(value = {
@@ -99,7 +68,6 @@ public class AdminUserController {
     public ResponseEntity<ResDTO> searchUser(@RequestParam("keyword") String keyword
                                              ,@AuthenticationPrincipal String userIdx) {
         List<UserProjection> results = adminUserService.searchUser(keyword, userIdx);
-        log.warn("keyword : {}", keyword);
         return ResponseEntity.ok().body(ResDTO.builder()
            .statusCode(StatusCode.OK)
            .data(results)

@@ -64,7 +64,6 @@ public class MainController {
 
   @InitBinder("ramyunFilterDTO")
   public void initFilterBinder (WebDataBinder webDataBinder) {
-    log.info("필터 쿼리스트링 유효성 체크");
     webDataBinder.registerCustomEditor(List.class, "brand", new IntegerListEditor());
     webDataBinder.registerCustomEditor(List.class, "noodle", new BooleanListEditor());
     webDataBinder.registerCustomEditor(List.class, "isCup", new BooleanListEditor());
@@ -126,7 +125,6 @@ public class MainController {
         user = Long.parseLong(userIdx);
       }
 
-      log.info("filter dto {}", filter.toString());
 
       if(page == null) page = 1;
 
@@ -157,16 +155,10 @@ public class MainController {
 
     // 라면 + 평점 조회
     RamyunDTO ramyun = mainService.getRamyun(ramyunIdx);
-//    log.info("ramyun {}", ramyun.toString());
 
     if(page == null){
       page = 1;
     }
-    log.info("page 번호 {}", page);
-
-    // 리뷰 조회
-//    Page<ReviewDTO> reviews = reviewService.getReviewByRamyun(ramyunIdx, user, page);
-//    log.info("review {}", reviews.toString());
 
     // 베스트 리뷰 조회
     List<ReviewDTO> bestReview = reviewService.getBestReviewByRamyun(ramyunIdx, user);
@@ -217,7 +209,6 @@ public class MainController {
 //                                                      ,@AuthenticationPrincipal String userIdx
                                                      ){
     Integer page = reviewService.goMyReview(ramyunIdx, reviewNo);
-    log.info("리뷰 조회 시 페이지 {}", page);
     return ResponseEntity.ok().body(ResDTO.builder()
                                           .statusCode(StatusCode.OK)
                                           .message("페이지 계산 성공")

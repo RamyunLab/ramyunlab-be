@@ -17,7 +17,6 @@ public class AdminPageController {
     @GetMapping("/userPage")
     public String adminUserPage(Model model,
                                 @AuthenticationPrincipal String userIdx) {
-        log.warn("UserIDx {}", userIdx);
         return "adminUser";
     }
 
